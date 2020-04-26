@@ -8,8 +8,22 @@
     "start": "next start"
   },
   "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@hapi/iron": "6.0.0",
+    "cookie": "0.4.1",
     "next": "9.3.5",
+    "next-connect": "0.6.5",
+    "passport": "0.4.1",
+    "passport-local": "1.0.0",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "sqlite3": "4.1.1",
+    "swr": "0.2.0",
+    "typeorm": "0.2.24"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "@types/react": "^16.9.34",
+    "typescript": "^3.8.3"
   }
 }
