@@ -1,7 +1,6 @@
 import { createConnection, getConnection } from "typeorm";
-
-import {User} from './entity/user.entity';
-
+import { User } from './entity/user.entity';
+import { Team } from './entity/team.entity';
 
 export default async () => {
     try {
@@ -18,7 +17,9 @@ export default async () => {
             "logging": true,
             "entities": [
                 //"./entity/**/*.ts"
-                User
+                //"src/bar/entities/**/*.ts",
+                User,
+                Team,
             ],
             "migrations": [
                 "db/migration/**/*.ts"

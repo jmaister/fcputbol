@@ -9,3 +9,11 @@ https://www.youtube.com/watch?v=QABkof8ygzI
 
 https://flaviocopes.com/nextjs-api-routes/
 
+# Formik
+
+https://jaredpalmer.com/formik/docs/overview
+
+TODO: Must be added: https://github.com/stackworx/formik-material-ui
+
+https://www.youtube.com/watch?v=3sXYK60T6Us
+

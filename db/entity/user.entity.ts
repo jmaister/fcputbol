@@ -1,8 +1,11 @@
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn
+    PrimaryGeneratedColumn,
+    OneToMany,
+    ManyToOne
 } from 'typeorm';
+import { Team } from './team.entity';
 
 @Entity()
 export class User {
@@ -21,4 +24,8 @@ export class User {
 
     @Column('varchar')
     password: string;
+
+    @OneToMany(type => Team, team => team.user)
+    teams: Team[];
 }
+
