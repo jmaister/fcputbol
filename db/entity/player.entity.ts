@@ -16,6 +16,9 @@ export class Player {
     @Column('varchar')
     name: string;
 
+    @Column('varchar')
+    surname: string;
+
     @ManyToOne(type => Team, team => team.players)
     team: Team;
 
