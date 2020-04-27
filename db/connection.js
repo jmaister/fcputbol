@@ -1,6 +1,7 @@
 import { createConnection, getConnection } from "typeorm";
 import { User } from './entity/user.entity';
 import { Team } from './entity/team.entity';
+import { Player } from './entity/player.entity';
 
 import ormconfig from '../ormconfig.json';
 
@@ -18,6 +19,7 @@ export default async () => {
                 //"src/bar/entities/** / *.ts",
                 User,
                 Team,
+                Player,
             ]
         }).then(async connection => {
             console.log("connection created...");
