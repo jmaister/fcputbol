@@ -39,7 +39,8 @@ const Team = () => {
                         console.log("fetch response data", data);
                         actions.setSubmitting(false);
                         if (data.ok) {
-                            // TODO: redirect                            
+                            // TODO: redirect
+                            setErrorMsg(null);
                         } else {
                             setErrorMsg(JSON.stringify(data.error.message));
                         }

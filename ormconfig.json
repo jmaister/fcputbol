@@ -1,0 +1,16 @@
+{
+    "name": "default",
+    "type": "sqlite",
+    "database": "fcputbol.sqlite",
+    "synchronize": true,
+    "logging": true,
+    "entities": [
+        "db/entity/**/*.entity.ts"
+    ],
+    "migrations": [
+        "db/migration/**/*.ts"
+    ],
+    "subscribers": [
+        "db/subscriber/**/*.ts"
+    ]
+}

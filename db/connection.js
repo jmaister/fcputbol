@@ -2,6 +2,8 @@ import { createConnection, getConnection } from "typeorm";
 import { User } from './entity/user.entity';
 import { Team } from './entity/team.entity';
 
+import ormconfig from '../ormconfig.json';
+
 export default async () => {
     try {
         console.log("loading connection...");
@@ -10,28 +12,13 @@ export default async () => {
     } catch (error) {
         console.log("* error db *", error);
         return await createConnection({
-            "name": "default",
-            "type": "sqlite",
-            "database": "fcputbol.sqlite",
-            "synchronize": true,
-            "logging": true,
+            ...ormconfig,
             "entities": [
-                //"./entity/**/*.ts"
-                //"src/bar/entities/**/*.ts",
+                //"./entity/** / *.ts"
+                //"src/bar/entities/** / *.ts",
                 User,
                 Team,
-            ],
-            "migrations": [
-                "db/migration/**/*.ts"
-            ],
-            "subscribers": [
-                "db/subscriber/**/*.ts"
-            ],
-            "cli": {
-                "entitiesDir": "db/entitie",
-                "migrationsDir": "db/migration",
-                "subscribersDir": "db/subscriber"
-            }
+            ]
         }).then(async connection => {
             console.log("connection created...");
             return connection;
