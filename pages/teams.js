@@ -1,13 +1,12 @@
+import Link from 'next/link';
 
 import { useState } from 'react'
 
-import { useUser } from '../lib/hooks';
 import Layout from '../components/layout';
 
-import { Formik, Field } from 'formik';
-import * as Yup from 'yup';
-import { TextField, Button, Typography } from '@material-ui/core';
 import { findUser } from '../lib/user';
+
+import { Button } from '@material-ui/core';
 
 const Team = ({user}) => {
     const [errorMsg, setErrorMsg] = useState('');
@@ -18,11 +17,11 @@ const Team = ({user}) => {
 
             {user && <p>Currently logged in as: {JSON.stringify(user)}</p>}
 
-            {user.teams.lenght === 0 ?
-                <div>
-                    <Button></Button>
-                </div>
-            :null}
+            <div>
+                <Link href="/createteam">
+                    <Button>Crear nuevo equipo</Button>
+                </Link>
+            </div>
 
             {user.teams.map(t => (
                 <div key={t.id}>{t.name}</div>
