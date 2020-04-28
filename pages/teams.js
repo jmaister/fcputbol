@@ -24,7 +24,10 @@ const Team = ({user}) => {
             </div>
 
             {user.teams.map(t => (
-                <div key={t.id}>{t.name}</div>
+                <div>
+                    <h2 key={t.id}>{t.name}</h2>
+                    {t.players.map(p=><span key={p.id}>{p.name} {p.surname}, </span>)}
+                </div>
             ))}
 
         </Layout>
