@@ -8,6 +8,13 @@ import {
 
 import { Team } from './team.entity';
 
+export enum Positions {
+    gk = "gk",
+    def = "def",
+    mid = "mid",
+    fw = "fw",
+}
+
 @Entity()
 export class Player {
     @PrimaryGeneratedColumn()
@@ -22,10 +29,21 @@ export class Player {
     @ManyToOne(type => Team, team => team.players)
     team: Team;
 
+    @Column('int')
+    num: number;
+
+    @Column('varchar')
+    position: string;
+
+    @Column('double')
     save: number;
+    @Column('double')
     defense: number;
+    @Column('double')
     pass: number;
+    @Column('double')
     dribble: number;
+    @Column('double')
     shot: number;
 }
 
