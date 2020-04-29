@@ -44,3 +44,23 @@ Inside that directory, you can run several commands:
   yarn start
     Runs the built app in production mode.
 
+
+# Typeorm migrations
+
+From: https://github.com/typeorm/typeorm/blob/master/docs/migrations.md
+
+Execute migrations:
+
+    yarn typeorm migration:run
+
+Revert migration:
+
+    yarn typeorm migration:revert
+
+Automatically generate a migration:
+
+    yarn typeorm migration:generate -n MigrationName
+
+Create an empty migration step:
+
+    yarn typeorm migration:create -n MigrationName

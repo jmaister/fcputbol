@@ -5,12 +5,17 @@
     "synchronize": true,
     "logging": true,
     "entities": [
-        "db/entity/**/*.entity.ts"
+        "db/entities/**/*.entity.{ts,js}"
     ],
     "migrations": [
         "db/migration/**/*.ts"
     ],
     "subscribers": [
         "db/subscriber/**/*.ts"
-    ]
+    ],
+    "cli": {
+        "entitiesDir": "db/entities",
+        "migrationsDir": "db/migrations"
+    },
+    "migrationsTableName": "migrations_table"
 }

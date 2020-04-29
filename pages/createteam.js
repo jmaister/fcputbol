@@ -8,7 +8,9 @@ import Layout from '../components/layout';
 
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Typography } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 const Team = ({}) => {
     const user = useUser();

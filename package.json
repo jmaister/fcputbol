@@ -5,10 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm:gen": "typeorm migration:generate -n",
+    "typeorm:mig": "typeorm migration:run",
+    "typeorm:cr": "typeorm migration:create -n"
   },
   "dependencies": {
-    "@babel/plugin-proposal-decorators": "7.8.3",
     "@hapi/iron": "6.0.0",
     "@material-ui/core": "4.9.11",
     "cookie": "0.4.1",
@@ -19,14 +22,17 @@
     "passport-local": "1.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "sqlite3": "4.1.1",
     "swr": "0.2.0",
     "typeorm": "0.2.24",
     "yup": "0.28.4"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "7.8.3",
     "@types/node": "13.13.2",
     "@types/react": "16.9.34",
+    "sqlite3": "4.1.1",
+    "tsconfig-paths": "3.9.0",
+    "ts-node": "8.9.1",
     "typescript": "3.8.3"
   }
 }

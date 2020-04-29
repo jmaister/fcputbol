@@ -8,33 +8,30 @@ import { findUser } from '../lib/user';
 
 import { Button } from '@material-ui/core';
 
-const Team = ({user}) => {
+export default function Team({user}) {
     const [errorMsg, setErrorMsg] = useState('');
 
-    return (
-        <Layout>
-            <h1>Equipos</h1>
+    return <Layout>
+        <h1>Equipos</h1>
 
-            {user && <p>Currently logged in as: {JSON.stringify(user)}</p>}
+        {user && <p>Currently logged in as: {JSON.stringify(user)}</p>}
 
-            <div>
-                <Link href="/createteam">
-                    <Button>Crear nuevo equipo</Button>
-                </Link>
-            </div>
+        <Link href="/createteam">
+            <Button
+                variant="contained"
+                color="primary">
+                    Crear nuevo equipo
+            </Button>
+        </Link>
 
-            {user.teams.map(t => (
-                <div>
-                    <h2 key={t.id}>{t.name}</h2>
-                    {t.players.map(p=><span key={p.id}>{p.name} {p.surname}, </span>)}
-                </div>
-            ))}
+        {user.teams.map(t => (
+            <Link key={t.id} href={'/team/' + t.id}>
+                <a>Ver equipo: {t.name}</a>
+            </Link>
+        ))}
 
-        </Layout>
-    )
+    </Layout>
 }
-
-export default Team
 
 export async function getServerSideProps(context) {
     // const userSession = useUser();

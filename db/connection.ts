@@ -7,30 +7,31 @@ import { Player } from './entity/player.entity';
 
 import ormconfig from '../ormconfig.json';
 
+
+const opts = ({
+    ...ormconfig,
+    "entities": [
+        //"./entity/** / *.ts"
+        //"src/bar/entities/** / *.ts",
+        User,
+        Team,
+        Player,
+    ]
+});
+
+
 export default async () => {
     try {
-        console.log("loading connection...");
-        const connection = await getConnection('default');
-        return connection;
+        console.log("*** loading connection...");
+        return getConnection('default');
     } catch (error) {
-        console.log("* error db *", error);
-
-        const opts = ({
-            ...ormconfig,
-            "entities": [
-                //"./entity/** / *.ts"
-                //"src/bar/entities/** / *.ts",
-                User,
-                Team,
-                Player,
-            ]
-        });
+        console.log("*** error db *", error);
 
         return await createConnection(opts as SqliteConnectionOptions)
             .then(async connection => {
-                console.log("connection created...");
+                console.log("*** connection created");
                 return connection;
-            }).catch(error => console.log("* error2 db *", error));
+            }).catch(error => console.log("*** error2 db *", error));
     }
 }
 
