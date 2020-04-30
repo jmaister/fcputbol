@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Player } from '../../db/entity/player.entity';
 
+import Position from './Position';
 
 const useStyles = makeStyles({
     table: {
@@ -43,7 +44,7 @@ export default function PlayersTable({ players }: PlayersTableParams) {
                         <TableRow key={player.id}>
                             <TableCell align="right">{player.id}</TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
-                            <TableCell>{player.position}</TableCell>
+                            <TableCell><Position pos={player.position}></Position></TableCell>
                             <TableCell align="right">{player.save}</TableCell>
                             <TableCell align="right">{player.defense}</TableCell>
                             <TableCell align="right">{player.pass}</TableCell>
