@@ -21,6 +21,11 @@ const Header = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/match">
+                  <a>Partido</a>
+                </Link>
+              </li>
+              <li>
                 <Link href="/profile">
                   <a>Profile</a>
                 </Link>
