@@ -4,11 +4,13 @@ import {
     Column,
     PrimaryGeneratedColumn,
     ManyToOne,
-    OneToMany
+    OneToMany,
+    OneToOne
 } from 'typeorm';
 
 import { User } from './user.entity';
 import { Player } from './player.entity';
+import { Lineup } from './lineup.entity';
 
 @Entity()
 export class Team {
@@ -25,6 +27,9 @@ export class Team {
 
     @OneToMany(type => Player, player => player.team)
     players: Player[];
+
+    @OneToOne(type => Lineup, lineup => lineup.team)
+    lineup: Lineup;
 
 }
 
