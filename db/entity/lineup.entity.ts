@@ -5,7 +5,9 @@ import {
     OneToMany,
     ManyToOne,
     OneToOne,
-    JoinColumn
+    JoinColumn,
+    ManyToMany,
+    JoinTable
 } from 'typeorm';
 import { Team } from './team.entity';
 import { Player } from './player.entity';
@@ -20,14 +22,8 @@ export class Lineup {
     @JoinColumn()
     team: Team;
 
-    @ManyToOne(type=> Player)
-    gk: Player[];
-    @ManyToOne(type=> Player)
-    def: Player[];
-    @ManyToOne(type=> Player)
-    mid: Player[];
-    @ManyToOne(type=> Player)
-    fw: Player[];
-
+    @ManyToMany(type=> Player)
+    @JoinTable()
+    players: Player[];
 }
 
