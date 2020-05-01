@@ -5,9 +5,9 @@ import { Team } from '../db/entity/team.entity';
 import { Lineup } from '../db/entity/lineup.entity';
 import { Player, Positions } from '../db/entity/player.entity';
 
-import RandomData from '../lib/random-data'
+import RandomData from './random-data'
 
-import {range, randomIntInterval, sample} from '../lib/utils';
+import {range, randomIntInterval, sample} from './utils';
 
 export async function createTeam({ name, username }) {
 
@@ -60,31 +60,28 @@ export async function createTeam({ name, username }) {
     }
 
     // Create default lineup
-    const lineupPlayers = [].concat(sample(players[Positions.gk], 1))
+    const lineupPlayers = []
+        .concat(sample(players[Positions.gk], 1))
         .concat(sample(players[Positions.def], 3))
         .concat(sample(players[Positions.mid], 4))
         .concat(sample(players[Positions.fw], 3));
-    const lineupData = {
-        team: team,
-        players: lineupPlayers,
-    };
-    console.log("******* lineupData", lineupData);
 
     const lineupRepository = db.getRepository(Lineup);
-    const lineup = await lineupRepository.save(lineupData);
-    console.log("******* lineup", lineup);
+    await lineupRepository.save({
+        team: team,
+        players: lineupPlayers,
+    });
 
     return team;
 }
 
-export async function findTeam(id) {
+export async function findTeam(id:string):Promise<Team> {
     const db = await connection();
     const teamRepository = db.getRepository(Team);
-    const team = await teamRepository.findOne(id, {relations: ["players"]});
-
-    if (team) {
-        return team;
-    } else {
-        throw new Error("Team not found");
+    try {
+        return teamRepository.findOne(id, {relations: ["players", "lineup", "lineup.players"]});
+    } catch (error) {
+        console.log("_*_*_*_*_*_*_ findTeam error:", error)
+        throw new Error("Team not found:" + error);
     }
 }

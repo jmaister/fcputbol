@@ -1,9 +1,11 @@
-import { createConnection, getConnection } from "typeorm";
+import { createConnection, getConnection, Connection } from "typeorm";
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
 
 import { User } from './entity/user.entity';
 import { Team } from './entity/team.entity';
 import { Player } from './entity/player.entity';
+import { MatchStep, Match } from "./entity/match.entity";
+import { Lineup } from "./entity/lineup.entity";
 
 import ormconfig from '../ormconfig.json';
 
@@ -11,27 +13,27 @@ import ormconfig from '../ormconfig.json';
 const opts = ({
     ...ormconfig,
     "entities": [
-        //"./entity/** / *.ts"
-        //"src/bar/entities/** / *.ts",
         User,
         Team,
         Player,
+        Match,
+        MatchStep,
+        Lineup
     ]
 });
 
 
-export default async () => {
+export default async ():Promise<Connection> => {
     try {
         console.log("*** loading connection...");
         return getConnection('default');
     } catch (error) {
         console.log("*** error db *", error);
-
-        return await createConnection(opts as SqliteConnectionOptions)
-            .then(async connection => {
-                console.log("*** connection created");
-                return connection;
-            }).catch(error => console.log("*** error2 db *", error));
+        try {
+            return await createConnection(opts as SqliteConnectionOptions)
+        } catch (error2) {
+            throw new Error("Error creating connection: " + error2)
+        }
     }
 }
 

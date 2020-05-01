@@ -43,14 +43,17 @@ export class MatchStep {
     @Column({ type: 'int' })
     t: number;
 
-    @ManyToOne(type => Player)
+    @ManyToOne(type => Player, {nullable: true})
     player: Player;
-    @ManyToOne(type => Player)
+    @ManyToOne(type => Player, {nullable: true})
     player2: Player;
 
+    @Column('varchar', {nullable: true})
     state: string;
 
+    @Column('boolean', {nullable: true})
     ballOnA: boolean;
 
+    @Column('varchar')
     comment: string;
 }
