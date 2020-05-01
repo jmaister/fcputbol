@@ -26,9 +26,9 @@ export default async function teams(req, res) {
                 resultAway: result.score[1],
             } as Match;
 
-            await saveMatch(match, result.steps);
+            const savedMatch = await saveMatch(match, result.steps);
 
-            res.status(200).json({ ok: true, matchId: 1, home, away });
+            res.status(200).json({ ok: true, matchId: savedMatch.id, home, away });
         } catch (error) {
             res.status(404).json({ ok: false, message: "Teams not found", body: req.body, error: error });
         }

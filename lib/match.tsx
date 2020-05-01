@@ -14,7 +14,7 @@ export async function saveMatch(match:Match, steps:MatchStep[]) {
     for (let i=0; i<steps.length; i++) {
         const s = steps[i];
         s.match = match;
-        // TODO: fix
+        // TODO: fix step times
         s.t = 1;
         await matchStepRepository.save(s);
     }
@@ -22,12 +22,12 @@ export async function saveMatch(match:Match, steps:MatchStep[]) {
     return savedMatch;
 }
 
-export async function findTeam(id:string):Promise<Team> {
+export async function findMatch(id:string):Promise<Match> {
     const db = await connection();
-    const teamRepository = db.getRepository(Team);
+    const matchRepository = db.getRepository(Match);
     try {
-        return teamRepository.findOne(id, {relations: ["players", "lineup", "lineup.players"]});
+        return matchRepository.findOne(id, {relations: ["matchSteps", "matchSteps.player", "matchSteps.player2"]});
     } catch (error) {
-        throw new Error("Team not found:" + error);
+        throw new Error("Match not found:" + error);
     }
 }
