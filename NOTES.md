@@ -23,3 +23,16 @@ https://material-ui.com/guides/server-rendering/#reference-implementations
 
 https://github.com/mui-org/material-ui/tree/master/examples/nextjs
 https://github.com/mui-org/material-ui/blob/master/examples/nextjs/src/theme.js
+
+# Fix typeorm migrations
+
+https://github.com/typeorm/typeorm/issues/5087
+
+# Fix positions
+
+position_id 	position_desc
+GK 	Goalkeepers
+DF 	Defenders
+MF 	Midfielders
+FD 	Defenders
+

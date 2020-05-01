@@ -5,7 +5,7 @@
     "synchronize": true,
     "logging": true,
     "entities": [
-        "db/entities/**/*.entity.{ts,js}"
+        "db/entity/**/*.entity.{ts,js}"
     ],
     "migrations": [
         "db/migration/**/*.ts"
