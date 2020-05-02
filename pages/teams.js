@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import Layout from '../components/layout';
 
-import { findUser } from '../lib/user';
+import { findUser } from '../lib/UserService';
 
 import { Button } from '@material-ui/core';
 
@@ -14,8 +14,6 @@ export default function Team({user}) {
     return <Layout>
         <h1>Equipos</h1>
 
-        {user && <p>Currently logged in as: {JSON.stringify(user)}</p>}
-
         <Link href="/createteam">
             <Button
                 variant="contained"
@@ -24,11 +22,15 @@ export default function Team({user}) {
             </Button>
         </Link>
 
+        <ul>
         {user.teams.map(t => (
-            <Link key={t.id} href={'/team/' + t.id}>
-                <a>Ver equipo: {t.name}</a>
-            </Link>
+            <li key={t.id}>
+                <Link  href={'/team/' + t.id}>
+                    <a>Ver equipo: {t.name}</a>
+                </Link>
+            </li>
         ))}
+        </ul>
 
     </Layout>
 }

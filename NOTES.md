@@ -36,3 +36,7 @@ DF 	Defenders
 MF 	Midfielders
 FD 	Defenders
 
+# Store current score in MatchStep
+
+that
+

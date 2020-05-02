@@ -50,8 +50,12 @@ export class MatchStep {
     @ManyToOne(type => Match, match => match.matchSteps)
     match: Match;
 
+    // Minute of the match
     @Column({ type: 'int' })
     t: number;
+    // Step number, it is possible to have more than one step in a minute
+    @Column({ type: 'int' })
+    stepNumber: number;
 
     @ManyToOne(type => Player, {nullable: true})
     player: Player;

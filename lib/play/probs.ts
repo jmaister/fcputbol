@@ -78,7 +78,7 @@ const randomSelectProb = (probs) => {
    }
 };
 
-const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string, plsdef:Player[], stattdef:string, plsTarget:Player[], state:string, stateTarget:string, ballOnA:boolean) : MatchStep[] => {
+const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string, plsdef:Player[], stattdef:string, plsTarget:Player[], state:string, stateTarget:string, ballOnA:boolean, stepNumber:number, t:number) : MatchStep[] => {
     // TODO: calculate depending on number of players on each side
 
     const probs = {};
@@ -103,14 +103,18 @@ const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string,
             player2: receiver,
             comment: "{player} pasa el balón",
             state: state,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
 
         steps.push({
             player: receiver,
             comment: "{player} recibe el pase",
             state: stateTarget,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
     } else {
         const defPlayerIdx = parseInt(selected);
@@ -121,7 +125,9 @@ const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string,
             player2: defPlayer,
             comment: "{player} regatea con {player2}",
             state: state,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
 
         const step2probs = {
@@ -136,7 +142,9 @@ const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string,
                 player2: defPlayer,
                 comment: "{player} se desmarca y consigue pasar el balón",
                 state: state,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
 
             let receiver = randomElement(plsTarget);
@@ -146,7 +154,9 @@ const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string,
                 player2: attackPlayer,
                 comment: "{player} recibe el pase",
                 state: stateTarget,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         } else if (selected2 === "robo") {
             steps.push({
@@ -154,7 +164,9 @@ const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string,
                 player2: attackPlayer,
                 comment: "{player} roba el balón",
                 state: state,
-                ballOnA: !ballOnA
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         }
     }
@@ -162,7 +174,7 @@ const calcStepsMedMed = (playerWithBall:Player, plsatt:Player[], statatt:string,
     return steps;
 };
 
-const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string, plsdef: Player[], stattdef:string, plsTarget: Player[], state:string, stateTarget:string, ballOnA:boolean): MatchStep[] => {
+const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string, plsdef: Player[], stattdef:string, plsTarget: Player[], state:string, stateTarget:string, ballOnA:boolean, stepNumber:number, t:number): MatchStep[] => {
     // TODO: calculate depending on number of players on each side
 
     const probs = {};
@@ -185,7 +197,9 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
             player: platt,
             comment: "{player} sortea a la defensa",
             state: stateTarget,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
     } else {
         const defPlayerIdx = parseInt(selected);
@@ -196,7 +210,9 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
             player2: defPlayer,
             comment: "{player} regatea con {player2}",
             state: state,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
 
         const step2probs = {
@@ -210,7 +226,9 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
                 player: platt,
                 comment: "{player} se desmarca y consigue atravesar la defensa",
                 state: stateTarget,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
 
         } else if (selected2 === "robo") {
@@ -219,13 +237,17 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
                 player: defPlayer,
                 comment: "{player} roba el balón y despeja.",
                 state: state,
-                ballOnA: !ballOnA
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
             steps.push({
                 player: randomElement(plsTarget),
                 comment: "{player} recibe el pase del defensa.",
                 state: "M",
-                ballOnA: !ballOnA
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         }
     }
@@ -234,7 +256,7 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
 };
 
 
-const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:string, stateGoal:string, stateClear:string, ballOnA:boolean): MatchStep[] => {
+const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:string, stateGoal:string, stateClear:string, ballOnA:boolean, stepNumber:number, t:number): MatchStep[] => {
     const probs = {};
 
     // Prob regate al portero
@@ -252,7 +274,9 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
             player2: por,
             comment: "{player} intenta regatear al portero.",
             state: state,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
 
         const probs2 = {};
@@ -270,21 +294,27 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
                 player2: por,
                 comment: "{player} regatea al portero y GOL!",
                 state: stateGoal,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         } else if (selected2 === "intercepta") {
             steps.push({
                 player: por,
                 comment: "{player} intercepta el balón y despeja.",
                 state: state,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
             steps.push({
                 player: randomElement(plsTarget),
                 player2: por,
                 comment: "{player} recibe el pase del portero.",
                 state: stateClear,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         }
 
@@ -294,7 +324,9 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
             player2: por,
             comment: "{player} se prepara para tirar a portería.",
             state: state,
-            ballOnA: ballOnA
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
         } as MatchStep);
 
         const probs2 = {};
@@ -311,14 +343,18 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
                 player: del,
                 comment: "{player} tira y GOL!",
                 state: stateGoal,
-                ballOnA: ballOnA
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         } else if (selected2 === "parada") {
             steps.push({
                 player: por,
                 comment: "{player} hace una parada.",
                 state: state,
-                ballOnA: !ballOnA
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
             const def = randomElement(plsTarget);
             steps.push({
@@ -326,13 +362,17 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
                 player2: def,
                 comment: "{player} pasa el balón a la defensa.",
                 state: state,
-                ballOnA: !ballOnA
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
             steps.push({
                 player: def,
                 comment: "{player} recibe el pase del portero.",
                 state: stateClear,
-                ballOnA: !ballOnA
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
             } as MatchStep);
         }
     }
@@ -340,7 +380,7 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
     return steps;
 };
 
-const calcKickOff = (pls: Player[], isFirstPartStart:boolean, isSecondPartStart:boolean, ballOnA:boolean): MatchStep[] => {
+const calcKickOff = (pls: Player[], isFirstPartStart:boolean, isSecondPartStart:boolean, ballOnA:boolean, stepNumber:number, t:number): MatchStep[] => {
     const newSteps = [] as MatchStep[];
     let comment:string = null;
     if (isFirstPartStart) {
@@ -359,7 +399,9 @@ const calcKickOff = (pls: Player[], isFirstPartStart:boolean, isSecondPartStart:
         player: currentPlayer,
         comment: comment,
         state: "M",
-        ballOnA: ballOnA
+        ballOnA: ballOnA,
+        stepNumber: stepNumber++,
+        t: t
     } as MatchStep);
 
     return newSteps;
@@ -368,57 +410,64 @@ const calcKickOff = (pls: Player[], isFirstPartStart:boolean, isSecondPartStart:
 const playFunction = (ala:Formation, alb:Formation): MatchResult => {
     const stps = [] as MatchStep[];
     const score = [0, 0] as number[];
-    let stpN = 0;
 
     let state:string = "M";
     let ballOnA:boolean = true;
+    let stepNumber:number = 0;
+    let t:number = 0;
 
-    calcKickOff(ala.mid, true, false, ballOnA).forEach(e=>stps.push(e));
+    calcKickOff(ala.mid, true, false, ballOnA, stepNumber, t).forEach(e=>stps.push(e));
 
     const MAX_TIME = 90;
 
-    while (stpN < MAX_TIME) {
-        stpN++;
-
-        if (stpN == 45) {
-            // Half time
-            stps.push({
-                comment: "Fin del primer tiempo."
-            } as MatchStep);
-            stps.push({
-                comment: "Comienza el segundo tiempo."
-            } as MatchStep);
-            calcKickOff(alb.mid, false, true, ballOnA).forEach(e=>stps.push(e));
-        }
+    while (t < MAX_TIME) {
 
         const previous = stps[stps.length-1];
         const playerWithBall = previous.player;
         state = previous.state;
         ballOnA = previous.ballOnA;
+        t = previous.t + 1;
+        stepNumber = previous.stepNumber + 1;
+
+        if (t == 46) {
+            // Half time
+            stps.push({
+                comment: "Fin del primer tiempo.",
+                t: t,
+                stepNumber: stepNumber++
+            } as MatchStep);
+            stps.push({
+                comment: "Comienza el segundo tiempo.",
+                t: t,
+                stepNumber: stepNumber++
+            } as MatchStep);
+            calcKickOff(alb.mid, false, true, ballOnA, stepNumber, t).forEach(e=>stps.push(e));
+        }
+
 
         let newSteps:MatchStep[] = null;
         if (state === "M") {
             if (ballOnA) {
-                newSteps = calcStepsMedMed(playerWithBall, ala.mid, "pass", alb.mid, "pass", ala.fw, "M", "DB", ballOnA);
+                newSteps = calcStepsMedMed(playerWithBall, ala.mid, "pass", alb.mid, "pass", ala.fw, "M", "DB", ballOnA, stepNumber, t);
             } else {
-                newSteps = calcStepsMedMed(playerWithBall, alb.mid, "pass", ala.mid, "pass", alb.fw, "M", "DA", ballOnA);
+                newSteps = calcStepsMedMed(playerWithBall, alb.mid, "pass", ala.mid, "pass", alb.fw, "M", "DA", ballOnA, stepNumber, t);
             }
 
         } else if (state === "DB") {
-            newSteps = calcStepsDelDef(playerWithBall, ala.fw, "dribble", alb.def, "defense", alb.mid, "DB", "PB", ballOnA);
+            newSteps = calcStepsDelDef(playerWithBall, ala.fw, "dribble", alb.def, "defense", alb.mid, "DB", "PB", ballOnA, stepNumber, t);
         } else if (state === "DA") {
-            newSteps = calcStepsDelDef(playerWithBall, alb.fw, "dribble", ala.def, "defense", ala.mid, "DA", "PA", ballOnA);
+            newSteps = calcStepsDelDef(playerWithBall, alb.fw, "dribble", ala.def, "defense", ala.mid, "DA", "PA", ballOnA, stepNumber, t);
 
         } else if (state === "PB") {
-            newSteps = calcStepsDelPor(playerWithBall, alb.gk[0], alb.def, "PB", "GA", "DB", ballOnA);
+            newSteps = calcStepsDelPor(playerWithBall, alb.gk[0], alb.def, "PB", "GA", "DB", ballOnA, stepNumber, t);
         } else if (state === "PA") {
-            newSteps = calcStepsDelPor(playerWithBall, ala.gk[0], ala.def, "PA", "GB", "DA", ballOnA);
+            newSteps = calcStepsDelPor(playerWithBall, ala.gk[0], ala.def, "PA", "GB", "DA", ballOnA, stepNumber, t);
 
         } else if (state === "GA") {
-            newSteps = calcKickOff(alb.mid, false, false, ballOnA);
+            newSteps = calcKickOff(alb.mid, false, false, ballOnA, stepNumber, t);
             score[0]++;
         } else if (state === "GB") {
-            newSteps = calcKickOff(ala.mid, false, false, ballOnA);
+            newSteps = calcKickOff(ala.mid, false, false, ballOnA, stepNumber, t);
             score[1]++;
         } else {
             throw new Error("wrong state:"+state);
@@ -426,8 +475,13 @@ const playFunction = (ala:Formation, alb:Formation): MatchResult => {
         newSteps.forEach(e=>stps.push(e));
 
     }
+
+    // End of the match
+    const previous = stps[stps.length-1];
     stps.push({
-        comment: "Fin del partido."
+        comment: "Fin del partido.",
+        t: previous.t,
+        stepNumber: previous.stepNumber + 1
     } as MatchStep);
 
     return {
@@ -436,6 +490,7 @@ const playFunction = (ala:Formation, alb:Formation): MatchResult => {
     } as MatchResult;
 };
 
+/*
 const format = (s, args) => {
     var formatted = s;
     for (let arg in args) {
@@ -444,7 +499,7 @@ const format = (s, args) => {
     return formatted;
 };
 
-/*
+
 const matchResult = playFunction(alinA, alinB);
 console.log("Play v2");
 console.log(matchResult);

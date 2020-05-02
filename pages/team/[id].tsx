@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import Layout from '../../components/layout';
 
-import { findTeam } from '../../lib/team';
+import { findTeam } from '../../lib/TeamService';
 
 import PlayersTable from '../../components/player/PlayersTable';
 

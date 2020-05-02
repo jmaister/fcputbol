@@ -1,11 +1,11 @@
 import { getSession } from '../../lib/iron';
-import { findTeam } from '../../lib/team';
-import { play, MatchResult } from 'lib/play/probs';
+import { play, MatchResult } from '../../lib/play/probs';
 import { Match } from 'db/entity/match.entity';
-import { saveMatch } from 'lib/match';
-import { Team } from 'db/entity/team.entity';
 
-export default async function teams(req, res) {
+import { findTeam } from '../../lib/TeamService';
+import { saveMatch } from '../../lib/MatchService';
+
+export default async function playMatch(req, res) {
     const session = await getSession(req);
 
     if (req.method === 'POST') {

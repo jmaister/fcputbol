@@ -6,7 +6,7 @@ import Layout from '../../components/layout';
 import { Stadium } from '../../components/stadium/Stadium';
 
 import { findMatch } from 'lib/MatchService';
-import { Match } from 'db/entity/match.entity';
+import { Match, MatchStep } from 'db/entity/match.entity';
 
 interface MatchResultParams {
     id: string
@@ -23,7 +23,7 @@ export default function MatchResult({id, match}:MatchResultParams) {
         <Stadium match={match} step={match.matchSteps[0]}></Stadium>
 
         <ul>
-            {match.matchSteps.map(s => <li key={s.id}>{s.comment}</li>)}
+            {match.matchSteps.map(s => <li key={s.id}>{s.t}/{s.stepNumber}/{s.comment}</li>)}
         </ul>
 
         {errorMsg ? <Typography color="error">{errorMsg}</Typography> : null}
@@ -35,6 +35,11 @@ export async function getServerSideProps(context) {
     let match = await findMatch(matchId);
     // Hack
     match = JSON.parse(JSON.stringify(match));
+
+    // Order
+    match.matchSteps.sort((a, b) => {
+        return a.stepNumber - b.stepNumber;
+    });
 
     //let match = JSON.parse(fs.readFileSync('match1.json', 'utf8'));
 
