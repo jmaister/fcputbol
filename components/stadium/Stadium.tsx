@@ -1,14 +1,17 @@
-import { Match, MatchStep } from "db/entity/match.entity";
+import { useState } from "react";
+
 import { format } from "../../lib/utils";
+
+import { Match, MatchStep } from "db/entity/match.entity";
 import { Player, Positions } from "../../db/entity/player.entity";
 import { Lineup } from "db/entity/lineup.entity";
 
-export interface StadiumParams {
+interface StadiumParams {
     match: Match
     step: MatchStep
 }
 
-export function PlayerView(player: Player, className: string) {
+function PlayerView(player: Player, className: string) {
     return (
         <div key={player.id} id={"" + player.id} className={'field_player '+ className}>
             <span className="player_number">{player.num}</span>
@@ -20,7 +23,6 @@ export function PlayerView(player: Player, className: string) {
 function showLine(lineup: Lineup, position: Positions, step: MatchStep) {
     return lineup.players.filter(p => p.position === position)
         .map(player => {
-            console.log("STEP!!!!!!", step);
             let className = "";
             if (step.player && step.player.id === player.id) {
                 className = "highlight_player_ball";
@@ -41,7 +43,8 @@ export function Stadium({ match, step }: StadiumParams) {
                 Resultado final: <span>{match.resultHome}</span> - <span>{match.resultAway}</span>
             </div>
             <div>
-                <div>Jugada: <span>{step.t} de {match.stepsCount}</span></div>
+                <div>Jugada: <span>{step.stepNumber} de {match.stepsCount}</span></div>
+                <div>Minuto: <span>{step.t}</span></div>
             </div>
             <div className={'field field-state-' + step.state}>
                 <div id="pora" className="field_line team-home state-PA">

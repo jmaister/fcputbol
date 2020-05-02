@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Typography from '@material-ui/core/Typography';
 
@@ -17,12 +17,21 @@ interface MatchResultParams {
 
 export default function MatchResult({id, match}:MatchResultParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    const [currentStep, setCurrentStep] = useState(0);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (currentStep + 1 < match.stepsCount){
+                setCurrentStep(currentStep + 1);
+            }
+        }, 75);
+        return () => clearTimeout(timer);
+    }, [currentStep]);
 
     return <Layout>
         <h1>Resultado del partido</h1>
-        id: /{id}/
 
-        <Stadium match={match} step={match.matchSteps[0]}></Stadium>
+        <Stadium match={match} step={match.matchSteps[currentStep]}></Stadium>
 
         <ul>
             {match.matchSteps.map(s => <li key={s.id}>{s.t}/{s.stepNumber}/{s.comment}</li>)}
