@@ -60,10 +60,6 @@ export default function MatchResult({id, match}:MatchResultParams) {
         </Button>
         <Stadium match={match} step={match.matchSteps[currentStep]}></Stadium>
 
-        <ul>
-            {match.matchSteps.map(s => <li key={s.id}>{s.t}/{s.stepNumber}/{s.comment}</li>)}
-        </ul>
-
         {errorMsg ? <Typography color="error">{errorMsg}</Typography> : null}
     </Layout>
 }

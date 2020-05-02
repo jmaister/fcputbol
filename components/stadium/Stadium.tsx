@@ -47,29 +47,35 @@ export function Stadium({ match, step }: StadiumParams) {
                 <div>Tiempo: <span>{step.t}'</span></div>
             </div>
             <div className={'field field-state-' + step.state}>
-                <div id="pora" className="field_line team-home state-PA">
+                <div className="field_line team-home state-GB">
+                    <span>GOL</span>
+                </div>
+                <div className="field_line team-home state-PA">
                     {showLine(match.homeLineup, Positions.gk, step)}
                 </div>
-                <div id="defa" className="field_line team-home state-DA">
+                <div className="field_line team-home state-DA">
                     {showLine(match.homeLineup, Positions.def, step)}
                 </div>
-                <div id="delb" className="field_line team-away state-DA state-PA">
+                <div className="field_line team-away state-DA state-PA">
                     {showLine(match.awayLineup, Positions.fw, step)}
                 </div>
-                <div id="meda" className="field_line team-home state-M">
+                <div className="field_line team-home state-M">
                     {showLine(match.homeLineup, Positions.mid, step)}
                 </div>
-                <div id="medb" className="field_line team-away state-M">
+                <div className="field_line team-away state-M">
                     {showLine(match.awayLineup, Positions.mid, step)}
                 </div>
-                <div id="dela" className="field_line team-home state-DB state-PB">
+                <div className="field_line team-home state-DB state-PB">
                     {showLine(match.homeLineup, Positions.fw, step)}
                 </div>
-                <div id="defb" className="field_line team-away state-DB">
+                <div className="field_line team-away state-DB">
                     {showLine(match.awayLineup, Positions.def, step)}
                 </div>
-                <div id="porb" className="field_line team-away state-PB">
+                <div className="field_line team-away state-PB">
                     {showLine(match.awayLineup, Positions.gk, step)}
+                </div>
+                <div className="field_line team-home state-GA">
+                    <span>GOL</span>
                 </div>
             </div>
             <div>Comentario: {comment}</div>
