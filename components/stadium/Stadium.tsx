@@ -11,7 +11,7 @@ export interface StadiumParams {
 export function PlayerView(player: Player) {
     return (
         <div key={player.id} id={"" + player.id} className="field_player">
-            {player.name} {player.surname}
+            <span className="field_player_name">{player.name} {player.surname}</span>
         </div>
     )
 }
@@ -67,66 +67,6 @@ export function Stadium({ match, step }: StadiumParams) {
                 </div>
             </div>
             <div>Comentario: {comment}</div>
-            <style jsx>{`
-            .field {
-                display: flex;
-                justify-content: space-between;
-                background-color: #8CB27C;
-                border: 1px solid white;
-                padding: 5px;
-                min-width: 680px;
-            }
-            .field_line {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-around;
-                flex-grow: 1;
-                padding: 1px;
-            }
-            .field_player {
-                border: 5px solid black;
-                padding: 3px;
-                margin: 5px;
-                color: white;
-                font-size: 10px;
-                font-family: Arial, Helvetica, sans-serif;
-                text-align: center;
-                height: 3em;
-            }
-
-            .team-home .field_player {
-                background-color: darkblue;
-            }
-            .team-away .field_player {
-                background-color: darkred;
-            }
-            .highlight {
-                background-color: lightblue;
-            }
-            .highlight_goal {
-                background-color: lightseagreen;
-            }
-            .highlight_player_ball {
-                border-color: crimson;
-            }
-            .highlight_player_ball:after {
-                content: "";
-                background: url("balon.png") round center;
-                width: 20px;
-                height: 20px;
-            }
-            .team-home .highlight_player_ball:after {
-                float: right;
-            }
-            .team-away .highlight_player_ball:after {
-                float: left;
-            }
-
-            .highlight_player {
-                border-color: crimson;
-            }
-
-            `}</style>
         </div>
     );
 }
