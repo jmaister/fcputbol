@@ -2,6 +2,7 @@ import fs from 'fs';
 
 import { useState, useEffect } from 'react'
 
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 import Layout from '../../components/layout';
@@ -18,19 +19,31 @@ interface MatchResultParams {
 export default function MatchResult({id, match}:MatchResultParams) {
     const [errorMsg, setErrorMsg] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
+    const [playing, setPlaying] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (currentStep + 1 < match.stepsCount){
-                setCurrentStep(currentStep + 1);
+            if (playing) {
+                if (currentStep + 1 < match.stepsCount){
+                    setCurrentStep(currentStep + 1);
+                } else {
+                    setPlaying(false);
+                }
             }
         }, 75);
         return () => clearTimeout(timer);
-    }, [currentStep]);
+    }, [playing, currentStep]);
 
     return <Layout>
         <h1>Resultado del partido</h1>
 
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setPlaying(!playing)}
+        >
+            {playing ? 'Pause':'Play'}
+        </Button>
         <Stadium match={match} step={match.matchSteps[currentStep]}></Stadium>
 
         <ul>

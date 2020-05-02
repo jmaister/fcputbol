@@ -45,7 +45,11 @@ export function sample<T>(arr:T[], n=1): T[] {
 export function format(s:string, args:object): string {
     let formatted = s;
     for (let arg in args) {
-        formatted = formatted.replace("{" + arg + "}", "<b>" + args[arg] + "</b>");
+        let value = args[arg];
+        if (value && (arg === "player" || arg === "player2")) {
+            value = '(' + value.num + ') ' + value.name + ' ' + value.surname;
+        }
+        formatted = formatted.replace("{" + arg + "}", "<b>" + value + "</b>");
     }
     return formatted;
 };
