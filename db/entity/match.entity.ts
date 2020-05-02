@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Team } from './team.entity';
 import { Player } from './player.entity';
+import { Lineup } from './lineup.entity';
 
 @Entity()
 export class Match {
@@ -17,10 +18,18 @@ export class Match {
     @OneToMany(type => MatchStep, matchStep => matchStep.match)
     matchSteps: MatchStep[];
 
+    @Column({ type: 'int' })
+    stepsCount: number;
+
     @ManyToOne(type => Team)
     home: Team;
     @ManyToOne(type => Team)
     away: Team;
+
+    @ManyToOne(type => Lineup)
+    homeLineup: Lineup;
+    @ManyToOne(type => Lineup)
+    awayLineup: Lineup;
 
     @Column({ type: 'int' })
     resultHome: number;

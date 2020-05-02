@@ -22,6 +22,8 @@ export default async function teams(req, res) {
             const match = {
                 home,
                 away,
+                homeLineup: home.lineup,
+                awayLineup: away.lineup,
                 resultHome: result.score[0],
                 resultAway: result.score[1],
             } as Match;

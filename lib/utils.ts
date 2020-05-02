@@ -41,3 +41,11 @@ export function sample<T>(arr:T[], n=1): T[] {
     shuffle(copy);
     return copy.slice(0, n);
 }
+
+export function format(s:string, args:object): string {
+    let formatted = s;
+    for (let arg in args) {
+        formatted = formatted.replace("{" + arg + "}", "<b>" + args[arg] + "</b>");
+    }
+    return formatted;
+};

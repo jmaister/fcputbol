@@ -8,6 +8,7 @@ export async function saveMatch(match:Match, steps:MatchStep[]) {
     const db = await connection();
 
     const matchRepository = db.getRepository(Match);
+    match.stepsCount = steps.length;
     const savedMatch = await matchRepository.save(match);
 
     const matchStepRepository = db.getRepository(MatchStep);
@@ -26,7 +27,11 @@ export async function findMatch(id:string):Promise<Match> {
     const db = await connection();
     const matchRepository = db.getRepository(Match);
     try {
-        return matchRepository.findOne(id, {relations: ["matchSteps", "matchSteps.player", "matchSteps.player2"]});
+        return matchRepository.findOne(id, {relations: [
+            "home", "away",
+            "homeLineup", "homeLineup.players", "awayLineup", "awayLineup.players",
+            "matchSteps"
+        ]});
     } catch (error) {
         throw new Error("Match not found:" + error);
     }
