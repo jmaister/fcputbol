@@ -40,9 +40,23 @@ export default function MatchResult({id, match}:MatchResultParams) {
         <Button
             variant="contained"
             color="primary"
+            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+        >
+            -
+        </Button>
+        <Button
+            variant="contained"
+            color="primary"
             onClick={() => setPlaying(!playing)}
         >
             {playing ? 'Pause':'Play'}
+        </Button>
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setCurrentStep(Math.min(match.stepsCount, currentStep + 1))}
+        >
+            +
         </Button>
         <Stadium match={match} step={match.matchSteps[currentStep]}></Stadium>
 
