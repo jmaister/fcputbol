@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { useState } from 'react'
 
 import Typography from '@material-ui/core/Typography';
@@ -7,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Layout from '../../components/layout';
 import { Stadium } from '../../components/stadium/Stadium';
 
-import { findMatch } from 'lib/match';
+import { findMatch } from 'lib/MatchService';
 import { Match } from 'db/entity/match.entity';
 
 interface MatchResultParams {
