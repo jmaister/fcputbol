@@ -16,8 +16,9 @@
 }
 .field_player {
     border: 5px solid black;
-    padding: 3px;
-    margin: 5px;
+    border-radius: 20px;
+    padding: 2px;
+    margin: 3px;
     color: white;
     font-size: 10px;
     font-family: Arial, Helvetica, sans-serif;
@@ -58,4 +59,18 @@
 
 .highlight_player {
     border-color: crimson;
+}
+
+.player_number {
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 3px;
+}
+
+$states: GA PA DA M DB PB GB;
+
+@each $state in $states {
+    .field-state-#{$state} .state-#{$state} {
+        background-color: lightblue;
+    }
 }

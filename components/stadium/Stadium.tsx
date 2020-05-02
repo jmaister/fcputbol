@@ -8,24 +8,27 @@ export interface StadiumParams {
     step: MatchStep
 }
 
-export function PlayerView(player: Player) {
+export function PlayerView(player: Player, className: string) {
     return (
-        <div key={player.id} id={"" + player.id} className="field_player">
-            <span className="field_player_name">{player.name} {player.surname}</span>
+        <div key={player.id} id={"" + player.id} className={'field_player '+ className}>
+            <span className="player_number">{player.num}</span>
+            <span className="field_player_name">{player.name}<br/>{player.surname}</span>
         </div>
     )
 }
 
-function Line(players: Player[]) {
-    return players.map(PlayerView);
-}
-
-function filterPlayers(players: Player[], position: Positions): Player[] {
-    return players.filter(p => p.position === position);
-}
-
-function showLine(lineup: Lineup, position: Positions) {
-    return Line(filterPlayers(lineup.players, position));
+function showLine(lineup: Lineup, position: Positions, step: MatchStep) {
+    return lineup.players.filter(p => p.position === position)
+        .map(player => {
+            console.log("STEP!!!!!!", step);
+            let className = "";
+            if (step.player && step.player.id === player.id) {
+                className = "highlight_player_ball";
+            } else if (step.player2 && step.player2.id === player.id) {
+                className = "highlight_player";
+            }
+            return PlayerView(player, className);
+        });
 }
 
 export function Stadium({ match, step }: StadiumParams) {
@@ -40,30 +43,30 @@ export function Stadium({ match, step }: StadiumParams) {
             <div>
                 <div>Jugada: <span>{step.t} de {match.stepsCount}</span></div>
             </div>
-            <div className="field">
-                <div id="pora" className="field_line team-home">
-                    {showLine(match.homeLineup, Positions.gk)}
+            <div className={'field field-state-' + step.state}>
+                <div id="pora" className="field_line team-home state-PA">
+                    {showLine(match.homeLineup, Positions.gk, step)}
                 </div>
-                <div id="defa" className="field_line team-home">
-                    {showLine(match.homeLineup, Positions.def)}
+                <div id="defa" className="field_line team-home state-DA">
+                    {showLine(match.homeLineup, Positions.def, step)}
                 </div>
-                <div id="delb" className="field_line team-away">
-                    {showLine(match.awayLineup, Positions.fw)}
+                <div id="delb" className="field_line team-away state-DA state-PA">
+                    {showLine(match.awayLineup, Positions.fw, step)}
                 </div>
-                <div id="meda" className="field_line team-home">
-                    {showLine(match.homeLineup, Positions.mid)}
+                <div id="meda" className="field_line team-home state-M">
+                    {showLine(match.homeLineup, Positions.mid, step)}
                 </div>
-                <div id="medb" className="field_line team-away">
-                    {showLine(match.awayLineup, Positions.mid)}
+                <div id="medb" className="field_line team-away state-M">
+                    {showLine(match.awayLineup, Positions.mid, step)}
                 </div>
-                <div id="dela" className="field_line team-home">
-                    {showLine(match.homeLineup, Positions.fw)}
+                <div id="dela" className="field_line team-home state-DB state-PB">
+                    {showLine(match.homeLineup, Positions.fw, step)}
                 </div>
-                <div id="defb" className="field_line team-away">
-                    {showLine(match.awayLineup, Positions.def)}
+                <div id="defb" className="field_line team-away state-DB">
+                    {showLine(match.awayLineup, Positions.def, step)}
                 </div>
-                <div id="porb" className="field_line team-away">
-                    {showLine(match.awayLineup, Positions.gk)}
+                <div id="porb" className="field_line team-away state-PB">
+                    {showLine(match.awayLineup, Positions.gk, step)}
                 </div>
             </div>
             <div>Comentario: {comment}</div>

@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import { useState } from 'react'
 
 import Typography from '@material-ui/core/Typography';
@@ -32,16 +34,24 @@ export default function MatchResult({id, match}:MatchResultParams) {
 
 export async function getServerSideProps(context) {
     const matchId = context.params.id;
-    let match = await findMatch(matchId);
-    // Hack
-    match = JSON.parse(JSON.stringify(match));
+    let match = null;
+    let DEBUG = true;
 
-    // Order
-    match.matchSteps.sort((a, b) => {
-        return a.stepNumber - b.stepNumber;
-    });
 
-    //let match = JSON.parse(fs.readFileSync('match1.json', 'utf8'));
+    if (DEBUG) {
+        match = JSON.parse(fs.readFileSync('match.json', 'utf8'));
+
+    } else {
+        match = await findMatch(matchId);
+        // Hack
+        match = JSON.parse(JSON.stringify(match));
+
+        // Order
+        match.matchSteps.sort((a, b) => {
+            return a.stepNumber - b.stepNumber;
+        });
+        fs.writeFileSync("match2.json", JSON.stringify(match));
+    }
 
     return {
         props: {
