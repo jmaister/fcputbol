@@ -5,10 +5,20 @@ import Router from 'next/router'
 import Layout from '../components/layout';
 import { findUser } from '../lib/UserService';
 import TeamSelect from 'components/team/TeamSelect';
-import { useUser } from 'lib/hooks';
-import { getSession } from 'lib/iron';
+import MatchesTable from 'components/match/MatchesTable';
 
-export default function Match({ user }) {
+import { getSession } from 'lib/iron';
+import { User } from 'db/entity/user.entity';
+import { Match } from 'db/entity/match.entity';
+import { findMatches } from 'lib/MatchService';
+
+
+interface MatchPageParams {
+    user: User
+    matches: Match[]
+}
+
+export default function MatchPage({ user, matches }: MatchPageParams) {
     const [errorMsg, setErrorMsg] = useState('');
     const [home, setHome] = useState('');
     const [away, setAway] = useState('');
@@ -52,11 +62,13 @@ export default function Match({ user }) {
             Jugar partido
         </Button>
         {errorMsg ? <Typography color="error">{errorMsg}</Typography> : null}
+
+        <h2>Partidos jugados</h2>
+        <MatchesTable matches={matches}></MatchesTable>
     </Layout>
 }
 
 export async function getServerSideProps({req, res}) {
-    // const userSession = useUser();
     const session = await getSession(req);
     console.log("SESSION", session);
 
@@ -65,9 +77,14 @@ export async function getServerSideProps({req, res}) {
     // Hack
     user = JSON.parse(JSON.stringify(user));
 
+    let matches = await findMatches(session.id);
+    // Hack
+    matches = JSON.parse(JSON.stringify(matches));
+
     return {
         props: {
-            user
+            user,
+            matches
         }
     };
 }

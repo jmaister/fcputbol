@@ -36,3 +36,15 @@ export async function findMatch(id:string):Promise<Match> {
         throw new Error("Match not found:" + error);
     }
 }
+
+export async function findMatches(userId:string):Promise<Match[]> {
+    const db = await connection();
+    const matchRepository = db.getRepository(Match);
+    return matchRepository.createQueryBuilder("match")
+        .leftJoinAndSelect("match.home", "home")
+        .leftJoinAndSelect("home.user", "homeUser")
+        .leftJoinAndSelect("match.away", "away")
+        .leftJoinAndSelect("away.user", "awayUser")
+        .where("homeUser.id = :id or awayUser.id = :id", {id: userId})
+        .getMany();
+}
