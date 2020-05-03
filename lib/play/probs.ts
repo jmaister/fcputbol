@@ -484,6 +484,19 @@ const playFunction = (ala:Formation, alb:Formation): MatchResult => {
         stepNumber: previous.stepNumber + 1
     } as MatchStep);
 
+    // Set current goals on steps
+    let homeGoals = 0;
+    let awayGoals = 0;
+    stps.forEach(s => {
+        if (s.state === 'GA') {
+            homeGoals++;
+        } else if (s.state === 'GB') {
+            awayGoals++;
+        }
+        s.currentGoalHome = homeGoals;
+        s.currentGoalAway = awayGoals;
+    });
+
     return {
         steps: stps,
         score: score

@@ -57,6 +57,11 @@ export class MatchStep {
     @Column({ type: 'int' })
     stepNumber: number;
 
+    @Column({ type: 'int' })
+    currentGoalHome: number;
+    @Column({ type: 'int' })
+    currentGoalAway: number;
+
     @ManyToOne(type => Player, {nullable: true})
     player: Player;
     @ManyToOne(type => Player, {nullable: true})
@@ -70,4 +75,6 @@ export class MatchStep {
 
     @Column('varchar')
     comment: string;
+
+
 }

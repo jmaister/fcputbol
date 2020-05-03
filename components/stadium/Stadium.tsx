@@ -40,7 +40,7 @@ export function Stadium({ match, step }: StadiumParams) {
         <div className="stadium">
             <div>{match.home.name} vs {match.away.name}</div>
             <div>
-                Resultado final: <span>{match.resultHome}</span> - <span>{match.resultAway}</span>
+                Resultado: <span>{step.currentGoalHome}</span> - <span>{step.currentGoalAway}</span>
             </div>
             <div>
                 <div>Jugada: <span>{step.stepNumber} de {match.stepsCount}</span></div>
@@ -48,7 +48,7 @@ export function Stadium({ match, step }: StadiumParams) {
             </div>
             <div className={'field field-state-' + step.state}>
                 <div className="field_line team-home state-GB">
-                    <span>GOL</span>
+                    <span className="goal">GOL</span>
                 </div>
                 <div className="field_line team-home state-PA">
                     {showLine(match.homeLineup, Positions.gk, step)}
@@ -74,8 +74,8 @@ export function Stadium({ match, step }: StadiumParams) {
                 <div className="field_line team-away state-PB">
                     {showLine(match.awayLineup, Positions.gk, step)}
                 </div>
-                <div className="field_line team-home state-GA">
-                    <span>GOL</span>
+                <div className="field_line team-away state-GA">
+                    <span className="goal">GOL</span>
                 </div>
             </div>
             <div>Comentario: {comment}</div>

@@ -67,7 +67,7 @@ export default function MatchResult({id, match}:MatchResultParams) {
 export async function getServerSideProps(context) {
     const matchId = context.params.id;
     let match = null;
-    let DEBUG = true;
+    let DEBUG = false;
 
 
     if (DEBUG) {

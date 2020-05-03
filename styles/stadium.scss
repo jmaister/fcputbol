@@ -2,6 +2,10 @@
     display: flex;
     justify-content: space-between;
     background-color: #8CB27C;
+    background-image: url(cancha.svg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
     border: 1px solid white;
     padding: 5px;
     min-width: 680px;
@@ -35,9 +39,7 @@
 .team-away .field_player {
     background-color: darkred;
 }
-.highlight {
-    background-color: lightblue;
-}
+
 .highlight_goal {
     background-color: lightseagreen;
 }
@@ -68,9 +70,21 @@
 }
 
 $states: GA PA DA M DB PB GB;
+$highlight_color: lightblue;
 
 @each $state in $states {
     .field-state-#{$state} .state-#{$state} {
-        background-color: lightblue;
+        background-color: rgba(black, 0.5);
+    }
+}
+
+.team-home {
+    .goal {
+        transform: rotate(-90deg);
+    }
+}
+.team-away {
+    .goal {
+        transform: rotate(90deg);
     }
 }
