@@ -20,9 +20,15 @@ interface PlayersTableParams {
     players: Player[]
 }
 
+const colorFn = (power) => {
+    return "power-" + Math.floor((power / 10) + 1);
+};
+
 export default function PlayersTable({ players }: PlayersTableParams) {
 
     const classes = useStyles();
+
+
 
     return (
         <TableContainer component={Paper}>
@@ -45,11 +51,11 @@ export default function PlayersTable({ players }: PlayersTableParams) {
                             <TableCell align="right">{player.id}</TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
                             <TableCell><Position pos={player.position}></Position></TableCell>
-                            <TableCell align="right">{player.save}</TableCell>
-                            <TableCell align="right">{player.defense}</TableCell>
-                            <TableCell align="right">{player.pass}</TableCell>
-                            <TableCell align="right">{player.dribble}</TableCell>
-                            <TableCell align="right">{player.shot}</TableCell>
+                            <TableCell align="right" className={colorFn(player.save)}>{player.save}</TableCell>
+                            <TableCell align="right" className={colorFn(player.defense)}>{player.defense}</TableCell>
+                            <TableCell align="right" className={colorFn(player.pass)}>{player.pass}</TableCell>
+                            <TableCell align="right" className={colorFn(player.dribble)}>{player.dribble}</TableCell>
+                            <TableCell align="right" className={colorFn(player.shot)}>{player.shot}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
