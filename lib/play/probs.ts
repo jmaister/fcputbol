@@ -459,8 +459,10 @@ const playFunction = (ala:Formation, alb:Formation): MatchResult => {
             newSteps = calcStepsDelDef(playerWithBall, alb.fw, "dribble", ala.def, "defense", ala.mid, "DA", "PA", ballOnA, stepNumber, t);
 
         } else if (state === "PB") {
+            // TODO: check if ballOnA
             newSteps = calcStepsDelPor(playerWithBall, alb.gk[0], alb.def, "PB", "GA", "DB", ballOnA, stepNumber, t);
         } else if (state === "PA") {
+            // TODO: check if !ballOnA
             newSteps = calcStepsDelPor(playerWithBall, ala.gk[0], ala.def, "PA", "GB", "DA", ballOnA, stepNumber, t);
 
         } else if (state === "GA") {
