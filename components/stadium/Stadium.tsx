@@ -46,6 +46,7 @@ export function Stadium({ match, step }: StadiumParams) {
                 <div>Jugada: <span>{step.stepNumber} de {match.stepsCount}</span></div>
                 <div>Tiempo: <span>{step.t}'</span></div>
             </div>
+            <div>Comentario: {comment}</div>
             <div className={'field field-state-' + step.state}>
                 <div className="field_line team-home state-GB">
                     <span className="goal">GOL</span>
@@ -78,7 +79,6 @@ export function Stadium({ match, step }: StadiumParams) {
                     <span className="goal">GOL</span>
                 </div>
             </div>
-            <div>Comentario: {comment}</div>
         </div>
     );
 }

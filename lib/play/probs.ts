@@ -256,6 +256,90 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
 };
 
 
+const calcStepsDefDel = (playerWithBall:Player, plsdel: Player[], plsTarget: Player[], state:string, stateTargetMed:string, stateTargetDel:string, ballOnA:boolean, stepNumber:number, t:number): MatchStep[] => {
+
+    const probs = {};
+
+    // Prob pase, HANDICAP inverted as its deffensive
+    probs["despeja"] = playerWithBall.pass * HANDICAP[state][ballOnA?'b':'a'];
+    probs["regate"] = playerWithBall.dribble * HANDICAP[state][ballOnA?'b':'a'];
+
+    const pctProbs = calcProbs(probs);
+    const selected = randomSelectProb(pctProbs);
+
+    const steps = [] as MatchStep[];
+    if (selected === "despeja") {
+        steps.push({
+            player: playerWithBall,
+            comment: "{player} despeja el balón",
+            state: state,
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
+        } as MatchStep);
+        const med = randomElement(plsTarget);
+        steps.push({
+            player: med,
+            comment: "{player} recibe el pase del defensa",
+            state: stateTargetMed,
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
+        } as MatchStep);
+    } else if (selected === "regate"){
+        // TODO: select DEL
+        const del = randomElement(plsdel);
+
+        steps.push({
+            player: playerWithBall,
+            player2: del,
+            comment: "{player} se encuentra con {player2}",
+            state: state,
+            ballOnA: ballOnA,
+            stepNumber: stepNumber++,
+            t: t
+        } as MatchStep);
+
+        const step2probs = {
+            "regate": playerWithBall.dribble,
+            "robo": del.dribble
+        };
+        const pctProbs = calcProbs(step2probs);
+        const selected2 = randomSelectProb(pctProbs);
+        if (selected2 === "regate") {
+            const med = randomElement(plsTarget);
+            steps.push({
+                player: playerWithBall,
+                comment: "{player} regatea y consigue pasar el balón",
+                state: state,
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
+            } as MatchStep);
+             steps.push({
+                player: med,
+                comment: "{player} recibe el pase del defensa",
+                state: stateTargetMed,
+                ballOnA: ballOnA,
+                stepNumber: stepNumber++,
+                t: t
+            } as MatchStep);
+
+        } else if (selected2 === "robo") {
+            steps.push({
+                player: del,
+                comment: "{player} roba el balón y encara a portería.",
+                state: stateTargetDel,
+                ballOnA: !ballOnA,
+                stepNumber: stepNumber++,
+                t: t
+            } as MatchStep);
+        }
+    }
+
+    return steps;
+};
+
 const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:string, stateGoal:string, stateClear:string, ballOnA:boolean, stepNumber:number, t:number): MatchStep[] => {
     const probs = {};
 
@@ -454,9 +538,17 @@ const playFunction = (ala:Formation, alb:Formation): MatchResult => {
             }
 
         } else if (state === "DB") {
-            newSteps = calcStepsDelDef(playerWithBall, ala.fw, "dribble", alb.def, "defense", alb.mid, "DB", "PB", ballOnA, stepNumber, t);
+            if (ballOnA) {
+                newSteps = calcStepsDelDef(playerWithBall, ala.fw, "dribble", alb.def, "defense", alb.mid, "DB", "PB", ballOnA, stepNumber, t);
+            } else {
+                newSteps = calcStepsDefDel(playerWithBall, ala.fw, alb.mid, state, "M", "DB", ballOnA, stepNumber, t);
+            }
         } else if (state === "DA") {
-            newSteps = calcStepsDelDef(playerWithBall, alb.fw, "dribble", ala.def, "defense", ala.mid, "DA", "PA", ballOnA, stepNumber, t);
+            if (ballOnA) {
+                newSteps = calcStepsDefDel(playerWithBall, alb.fw, ala.mid, state, "M", "DA", ballOnA, stepNumber, t);
+            } else {
+                newSteps = calcStepsDelDef(playerWithBall, alb.fw, "dribble", ala.def, "defense", ala.mid, "DA", "PA", ballOnA, stepNumber, t);
+            }
 
         } else if (state === "PB") {
             // TODO: check if ballOnA
