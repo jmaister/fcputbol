@@ -22,6 +22,9 @@ export class Team {
     })
     name: string;
 
+    @Column('varchar')
+    jersey_color: string;
+
     @ManyToOne(type => User, user => user.teams)
     user: User;
 

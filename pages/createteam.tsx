@@ -12,13 +12,17 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-const Team = ({}) => {
+import {Team} from '../db/entity/team.entity';
+import JerseySelect from 'components/team/JerseySelect';
+
+export default function CreateTeam({}) {
     const user = useUser();
     const [errorMsg, setErrorMsg] = useState('');
 
     const team = {
-        name: ""
-    };
+        name: "",
+        jersey_color: "",
+    } as Team;
 
     return (
         <Layout>
@@ -26,10 +30,13 @@ const Team = ({}) => {
 
             {user && <p>Currently logged in as: {JSON.stringify(user)}</p>}
 
+            {<p>value: {JSON.stringify(team)}</p>}
+
             <Formik
                 initialValues={team}
                 validationSchema={Yup.object({
-                    name: Yup.string().min(5).max(15).required()
+                    name: Yup.string().min(5).max(15).required(),
+                    jersey_color: Yup.string().required(),
                 })}
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
@@ -73,6 +80,16 @@ const Team = ({}) => {
                             error={!!errors.name}
                         ></Field>
                         <br />
+                        <Field
+                            component={JerseySelect}
+                            id="jersey_color"
+                            name="jersey_color"
+                            label="Equipación"
+                            value={values.jersey_color}
+                            onChange={handleChange}
+                            helperText={errors.name}
+                            error={!!errors.name}
+                        ></Field>
 
                         {errorMsg ? <Typography color="error">{errorMsg}</Typography> : null}
                         <Button
@@ -89,5 +106,3 @@ const Team = ({}) => {
         </Layout>
     )
 }
-
-export default Team

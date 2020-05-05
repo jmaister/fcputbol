@@ -1,0 +1,12 @@
+
+
+$jerseys: red blue green orange yellow lightblue brown;
+
+.jersey-select {
+    @each $j in $jerseys {
+        .jersey_#{'' + $j} {
+            background-color: $j;
+            color: lighten($color: $j, $amount: 30%);
+        }
+    }
+}
