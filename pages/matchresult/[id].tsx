@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import NavigateBeforeTwoToneIcon from '@material-ui/icons/NavigateBeforeTwoTone';
+import NavigateNextTwoToneIcon from '@material-ui/icons/NavigateNextTwoTone';
 
 import Layout from '../../components/layout';
 import { Stadium } from '../../components/stadium/Stadium';
 
 import { findMatch } from 'lib/MatchService';
-import { Match, MatchStep } from 'db/entity/match.entity';
+import { Match } from 'db/entity/match.entity';
 
 interface MatchResultParams {
     id: string
@@ -20,6 +22,7 @@ export default function MatchResult({id, match}:MatchResultParams) {
     const [errorMsg, setErrorMsg] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
     const [playing, setPlaying] = useState(false);
+    const [stepTime, setStepTime] = useState(1000);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -30,7 +33,7 @@ export default function MatchResult({id, match}:MatchResultParams) {
                     setPlaying(false);
                 }
             }
-        }, 75);
+        }, stepTime);
         return () => clearTimeout(timer);
     }, [playing, currentStep]);
 
@@ -40,24 +43,39 @@ export default function MatchResult({id, match}:MatchResultParams) {
         <Button
             variant="contained"
             color="primary"
+            startIcon={<NavigateBeforeTwoToneIcon/>}
+            onClick={() => setCurrentStep(Math.max(0, currentStep - 10))}
+            disabled={playing}
+        >-10</Button>
+        <Button
+            variant="contained"
+            color="primary"
+            startIcon={<NavigateBeforeTwoToneIcon/>}
             onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-        >
-            -
-        </Button>
+            disabled={playing}
+        >-1</Button>
         <Button
             variant="contained"
             color="primary"
             onClick={() => setPlaying(!playing)}
         >
-            {playing ? 'Pause':'Play'}
+            {playing ? 'Pausa':'Comenzar partido'}
         </Button>
         <Button
             variant="contained"
             color="primary"
+            endIcon={<NavigateNextTwoToneIcon/>}
             onClick={() => setCurrentStep(Math.min(match.stepsCount, currentStep + 1))}
-        >
-            +
-        </Button>
+            disabled={playing}
+        >+1</Button>
+        <Button
+            variant="contained"
+            color="primary"
+            endIcon={<NavigateNextTwoToneIcon/>}
+            onClick={() => setCurrentStep(Math.min(match.stepsCount, currentStep + 10))}
+            disabled={playing}
+        >+10</Button>
+
         <Stadium match={match} step={match.matchSteps[currentStep]}></Stadium>
 
         {errorMsg ? <Typography color="error">{errorMsg}</Typography> : null}

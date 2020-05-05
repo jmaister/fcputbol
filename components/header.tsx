@@ -7,18 +7,16 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 
-// import MenuIcon from '@material-ui/icons/Menu';
+import MenuIcon from '@material-ui/icons/Menu';
 
 export default function Header() {
     const user = useUser();
-
-    // <MenuIcon />
 
     return <>
         <AppBar position="static">
             <Toolbar>
                 <IconButton edge="start" color="inherit" aria-label="menu">
-                     menu
+                    <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" className="title">
                     FC Pútbol

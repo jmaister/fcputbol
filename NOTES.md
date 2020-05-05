@@ -36,18 +36,6 @@ DF 	Defenders
 MF 	Midfielders
 FD 	Defenders
 
-# Store current score in MatchStep
-
-that
-
-# FIX def trying to shot to own goal
-
-# goal background
-
-https://stripesgenerator.com/
-
-background-image: linear-gradient(120deg, #8cb27c 37.04%, #a09ea3 37.04%, #a09ea3 50%, #8cb27c 50%, #8cb27c 87.04%, #a09ea3 87.04%, #a09ea3 100%);
-background-size: 31.18px 54.00px;
 
 
 # Material-UI theme generator
