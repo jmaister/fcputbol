@@ -7,9 +7,9 @@ import { Player, Positions } from '../db/entity/player.entity';
 
 import RandomData from './random-data'
 
-import {range, randomIntInterval, sample} from './utils';
+import {randomIntInterval, sample} from './utils';
 
-export async function createTeam({ name, username }) {
+export async function createTeam({ name, jersey_color, username }) {
 
     const db = await connection();
 
@@ -19,6 +19,7 @@ export async function createTeam({ name, username }) {
     const teamRepository = db.getRepository(Team);
     const team = await teamRepository.save({
         name: name,
+        jersey_color,
         user: user
     });
 

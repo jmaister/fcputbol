@@ -17,6 +17,10 @@ TODO: Must be added: https://github.com/stackworx/formik-material-ui
 
 https://www.youtube.com/watch?v=3sXYK60T6Us
 
+## formik material-ui
+
+https://stackworx.github.io/formik-material-ui/docs/guide/getting-started
+
 # Fix styles of material-ui
 
 https://material-ui.com/guides/server-rendering/#reference-implementations
