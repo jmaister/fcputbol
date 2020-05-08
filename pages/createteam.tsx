@@ -8,17 +8,34 @@ import Layout from '../components/layout';
 
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import MenuItem from '@material-ui/core/MenuItem';
 
-const Team = ({}) => {
+
+import { TextField } from 'formik-material-ui';
+
+import {Team} from '../db/entity/team.entity';
+// import JerseySelect from 'components/team/JerseySelect';
+
+export default function CreateTeam({}) {
     const user = useUser();
     const [errorMsg, setErrorMsg] = useState('');
 
     const team = {
-        name: ""
-    };
+        name: "",
+        jersey_color: "",
+    } as Team;
+
+    const colors = [
+        {label: "Rojo", value: "red"},
+        {label: "Azúl", value: "blue"},
+        {label: "Verde", value: "green"},
+        {label: "Naranja", value: "orange"},
+        {label: "Amarillo", value: "yellow"},
+        {label: "Azúl claro", value: "lightblue"},
+        {label: "Marrón", value: "brown"},
+    ];
 
     return (
         <Layout>
@@ -26,10 +43,13 @@ const Team = ({}) => {
 
             {user && <p>Currently logged in as: {JSON.stringify(user)}</p>}
 
+            {<p>value: {JSON.stringify(team)}</p>}
+
             <Formik
                 initialValues={team}
                 validationSchema={Yup.object({
-                    name: Yup.string().min(5).max(15).required()
+                    name: Yup.string().min(5).max(15).required(),
+                    jersey_color: Yup.string().required(),
                 })}
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
@@ -73,6 +93,26 @@ const Team = ({}) => {
                             error={!!errors.name}
                         ></Field>
                         <br />
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="jersey_color"
+                            label="Color"
+                            select
+                            variant="standard"
+                            helperText="Selecciona el color del equipo"
+                            margin="normal"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        >
+                            {colors.map(option => (
+                            <MenuItem key={option.value} value={option.value}>
+                                <span className={"jersey-sample jersey-" + option.value}>{option.label}</span>
+                            </MenuItem>
+                            ))}
+                        </Field>
+                        <br />
 
                         {errorMsg ? <Typography color="error">{errorMsg}</Typography> : null}
                         <Button
@@ -81,7 +121,7 @@ const Team = ({}) => {
                             color="primary"
                             disabled={isSubmitting || !isValid}>
                             Guardar
-                    </Button>
+                        </Button>
                     </form>
                 )}
             </Formik>
@@ -89,5 +129,3 @@ const Team = ({}) => {
         </Layout>
     )
 }
-
-export default Team

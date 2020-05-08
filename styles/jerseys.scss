@@ -1,0 +1,19 @@
+
+
+
+$jerseys:            red   blue  green orange yellow lightblue brown;
+$jersey_font_colors: white white white white  black  black     white;
+
+@for $i from 1 through length($jerseys) {
+    $bg: nth($jerseys, $i);
+    $jersey_font_c: nth($jersey_font_colors, $i);
+    span.jersey-#{'' + $bg}, div.jersey-#{'' + $bg} {
+        background-color: $bg;
+        color: $jersey_font_c;
+    }
+}
+
+.jersey-sample {
+    width: 100%;
+    height: 1.5em;
+}

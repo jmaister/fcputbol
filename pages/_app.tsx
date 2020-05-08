@@ -1,5 +1,7 @@
 import '../styles/main.scss';
 import '../styles/stadium.scss';
+import '../styles/jerseys.scss';
+import '../styles/labels.scss';
 
 import Head from 'next/head';
 import Header from 'components/header';
