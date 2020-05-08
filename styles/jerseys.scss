@@ -2,7 +2,7 @@
 
 
 $jerseys:            red   blue  green orange yellow lightblue brown;
-$jersey_font_colors: white white white white  black  black     white;
+$jersey_font_colors: white white black black  black  black     white;
 
 @for $i from 1 through length($jerseys) {
     $bg: nth($jerseys, $i);

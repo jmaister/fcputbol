@@ -2,24 +2,29 @@
 import connection from '../db/connection';
 import { MatchStep, Match } from '../db/entity/match.entity';
 
+
 export async function saveMatch(match:Match, steps:MatchStep[]) {
+    try {
+        const db = await connection();
+        const matchToReturn = await db.transaction(async (transactionalEntityManager) => {
+            const matchRepository = transactionalEntityManager.getRepository(Match);
+            const matchStepRepository = transactionalEntityManager.getRepository(MatchStep);
 
-    const db = await connection();
-    const matchRepository = db.getRepository(Match);
-    const matchStepRepository = db.getRepository(MatchStep);
+            match.stepsCount = steps.length;
+            const savedMatch = await matchRepository.save(match);
 
-    // Save match
-    match.stepsCount = steps.length;
-    const savedMatch = await matchRepository.save(match);
-
-    // Save match steps
-    for (let i=0; i<steps.length; i++) {
-        const s = steps[i];
-        s.match = match;
-        await matchStepRepository.save(s);
+            // Save match steps
+            for (let i=0; i<steps.length; i++) {
+                const s = steps[i];
+                s.match = savedMatch;
+                await matchStepRepository.save(s);
+            }
+            return savedMatch;
+        });
+        return matchToReturn;
+    } catch (error) {
+        throw new Error("Error on saveMatch: " + error);
     }
-
-    return savedMatch;
 }
 
 export async function findMatch(id:string):Promise<Match> {

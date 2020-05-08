@@ -32,7 +32,8 @@ export default async function playMatch(req, res) {
 
             res.status(200).json({ ok: true, matchId: savedMatch.id, home, away });
         } catch (error) {
-            res.status(404).json({ ok: false, message: "Teams not found", body: req.body, error: error });
+            console.log("playMatch", error);
+            res.status(404).json({ ok: false, message: "Error on playMatch.", body: req.body, error: error });
         }
 
     } else {
