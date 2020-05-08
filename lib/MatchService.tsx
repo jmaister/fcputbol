@@ -28,6 +28,7 @@ export async function findMatch(id:string):Promise<Match> {
     try {
         return matchRepository.findOne(id, {relations: [
             "home", "away",
+            "home.user", "away.user",
             "homeLineup", "homeLineup.players", "awayLineup", "awayLineup.players",
             "matchSteps", "matchSteps.player", "matchSteps.player2"
 

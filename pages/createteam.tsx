@@ -108,7 +108,7 @@ export default function CreateTeam({}) {
                         >
                             {colors.map(option => (
                             <MenuItem key={option.value} value={option.value}>
-                                <span className={"jersey-sample jersey-" + option.value}>&nbsp;</span> {option.label}
+                                <span className={"jersey-sample jersey-" + option.value}>{option.label}</span>
                             </MenuItem>
                             ))}
                         </Field>

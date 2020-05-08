@@ -3,6 +3,7 @@ import { Team } from '../../db/entity/team.entity';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { ChangeEvent } from 'react';
+import TeamName from './TeamName';
 
 
 interface TeamSelectParams {
@@ -43,7 +44,9 @@ export default function TeamSelect({ id, teams, value, setValue, label }: TeamSe
                 label={label}
             >
                 {teams.map(t => (
-                    <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>
+                    <MenuItem key={t.id} value={t.id}>
+                        <TeamName team={t} />
+                    </MenuItem>
                 ))}
             </Select>
         </FormControl>
