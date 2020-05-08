@@ -1,7 +1,6 @@
 import { Team } from '../../db/entity/team.entity';
 
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { ChangeEvent } from 'react';
 import TeamName from './TeamName';
 
@@ -15,26 +14,13 @@ interface TeamSelectParams {
 }
 
 export default function TeamSelect({ id, teams, value, setValue, label }: TeamSelectParams) {
-    const useStyles = makeStyles((theme: Theme) =>
-        createStyles({
-            formControl: {
-                margin: theme.spacing(1),
-                minWidth: 230,
-            },
-            selectEmpty: {
-                marginTop: theme.spacing(2),
-            },
-        }),
-    );
-
-    const classes = useStyles();
 
     const handleChange = (event: ChangeEvent<{ value: unknown }>) => {
         setValue(event.target.value as string);
     };
 
     return (
-        <FormControl className={classes.formControl}>
+        <FormControl className="teamselect-formcontrol">
             <InputLabel id={id + '-label'}>{label}</InputLabel>
             <Select
                 labelId={id + '-label'}

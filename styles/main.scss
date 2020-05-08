@@ -1,3 +1,5 @@
+$spacing: 10px;
+
 *,
 *::before,
 *::after {
@@ -11,6 +13,20 @@ body {
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+// Menu
 .title {
     flex-grow: 1;
+}
+
+
+// tables
+.matches-table, .players-table {
+    min-width: 650px;
+}
+
+.MuiFormControl-root {
+    &.teamselect-formcontrol {
+        min-width: 230px;
+        margin-right: $spacing;
+    }
 }
