@@ -1,11 +1,11 @@
 
-import connection from '../db/connection';
 import { MatchStep, Match } from '../db/entity/match.entity';
+import Database from 'db/database';
 
 
 export async function saveMatch(match:Match, steps:MatchStep[]) {
     try {
-        const db = await connection();
+        const db = await new Database().getManager();
         const matchToReturn = await db.transaction(async (transactionalEntityManager) => {
             const matchRepository = transactionalEntityManager.getRepository(Match);
             const matchStepRepository = transactionalEntityManager.getRepository(MatchStep);
@@ -28,7 +28,7 @@ export async function saveMatch(match:Match, steps:MatchStep[]) {
 }
 
 export async function findMatch(id:string):Promise<Match> {
-    const db = await connection();
+    const db = await new Database().getManager();
     const matchRepository = db.getRepository(Match);
     try {
         return matchRepository.findOne(id, {relations: [
@@ -44,7 +44,7 @@ export async function findMatch(id:string):Promise<Match> {
 }
 
 export async function findMatches(userId:string):Promise<Match[]> {
-    const db = await connection();
+    const db = await new Database().getManager();
     const matchRepository = db.getRepository(Match);
     return matchRepository.createQueryBuilder("match")
         .leftJoinAndSelect("match.home", "home")

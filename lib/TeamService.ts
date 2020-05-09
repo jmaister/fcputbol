@@ -1,5 +1,4 @@
 
-import connection from '../db/connection';
 import { User } from '../db/entity/user.entity';
 import { Team } from '../db/entity/team.entity';
 import { Lineup } from '../db/entity/lineup.entity';
@@ -8,10 +7,11 @@ import { Player, Positions } from '../db/entity/player.entity';
 import RandomData from './random-data'
 
 import {randomIntInterval, sample} from './utils';
+import Database from 'db/database';
 
 export async function createTeam({ name, jersey_color, username }) {
 
-    const db = await connection();
+    const db = await new Database().getManager();
 
     const userRepository = db.getRepository(User);
     const user = await userRepository.findOne({ username: username });
@@ -77,7 +77,7 @@ export async function createTeam({ name, jersey_color, username }) {
 }
 
 export async function findTeam(id:string):Promise<Team> {
-    const db = await connection();
+    const db = await new Database().getManager();
     const teamRepository = db.getRepository(Team);
     try {
         return teamRepository.findOne(id, {relations: ["players", "lineup", "lineup.players"]});

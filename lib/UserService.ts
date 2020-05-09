@@ -1,10 +1,10 @@
 import crypto from 'crypto';
 
-import connection from '../db/connection';
 import { User } from '../db/entity/user.entity';
+import Database from '../db/database';
 
 // TODO: read from ENV
-const salt = "SaLtSaLtSaLtSaLt".toString('hex');
+const salt = "SaLtSaLtSaLtSaLt";//.toString('hex');
 
 
 /**
@@ -18,7 +18,7 @@ export async function createUser({ username, password }) {
     //
     const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
-    const db = await connection();
+    const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
     const user = await userRepository.save({
         username: username,
@@ -33,7 +33,7 @@ export async function findUserForLogin({ username, password }) {
 
     const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
-    const db = await connection();
+    const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
     try {
         const user = await userRepository.findOne({ username: username, password: hash });
@@ -49,7 +49,7 @@ export async function findUserForLogin({ username, password }) {
 }
 
 export async function findUser(id) {
-    const db = await connection();
+    const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
     const user = await userRepository
         .findOne(id, { relations: ["teams", "teams.players" ] });

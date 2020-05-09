@@ -1,12 +1,31 @@
+$padding: 5px;
+$font-size: 16px;
+
+
+$jerseys:            red   blue  green orange yellow lightblue brown;
+$jersey_font_colors: white white black black  black  black     white;
+
+@for $i from 1 through length($jerseys) {
+    $bg: nth($jerseys, $i);
+    $jersey_font_c: nth($jersey_font_colors, $i);
+    span.jersey-#{'' + $bg}, div.jersey-#{'' + $bg} {
+        background-color: $bg;
+        color: $jersey_font_c;
+    }
+}
 
 .teamname {
     width: 150px;
 
     .jersey {
-        padding: 5px
+        padding: $padding;
+        font-size: $font-size;
     }
 
     .username {
-        font-size: 15px;
+        font-size: $font-size;
+        padding: $padding;
+        color: white;
+        background-color: #999999;
     }
 }

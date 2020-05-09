@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 
 import { Match } from 'db/entity/match.entity';
 import Link from 'next/link';
+import TeamName from 'components/team/TeamName';
 
 interface MatchesTableParams {
     matches: Match[]
@@ -32,8 +33,8 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                     {matches.map((match) => (
                         <TableRow key={match.id}>
                             <TableCell align="right">{match.id}</TableCell>
-                            <TableCell><Link href={'team/' + match.home.id}><a>{match.home.name}</a></Link></TableCell>
-                            <TableCell><Link href={'team/' + match.away.id}><a>{match.away.name}</a></Link></TableCell>
+                            <TableCell><TeamName team={match.home} /></TableCell>
+                            <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>
                             <TableCell>{new Date(match.createdDate).toLocaleString()}</TableCell>
                             <TableCell><Link href={'matchresult/' + match.id}><a>Ver partido</a></Link></TableCell>
