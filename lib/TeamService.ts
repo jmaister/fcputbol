@@ -10,6 +10,7 @@ import {randomIntInterval, sample} from './utils';
 import Database from 'db/database';
 
 export async function createTeam({ name, jersey_color, username }) {
+    // TODO: transaction
 
     const db = await new Database().getManager();
 
@@ -26,7 +27,8 @@ export async function createTeam({ name, jersey_color, username }) {
     // TODO: create and assign team players
     const quantities = [3, 5, 5, 5];
     const positions = [Positions.gk, Positions.def, Positions.mid, Positions.fw];
-    const m = 20;
+    const avg = 25;
+    const std = 5;
 
     const playerRepository = db.getRepository(Player);
 
@@ -47,11 +49,11 @@ export async function createTeam({ name, jersey_color, username }) {
                 surname: RandomData.getSurname(),
                 num: num,
                 position: pos,
-                save: randomIntInterval(m, m + 10),
-                defense: randomIntInterval(m, m + 10),
-                pass: randomIntInterval(m, m + 10),
-                dribble: randomIntInterval(m, m + 10),
-                shot: randomIntInterval(m, m + 10),
+                save: randomIntInterval(avg-std, avg+std),
+                defense: randomIntInterval(avg-std, avg+std),
+                pass: randomIntInterval(avg-std, avg+std),
+                dribble: randomIntInterval(avg-std, avg+std),
+                shot: randomIntInterval(avg-std, avg+std),
                 team: team
             };
             const player = await playerRepository.save(playerData);
