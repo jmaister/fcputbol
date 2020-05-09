@@ -3,10 +3,12 @@ import Link from 'next/link';
 import { useState } from 'react'
 
 import Layout from '../components/layout';
+import TeamName from '../components/team/TeamName';
 
 import { findUser } from '../lib/UserService';
 
-import { Button } from '@material-ui/core';
+import { Button, List, ListItem } from '@material-ui/core';
+
 
 export default function Team({user}) {
     const [errorMsg, setErrorMsg] = useState('');
@@ -22,15 +24,14 @@ export default function Team({user}) {
             </Button>
         </Link>
 
-        <ul>
+        <h2>Tus equipos:</h2>
+        <List>
         {user.teams.map(t => (
-            <li key={t.id}>
-                <Link  href={'/team/' + t.id}>
-                    <a>Ver equipo: {t.name}</a>
-                </Link>
-            </li>
+            <ListItem key={t.id}>
+                <TeamName team={t} user={user} />
+            </ListItem>
         ))}
-        </ul>
+        </List>
 
     </Layout>
 }

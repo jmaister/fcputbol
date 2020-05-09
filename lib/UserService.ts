@@ -52,7 +52,9 @@ export async function findUser(id) {
     const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
     const user = await userRepository
-        .findOne(id, { relations: ["teams", "teams.players" ] });
+        .findOne(id, { relations: [
+            "teams", "teams.players"
+        ] });
 
     if (user) {
         // TODO: clean private fields

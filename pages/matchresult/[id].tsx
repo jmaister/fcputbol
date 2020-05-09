@@ -84,24 +84,14 @@ export default function MatchResult({id, match}:MatchResultParams) {
 
 export async function getServerSideProps(context) {
     const matchId = context.params.id;
-    let match = null;
-    let DEBUG = false;
+    let match = await findMatch(matchId);
+    // Hack
+    match = JSON.parse(JSON.stringify(match));
 
-
-    if (DEBUG) {
-        match = JSON.parse(fs.readFileSync('match.json', 'utf8'));
-
-    } else {
-        match = await findMatch(matchId);
-        // Hack
-        match = JSON.parse(JSON.stringify(match));
-
-        // Order
-        match.matchSteps.sort((a, b) => {
-            return a.stepNumber - b.stepNumber;
-        });
-        fs.writeFileSync("match2.json", JSON.stringify(match));
-    }
+    // Order
+    match.matchSteps.sort((a, b) => {
+        return a.stepNumber - b.stepNumber;
+    });
 
     return {
         props: {
