@@ -10,7 +10,7 @@ export default async function leagues(req, res) {
                 ...req.body,
                 userId: session.id
             });
-            res.status(200).json({ ok: true, response });
+            res.status(200).json({ ok: true, data: response });
         } catch (error) {
             res.status(400).json({ ok: false, error: error });
         };

@@ -10,6 +10,13 @@ import {
 import { Team } from './team.entity';
 import { Player } from './player.entity';
 import { Lineup } from './lineup.entity';
+import { League } from './league.entity';
+
+export enum MatchStatus {
+    SCHEDULED = "SCHEDULED",
+    READY = "READY",
+    FINISHED = "FINISHED",
+}
 
 @Entity()
 export class Match {
@@ -39,6 +46,18 @@ export class Match {
 
     @CreateDateColumn()
     createdDate: Date;
+
+    @Column({ type: 'datetime' })
+    playDate: Date;
+
+    @ManyToOne(type => League, l => l.matches)
+    league?: League;
+
+    @Column({
+        type: "varchar",
+        default: MatchStatus.SCHEDULED
+    })
+    status: MatchStatus;
 }
 
 

@@ -19,11 +19,11 @@ import { getSession } from 'lib/iron';
 import { findUser } from 'lib/UserService';
 import { withAuthSSP } from 'lib/withAuth';
 
-interface CreateLeagueParams {
+interface CreateLeaguePageParams {
     user: User
 }
 
-export default function CreateLeague({user}:CreateLeagueParams) {
+export default function CreateLeague({user}:CreateLeaguePageParams) {
     const [errorMsg, setErrorMsg] = useState('');
 
     const league = {
@@ -49,14 +49,14 @@ export default function CreateLeague({user}:CreateLeagueParams) {
                         body: JSON.stringify(values),
                     })
                         .then((response) => response.json())
-                        .then(data => {
-                            console.log("fetch response data", data);
-                            if (data.ok) {
+                        .then(response => {
+                            console.log("fetch response data", response);
+                            if (response.ok) {
                                 setErrorMsg(null);
-                                Router.push('/leagues');
+                                Router.push('/league/' + response.data.id);
                             } else {
                                 actions.setSubmitting(false);
-                                setErrorMsg(JSON.stringify(data.error.message));
+                                setErrorMsg(JSON.stringify(response.error.message));
                             }
                         });
                 }}

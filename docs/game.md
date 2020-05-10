@@ -25,6 +25,7 @@ Add current match day - jornada actual
 ORGANIZING - ORGANIZANDO
     - Can add teams
 ONGOING - EN MARCHA
+    - Create matches, set matchDayCount and currentMatchDay
     - Play
     - Once all matches in a match day are finished, next match day is shown
 FINISHED - FINALIZADO
