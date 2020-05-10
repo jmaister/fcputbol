@@ -53,3 +53,15 @@ export function format(s:string, args:object): string {
     }
     return formatted;
 };
+
+const _symbols = 'abcdefghijklmnopqrstuvwxyz1234567890';
+const _simbols_length = _symbols.length;
+
+export function generateCode(count:number): string {
+    let str = '';
+
+    for(let i = 0; i < count; i++) {
+        str += _symbols[Math.floor(Math.random() * _simbols_length)];
+    }
+    return str;
+}

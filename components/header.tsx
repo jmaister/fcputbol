@@ -25,6 +25,9 @@ export default function Header() {
                     <Link href="/teams">
                         <Button color="inherit">Equipos</Button>
                     </Link>
+                    <Link href="/leagues">
+                        <Button color="inherit">Ligas</Button>
+                    </Link>
                     <Link href="/match">
                         <Button color="inherit">Partidos</Button>
                     </Link>

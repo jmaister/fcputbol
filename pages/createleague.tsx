@@ -3,7 +3,6 @@ import Router from 'next/router';
 
 import { useState } from 'react';
 
-import { useUser } from '../lib/hooks';
 import Layout from '../components/layout';
 
 import { Formik, Field } from 'formik';
@@ -16,39 +15,39 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { TextField } from 'formik-material-ui';
 
 import {Team} from '../db/entity/team.entity';
+import { User } from 'db/entity/user.entity';
+import TeamName from 'components/team/TeamName';
+import { getSession } from 'lib/iron';
+import { findUser } from 'lib/UserService';
+import { GetServerSideProps } from 'next';
+import { redirectToLogin } from 'lib/serverutils';
+import { withAuthSSP } from 'lib/withAuth';
 
-export default function CreateTeam({}) {
-    const user = useUser();
+interface CreateLeagueParams {
+    user: User
+}
+
+export default function CreateLeague({user}:CreateLeagueParams) {
     const [errorMsg, setErrorMsg] = useState('');
 
-    const team = {
+    const league = {
         name: "",
-        jersey_color: "",
-    } as Team;
-
-    const colors = [
-        {label: "Rojo", value: "red"},
-        {label: "Azúl", value: "blue"},
-        {label: "Verde", value: "green"},
-        {label: "Naranja", value: "orange"},
-        {label: "Amarillo", value: "yellow"},
-        {label: "Azúl claro", value: "lightblue"},
-        {label: "Marrón", value: "brown"},
-    ];
+        yourteam: "",
+    };
 
     return (
         <Layout>
             <h1>Equipo</h1>
 
-            <Formik
-                initialValues={team}
+             <Formik
+                initialValues={league}
                 validationSchema={Yup.object({
-                    name: Yup.string().min(5).max(15).required(),
-                    jersey_color: Yup.string().required(),
+                    name: Yup.string().min(5).max(15).required().label("Nombre"),
+                    yourteam: Yup.string().required(),
                 })}
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
-                    fetch('/api/teams', {
+                    fetch('/api/leagues', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(values),
@@ -58,7 +57,7 @@ export default function CreateTeam({}) {
                             console.log("fetch response data", data);
                             if (data.ok) {
                                 setErrorMsg(null);
-                                Router.push('/teams');
+                                Router.push('/leagues');
                             } else {
                                 actions.setSubmitting(false);
                                 setErrorMsg(JSON.stringify(data.error.message));
@@ -91,19 +90,20 @@ export default function CreateTeam({}) {
                         <Field
                             component={TextField}
                             type="text"
-                            name="jersey_color"
-                            label="Color"
+                            name="yourteam"
+                            label="Tu equipo"
                             select
                             variant="standard"
-                            helperText="Selecciona el color del equipo"
+                            helperText="Selecciona tu equipo para esta liga"
                             margin="normal"
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            error={!!errors.yourteam}
                         >
-                            {colors.map(option => (
-                            <MenuItem key={option.value} value={option.value}>
-                                <span className={"jersey-sample jersey-" + option.value}>{option.label}</span>
+                            {user.teams.map(option => (
+                            <MenuItem key={option.id} value={option.id}>
+                                <TeamName team={option} isLink={false} />
                             </MenuItem>
                             ))}
                         </Field>
@@ -124,3 +124,18 @@ export default function CreateTeam({}) {
         </Layout>
     )
 }
+
+export const getServerSideProps = withAuthSSP(async ({req, res}) => {
+    const session = await getSession(req);
+    console.log("************************** session", session);
+
+    let user = await findUser(session.id);
+    // Hack
+    user = JSON.parse(JSON.stringify(user));
+
+    return {
+        props: {
+            user,
+        }
+    };
+});

@@ -55,3 +55,9 @@ https://material-ui.com/components/material-icons/
 # SCSS
 
 https://sass-lang.com/documentation/at-rules/control/for
+
+
+# Fix auth
+
+add withAuthSSP to all pages
+and withAuthAPI to API pages

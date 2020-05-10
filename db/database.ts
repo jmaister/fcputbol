@@ -8,6 +8,7 @@ import { Player } from './entity/player.entity';
 import { MatchStep, Match } from "./entity/match.entity";
 import { Lineup } from "./entity/lineup.entity";
 import { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
+import { League } from "./entity/league.entity";
 
 const databaseOptions = ({
     ...ormconfig,
@@ -17,7 +18,8 @@ const databaseOptions = ({
         Player,
         Match,
         MatchStep,
-        Lineup
+        Lineup,
+        League,
     ]
 });
 

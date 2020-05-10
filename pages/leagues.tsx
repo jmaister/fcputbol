@@ -3,33 +3,40 @@ import Link from 'next/link';
 import { useState } from 'react'
 
 import Layout from '../components/layout';
-import TeamName from '../components/team/TeamName';
 
 import { findUser } from '../lib/UserService';
 
 import { Button, List, ListItem } from '@material-ui/core';
 import { getSession } from 'lib/iron';
+import { findUserLeagues } from 'lib/LeagueService';
+import { User } from 'db/entity/user.entity';
+import { League } from 'db/entity/league.entity';
 
 
-export default function TeamsPage({user}) {
+interface LeaguesParams {
+    user: User
+    leagues: League[]
+}
+
+export default function Leagues({user, leagues}: LeaguesParams) {
     const [errorMsg, setErrorMsg] = useState('');
 
     return <Layout>
-        <h1>Equipos</h1>
+        <h1>Ligas</h1>
 
-        <Link href="/createteam">
+        <Link href="/createleague">
             <Button
                 variant="contained"
                 color="primary">
-                    Crear nuevo equipo
+                    Crear liga
             </Button>
         </Link>
 
-        <h2>Tus equipos:</h2>
+        <h2>Tus ligas:</h2>
         <List>
-        {user.teams.map(t => (
-            <ListItem key={t.id}>
-                <TeamName team={t} user={user} />
+        {leagues.map(l => (
+            <ListItem key={l.id}>
+                <Link href={"/league/" + l.id}><a>{l.id}_{l.name}</a></Link>
             </ListItem>
         ))}
         </List>
@@ -43,9 +50,15 @@ export async function getServerSideProps(context) {
     // Hack
     user = JSON.parse(JSON.stringify(user));
 
+    // User leagues
+    let leagues = await findUserLeagues(session.id);
+    leagues = JSON.parse(JSON.stringify(leagues));
+
+
     return {
         props: {
-            user
+            user,
+            leagues
         }
     };
 }
