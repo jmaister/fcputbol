@@ -23,41 +23,48 @@ export class Match {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToMany(type => MatchStep, matchStep => matchStep.match)
-    matchSteps: MatchStep[];
-
-    @Column({ type: 'int' })
-    stepsCount: number;
-
     @ManyToOne(type => Team)
     home: Team;
     @ManyToOne(type => Team)
     away: Team;
 
-    @ManyToOne(type => Lineup)
-    homeLineup: Lineup;
-    @ManyToOne(type => Lineup)
-    awayLineup: Lineup;
-
-    @Column({ type: 'int' })
-    resultHome: number;
-    @Column({ type: 'int' })
-    resultAway: number;
-
     @CreateDateColumn()
     createdDate: Date;
-
-    @Column({ type: 'datetime' })
-    playDate: Date;
-
-    @ManyToOne(type => League, l => l.matches)
-    league?: League;
 
     @Column({
         type: "varchar",
         default: MatchStatus.SCHEDULED
     })
     status: MatchStatus;
+
+    @ManyToOne(type => League, l => l.matches)
+    league?: League;
+
+    @Column({ type: 'int', nullable: true })
+    round: number;
+
+    // Fields to set on READY
+
+    @ManyToOne(type => Lineup)
+    homeLineup?: Lineup;
+    @ManyToOne(type => Lineup)
+    awayLineup?: Lineup;
+
+    // Fields to set on FINISHED
+
+    @Column({ type: 'datetime', nullable: true })
+    playDate: Date;
+
+    @OneToMany(type => MatchStep, matchStep => matchStep.match)
+    matchSteps?: MatchStep[];
+
+    @Column({ type: 'int', nullable: true })
+    stepsCount: number;
+
+    @Column({ type: 'int', nullable: true })
+    resultHome: number;
+    @Column({ type: 'int', nullable: true })
+    resultAway: number;
 }
 
 

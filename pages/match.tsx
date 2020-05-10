@@ -22,10 +22,10 @@ export default function MatchPage({ user, matches }: MatchPageParams) {
     const [errorMsg, setErrorMsg] = useState('');
     const [home, setHome] = useState('');
     const [away, setAway] = useState('');
-    const [isLoading, setIsloading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const playMatch = async () => {
-        setIsloading(true);
+        setIsLoading(true);
 
         const body = {
             home,
@@ -41,11 +41,11 @@ export default function MatchPage({ user, matches }: MatchPageParams) {
                 const response = await res.json();
                 Router.push('/matchresult/' + response.matchId);
             } else {
-                setIsloading(false);
+                setIsLoading(false);
                 throw new Error(await res.text())
             }
         } catch (error) {
-            setIsloading(false);
+            setIsLoading(false);
             console.error('An unexpected error happened occurred:', error);
             setErrorMsg(error.message);
         }

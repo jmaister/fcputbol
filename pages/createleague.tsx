@@ -123,8 +123,6 @@ export default function CreateLeague({user}:CreateLeaguePageParams) {
 
 export const getServerSideProps = withAuthSSP(async ({req, res}) => {
     const session = await getSession(req);
-    console.log("************************** session", session);
-
     let user = await findUser(session.id);
     // Hack
     user = JSON.parse(JSON.stringify(user));

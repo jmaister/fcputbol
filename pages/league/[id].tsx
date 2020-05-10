@@ -8,19 +8,67 @@ import TeamName from 'components/team/TeamName';
 import { findLeague } from 'lib/LeagueService';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import Button from '@material-ui/core/Button';
+import { User } from 'db/entity/user.entity';
+import Router from 'next/router'
+import { getSession } from 'lib/iron';
+import { findUser } from 'lib/UserService';
 
 interface LeaguePageParams {
     league: League
+    user: User
 }
 
-export default function LeaguePage({league}: LeaguePageParams) {
+export default function LeaguePage({league, user}: LeaguePageParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const isAdmin = league.admin.id === user.id;
+
+    const startLeague = async () => {
+        setIsLoading(true);
+
+        const body = {
+            leagueId: league.id
+        };
+        try {
+            const res = await fetch('/api/startleague', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            })
+            if (res.status === 200) {
+                const response = await res.json();
+                console.log("response", response);
+                Router.push('/league/' + league.id);
+            } else {
+                setIsLoading(false);
+                const text = await res.text();
+                setErrorMsg(text);
+                throw new Error(text)
+            }
+        } catch (error) {
+            setIsLoading(false);
+            console.error('An unexpected error happened occurred:', error);
+            setErrorMsg(error.message);
+        }
+    };
 
     return (
         <Layout>
             <h1>Liga: <b>{league.name}</b></h1>
 
             <p>Administrador: @{league.admin.username}</p>
+
+            {isAdmin?
+            <Button
+                variant="contained"
+                color="primary"
+                disabled={isLoading}
+                onClick={() => startLeague()}>
+                Comenzar liga
+            </Button>
+            :null}
 
             <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{league.code}</a></p>
 
@@ -43,10 +91,16 @@ export async function getServerSideProps(context) {
     // Hack
     league = JSON.parse(JSON.stringify(league));
 
+    const session = await getSession(context.req);
+    let user = await findUser(session.id);
+    // Hack
+    user = JSON.parse(JSON.stringify(user));
+
     console.log("league", league);
 
     return {
         props: {
+            user,
             league
         }
     };

@@ -48,8 +48,8 @@ export class League {
     matches?: Match[]
 
     @Column("int", {nullable: true})
-    currentMatchDay: number;
+    currentRound: number;
 
     @Column("int", {nullable: true})
-    matchDayCount: number;
+    roundCount: number;
 }
