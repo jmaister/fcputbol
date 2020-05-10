@@ -9,11 +9,11 @@ import { findLeague } from 'lib/LeagueService';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
-interface TeamPageParams {
+interface LeaguePageParams {
     league: League
 }
 
-export default function LeaguePage({league}: TeamPageParams) {
+export default function LeaguePage({league}: LeaguePageParams) {
     const [errorMsg, setErrorMsg] = useState('');
 
     return (
@@ -21,6 +21,8 @@ export default function LeaguePage({league}: TeamPageParams) {
             <h1>Liga: <b>{league.name}</b></h1>
 
             <p>Administrador: @{league.admin.username}</p>
+
+            <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{league.code}</a></p>
 
             <h2>Equipos participando</h2>
             <List>

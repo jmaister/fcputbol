@@ -17,3 +17,32 @@
 
 League will play matches automatically when due date arrives.
 
+Add status
+Add current match day - jornada actual
+
+## League states
+
+ORGANIZING - ORGANIZANDO
+    - Can add teams
+ONGOING - EN MARCHA
+    - Play
+    - Once all matches in a match day are finished, next match day is shown
+FINISHED - FINALIZADO
+    - view only
+
+# Match
+
+Add match day - Jornada
+Add status
+
+## Match states
+
+SCHEDULED - PREVISTO
+    - no need for lineup
+
+READY - PREPARADO
+    - Current lineup is assigned
+
+FINISHED - FINALIZADO
+    - Play, save steps and score
+

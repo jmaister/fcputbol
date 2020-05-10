@@ -35,6 +35,23 @@ export async function findLeague(id:string):Promise<League> {
     }
 }
 
+export async function findLeagueByCode(code:string):Promise<League> {
+    const db = await new Database().getManager();
+    const leagueRepository = db.getRepository(League);
+    try {
+        return leagueRepository.createQueryBuilder("league")
+            .leftJoinAndSelect("league.teams", "team")
+            .leftJoinAndSelect("team.user", "user")
+            .leftJoinAndSelect("league.admin", "admin")
+            .where("league.code = :code", {code: code})
+            .getOne();
+
+    } catch (error) {
+        console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
+        throw new Error("Find leagues error:" + error);
+    }
+}
+
 export async function findUserLeagues(userId:string):Promise<League[]> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
@@ -45,6 +62,30 @@ export async function findUserLeagues(userId:string):Promise<League[]> {
             .where("user.id = :id", {id: userId})
             .getMany();
 
+    } catch (error) {
+        console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
+        throw new Error("Find leagues error:" + error);
+    }
+}
+
+export async function enterLeague({ yourteam, code, userId }) {
+    const db = await new Database().getManager();
+    const leagueRepository = db.getRepository(League);
+    const teamRepository = db.getRepository(Team);
+    try {
+        const team = await teamRepository.findOne(yourteam, {relations: ["user"]});
+        // Check that user and yourteam matches
+        if (team.user.id !== userId) {
+            throw new Error("El equipo no pertenece a ese usuario.");
+        }
+
+        const league = await leagueRepository.createQueryBuilder("league")
+            .leftJoinAndSelect("league.teams", "team")
+            .where("league.code = :code", {code: code})
+            .getOne();
+
+        league.teams.push(team);
+        return leagueRepository.save(league);
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
         throw new Error("Find leagues error:" + error);

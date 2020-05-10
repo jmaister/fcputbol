@@ -16,7 +16,7 @@ export function randomElement<T>(arr: T[]): T {
     return arr[randomIntInterval(0, arr.length-1)];
 };
 
-function shuffle<T>(array:T[]): T[] {
+export function shuffle<T>(array:T[]): T[] {
     let counter = array.length;
 
     // While there are elements in the array
@@ -54,7 +54,7 @@ export function format(s:string, args:object): string {
     return formatted;
 };
 
-const _symbols = 'abcdefghijklmnopqrstuvwxyz1234567890';
+const _symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const _simbols_length = _symbols.length;
 
 export function generateCode(count:number): string {

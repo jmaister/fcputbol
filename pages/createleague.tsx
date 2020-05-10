@@ -11,16 +11,12 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 
-
 import { TextField } from 'formik-material-ui';
 
-import {Team} from '../db/entity/team.entity';
 import { User } from 'db/entity/user.entity';
 import TeamName from 'components/team/TeamName';
 import { getSession } from 'lib/iron';
 import { findUser } from 'lib/UserService';
-import { GetServerSideProps } from 'next';
-import { redirectToLogin } from 'lib/serverutils';
 import { withAuthSSP } from 'lib/withAuth';
 
 interface CreateLeagueParams {
@@ -64,15 +60,15 @@ export default function CreateLeague({user}:CreateLeagueParams) {
                             }
                         });
                 }}
-            >{({
-                values,
-                handleSubmit,
-                isSubmitting,
-                isValid,
-                handleChange,
-                handleBlur,
-                errors
-            }) => (
+                >{({
+                    values,
+                    handleSubmit,
+                    isSubmitting,
+                    isValid,
+                    handleChange,
+                    handleBlur,
+                    errors
+                }) => (
                     <form onSubmit={handleSubmit} method="POST">
                         <div>{JSON.stringify(errors)}</div>
                         <Field
