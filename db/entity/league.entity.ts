@@ -44,12 +44,22 @@ export class League {
     })
     status: LeagueStatus;
 
-    @ManyToOne(type => Match, m => m.league)
-    matches?: Match[]
+    @OneToMany(type => Match, m => m.league)
+    matches: Match[]
 
     @Column("int", {nullable: true})
     currentRound: number;
 
     @Column("int", {nullable: true})
     roundCount: number;
+
+    isOrganizing() {
+        return this.status === LeagueStatus.ORGANIZING;
+    }
+    isOngoing() {
+        return this.status === LeagueStatus.ONGOING;
+    }
+    isOFinished() {
+        return this.status === LeagueStatus.FINISHED;
+    }
 }

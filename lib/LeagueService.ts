@@ -30,7 +30,8 @@ export async function findLeague(id:string):Promise<League> {
         return leagueRepository.findOne(id, {relations: [
             "teams",
             "teams.user",
-            "admin"
+            "admin",
+            "matches",
         ]});
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findLeague error:", error)

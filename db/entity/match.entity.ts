@@ -37,8 +37,8 @@ export class Match {
     })
     status: MatchStatus;
 
-    @ManyToOne(type => League, l => l.matches)
-    league?: League;
+    @ManyToOne(type => League, l => l.matches, {nullable: true})
+    league: League;
 
     @Column({ type: 'int', nullable: true })
     round: number;

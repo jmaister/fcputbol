@@ -1,7 +1,7 @@
 
 import { useState } from 'react'
 
-import Layout from '../../components/layout';
+import Layout from 'components/layout';
 
 import { League } from 'db/entity/league.entity';
 import TeamName from 'components/team/TeamName';
@@ -13,6 +13,8 @@ import { User } from 'db/entity/user.entity';
 import Router from 'next/router'
 import { getSession } from 'lib/iron';
 import { findUser } from 'lib/UserService';
+import LeagueStatusChip from 'components/league/LeagueStatusChip';
+import MatchesTable from 'components/match/MatchesTable';
 
 interface LeaguePageParams {
     league: League
@@ -59,8 +61,10 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             <h1>Liga: <b>{league.name}</b></h1>
 
             <p>Administrador: @{league.admin.username}</p>
+            <p>Estado: <LeagueStatusChip status={league.status} /></p>
 
-            {isAdmin?
+
+            {isAdmin && league.isOrganizing ?
             <Button
                 variant="contained"
                 color="primary"
@@ -70,7 +74,10 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             </Button>
             :null}
 
+            {league.isOrganizing ?
             <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{league.code}</a></p>
+            : <p>La liga ya ha comenzado, no se pueden añadir equipos</p>
+            }
 
             <h2>Equipos participando</h2>
             <List>
@@ -80,6 +87,9 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 </ListItem>
             ))}
             </List>
+
+            <h2>Partidos</h2>
+            <MatchesTable matches={league.matches} />
         </Layout>
     )
 }
