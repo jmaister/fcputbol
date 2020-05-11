@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import Layout from 'components/layout';
 
-import { League } from 'db/entity/league.entity';
+import { League, LeagueStatus } from 'db/entity/league.entity';
 import TeamName from 'components/team/TeamName';
 import { findLeague } from 'lib/LeagueService';
 import List from '@material-ui/core/List';
@@ -27,6 +27,10 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
 
     const isAdmin = league.admin.id === user.id;
 
+    const isOrganizing = league.status === LeagueStatus.ORGANIZING;
+    const isOngoing = league.status === LeagueStatus.ONGOING;
+    const isFinished = league.status === LeagueStatus.FINISHED;
+
     const startLeague = async () => {
         setIsLoading(true);
 
@@ -38,7 +42,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
-            })
+            });
             if (res.status === 200) {
                 const response = await res.json();
                 console.log("response", response);
@@ -64,7 +68,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             <p>Estado: <LeagueStatusChip status={league.status} /></p>
 
 
-            {isAdmin && league.isOrganizing ?
+            {isAdmin && isOrganizing ?
             <Button
                 variant="contained"
                 color="primary"
@@ -74,10 +78,10 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             </Button>
             :null}
 
-            {league.isOrganizing ?
-            <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{league.code}</a></p>
-            : <p>La liga ya ha comenzado, no se pueden añadir equipos</p>
-            }
+            {isOrganizing ? <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{league.code}</a>
+                </p>: null}
+            {isOngoing ? <p>La liga ya está en marcha. No se pueden añadir más jugadores.</p> : null}
+            {isFinished ? <p>La liga ya ha finalizado.</p> : null}
 
             <h2>Equipos participando</h2>
             <List>
@@ -88,8 +92,12 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             ))}
             </List>
 
-            <h2>Partidos</h2>
-            <MatchesTable matches={league.matches} />
+            {isOngoing || isFinished ?
+            <>
+                <h2>Partidos</h2>
+                <MatchesTable matches={league.matches} />
+            </>
+            : null}
         </Layout>
     )
 }

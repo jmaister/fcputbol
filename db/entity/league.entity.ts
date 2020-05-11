@@ -53,13 +53,4 @@ export class League {
     @Column("int", {nullable: true})
     roundCount: number;
 
-    isOrganizing() {
-        return this.status === LeagueStatus.ORGANIZING;
-    }
-    isOngoing() {
-        return this.status === LeagueStatus.ONGOING;
-    }
-    isOFinished() {
-        return this.status === LeagueStatus.FINISHED;
-    }
 }

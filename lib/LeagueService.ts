@@ -32,6 +32,8 @@ export async function findLeague(id:string):Promise<League> {
             "teams.user",
             "admin",
             "matches",
+            "matches.home", "matches.home.user",
+            "matches.away", "matches.away.user",
         ]});
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findLeague error:", error)
