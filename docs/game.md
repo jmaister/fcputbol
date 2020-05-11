@@ -47,3 +47,10 @@ READY - PREPARADO
 FINISHED - FINALIZADO
     - Play, save steps and score
 
+
+# TODO
+
+* Match: add play date
+* League: add play hour (utc)
+* League: sort by round
+ 

@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import { Match } from 'db/entity/match.entity';
 import Link from 'next/link';
 import TeamName from 'components/team/TeamName';
+import MatchStatusChip from './MatchStatusChip';
 
 interface MatchesTableParams {
     matches: Match[]
@@ -22,10 +23,12 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                 <TableHead>
                     <TableRow>
                         <TableCell>#</TableCell>
+                        <TableCell>Jornada</TableCell>
                         <TableCell align="right">Casa</TableCell>
                         <TableCell align="right">Visitante</TableCell>
                         <TableCell align="right">Resultado</TableCell>
                         <TableCell align="right">Fecha</TableCell>
+                        <TableCell align="right">Estado</TableCell>
                         <TableCell align="right">Acciones</TableCell>
                     </TableRow>
                 </TableHead>
@@ -33,10 +36,12 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                     {matches.map((match) => (
                         <TableRow key={match.id}>
                             <TableCell align="right">{match.id}</TableCell>
+                            <TableCell align="right">{match.round}</TableCell>
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>
                             <TableCell>{new Date(match.createdDate).toLocaleString()}</TableCell>
+                            <TableCell><MatchStatusChip status={match.status} /></TableCell>
                             <TableCell><Link href={'matchresult/' + match.id}><a>Ver partido</a></Link></TableCell>
                         </TableRow>
                     ))}

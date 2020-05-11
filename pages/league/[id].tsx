@@ -65,7 +65,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             <h1>Liga: <b>{league.name}</b></h1>
 
             <p>Administrador: @{league.admin.username}</p>
-            <p>Estado: <LeagueStatusChip status={league.status} /></p>
+            <div>Estado: <LeagueStatusChip status={league.status} /></div>
 
 
             {isAdmin && isOrganizing ?
@@ -108,6 +108,11 @@ export async function getServerSideProps(context) {
     let league = await findLeague(leagueId);
     // Hack
     league = JSON.parse(JSON.stringify(league));
+
+    // Sort matches
+    league.matches.sort((a, b) => {
+        return a.round - b.round;
+    });
 
     const session = await getSession(context.req);
     let user = await findUser(session.id);
