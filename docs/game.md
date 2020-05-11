@@ -50,7 +50,9 @@ FINISHED - FINALIZADO
 
 # TODO
 
+* League creation: add play hour (utc)
+
 * Match: add play date
-* League: add play hour (utc)
-* League: sort by round
- 
+* Match: Update match status after play
+* Match: Update match status after play
+* Match: cron job to play if match.status==READY

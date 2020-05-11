@@ -123,6 +123,7 @@ export async function startLeague({id, userId}) {
             const round = rounds[r];
             for (let p=0; p < round.length; p++) {
                 const pair = round[p];
+                // TODO: calculate team date + time
                 matchRepository.save({
                     league,
                     home: teams[pair.home-1],

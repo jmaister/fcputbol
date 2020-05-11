@@ -1,6 +1,6 @@
 $padding: 5px;
 $font-size: 16px;
-
+$font-size-small: 14px;
 
 $jerseys:            red   blue  green orange yellow lightblue brown;
 $jersey_font_colors: white white black black  black  black     white;
@@ -20,12 +20,17 @@ $jersey_font_colors: white white black black  black  black     white;
     .jersey {
         padding: $padding;
         font-size: $font-size;
+        display: inline-block;
+        width: 100%;
     }
 
     .username {
-        font-size: $font-size;
-        padding: $padding;
+        font-size: $font-size-small;
+        padding: 0px;
         color: white;
-        background-color: #999999;
+        background-color: #606060;
+        display: inline-block;
+        width: 100%;
+        text-align: right;
     }
 }
