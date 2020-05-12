@@ -31,6 +31,9 @@ export class Match {
     @CreateDateColumn()
     createdDate: Date;
 
+    @Column({ type: 'datetime' })
+    matchDate: Date;
+
     @Column({
         type: "varchar",
         default: MatchStatus.SCHEDULED

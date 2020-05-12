@@ -6,16 +6,19 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import { Match } from 'db/entity/match.entity';
+import { Match, MatchStatus } from 'db/entity/match.entity';
 import Link from 'next/link';
 import TeamName from 'components/team/TeamName';
 import MatchStatusChip from './MatchStatusChip';
+
+import moment from 'moment';
 
 interface MatchesTableParams {
     matches: Match[]
 }
 
 export default function MatchesTable({ matches }: MatchesTableParams) {
+    moment.locale("es");
 
     return (
         <TableContainer component={Paper}>
@@ -24,25 +27,28 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                     <TableRow>
                         <TableCell>#</TableCell>
                         <TableCell>Jornada</TableCell>
-                        <TableCell align="right">Casa</TableCell>
-                        <TableCell align="right">Visitante</TableCell>
-                        <TableCell align="right">Resultado</TableCell>
-                        <TableCell align="right">Fecha</TableCell>
-                        <TableCell align="right">Estado</TableCell>
-                        <TableCell align="right">Acciones</TableCell>
+                        <TableCell>Casa</TableCell>
+                        <TableCell>Visitante</TableCell>
+                        <TableCell>Resultado</TableCell>
+                        <TableCell>Fecha</TableCell>
+                        <TableCell>Estado</TableCell>
+                        <TableCell>Acciones</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {matches.map((match) => (
                         <TableRow key={match.id}>
-                            <TableCell align="right">{match.id}</TableCell>
-                            <TableCell align="right">{match.round}</TableCell>
+                            <TableCell>{match.id}</TableCell>
+                            <TableCell>{match.round}</TableCell>
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>
-                            <TableCell>{new Date(match.createdDate).toLocaleString()}</TableCell>
+                            <TableCell>{moment(match.matchDate).calendar()}</TableCell>
                             <TableCell><MatchStatusChip status={match.status} /></TableCell>
-                            <TableCell><Link href={'matchresult/' + match.id}><a>Ver partido</a></Link></TableCell>
+                            <TableCell>{match.status === MatchStatus.FINISHED ?
+                                <Link href={'matchresult/' + match.id}><a>Ver partido</a></Link>
+                                :null}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

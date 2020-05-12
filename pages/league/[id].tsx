@@ -15,6 +15,7 @@ import { getSession } from 'lib/iron';
 import { findUser } from 'lib/UserService';
 import LeagueStatusChip from 'components/league/LeagueStatusChip';
 import MatchesTable from 'components/match/MatchesTable';
+import { withAuthSSP } from 'lib/withAuth';
 
 interface LeaguePageParams {
     league: League
@@ -103,7 +104,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
 }
 
 
-export async function getServerSideProps(context) {
+export const getServerSideProps = withAuthSSP(async (context) => {
     const leagueId = context.params.id;
     let league = await findLeague(leagueId);
     // Hack
@@ -119,12 +120,10 @@ export async function getServerSideProps(context) {
     // Hack
     user = JSON.parse(JSON.stringify(user));
 
-    console.log("league", league);
-
     return {
         props: {
             user,
             league
         }
     };
-}
+});

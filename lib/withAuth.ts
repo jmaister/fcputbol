@@ -8,6 +8,7 @@ export function withAuthSSP(handler) {
     return async function(context) {
         const session = await getSession(context.req);
         if (!session) {
+            // TODO: add success URL to redirect after login
             redirectToLogin(context.res);
             return {};
         }

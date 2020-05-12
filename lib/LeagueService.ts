@@ -5,6 +5,8 @@ import { Team } from 'db/entity/team.entity';
 import { generateCode } from './utils';
 import { tournament, MatchPair } from './Tournament';
 import { Match, MatchStatus } from 'db/entity/match.entity';
+import moment from 'moment';
+import { match } from 'assert';
 
 export async function createLeague({ name, yourteam, userId }) {
     const db = await new Database().getManager();
@@ -119,6 +121,14 @@ export async function startLeague({id, userId}) {
         const teams = league.teams;
         const n = league.teams.length;
         const rounds:MatchPair[][] = tournament(n);
+
+        // Matches start next day at 12:00:00
+        let matchDate = moment().utc().hour(12).minute(0).second(0).add(1, "day");
+        console.log("matchDate 1a ", matchDate);
+        console.log("matchDate 1b ", matchDate.utc());
+        console.log("matchDate 1c ", matchDate.local());
+        console.log("matchDate 1d ", matchDate.toISOString());
+
         for (let r=0; r < rounds.length; r++) {
             const round = rounds[r];
             for (let p=0; p < round.length; p++) {
@@ -129,13 +139,19 @@ export async function startLeague({id, userId}) {
                     home: teams[pair.home-1],
                     away: teams[pair.away-1],
                     status: MatchStatus.SCHEDULED,
-                    round: r
+                    round: r,
+                    matchDate: matchDate.toISOString()
                 });
             }
+            // Calcualte next round date
+            matchDate = matchDate.add(1, "day");
+            console.log("matchDate 2 ", matchDate);
         }
 
         // Status and Save
         league.status = LeagueStatus.ONGOING;
+        league.currentRound = 0;
+        league.roundCount = rounds.length;
         return leagueRepository.save(league);
 
     } catch (error) {
