@@ -7,19 +7,17 @@ export function withAuthSSP(handler) {
     console.log("creating wrapper withAuthSSP");
     return async function(context) {
         const session = await getSession(context.req);
-        console.log("session", session);
         if (!session) {
+            // TODO: add success URL to redirect after login
             redirectToLogin(context.res);
             return {};
         }
         const ret = handler(context);
-        console.log("returned", ret);
         return ret;
     }
 }
 
 
-
-export function withAuthAPI(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json({ name: 'John Doe' });
-}
+//export function withAuthAPI(req: NextApiRequest, res: NextApiResponse) {
+//  res.status(200).json({ name: 'John Doe' });
+//}

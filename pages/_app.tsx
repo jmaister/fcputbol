@@ -8,6 +8,8 @@ import Container from '@material-ui/core/Container';
 import { ThemeProvider } from '@material-ui/core';
 import theme from '../components/theme';
 
+import moment from 'moment';
+
 export default function MyApp({ Component, pageProps }) {
 
     return (

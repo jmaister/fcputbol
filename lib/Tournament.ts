@@ -2,7 +2,7 @@
 import {shuffle} from './utils';
 
 // https://www.devenezia.com/javascript/article.php/RoundRobin3.html
-export function tournament(n) {
+export function tournament(n:number):MatchPair[][] {
     const rounds = [];
 
     for (var r = 1; r < n; r++) {
@@ -14,8 +14,8 @@ export function tournament(n) {
     return shuffle(rounds);
 }
 
-export function Round(r, n, reverse) {
-    const pairs = [];
+export function Round(r:number, n:number, reverse:boolean): MatchPair[] {
+    const pairs:MatchPair[] = [];
 
     for (let i = 1; i <= n / 2; i++) {
         if (i == 1) {

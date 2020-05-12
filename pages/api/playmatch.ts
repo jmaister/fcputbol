@@ -19,23 +19,19 @@ export default async function playMatch(req, res) {
 
             const match = {
                 home,
-                away,
-                homeLineup: home.lineup,
-                awayLineup: away.lineup,
-                resultHome: result.score[0],
-                resultAway: result.score[1],
+                away
             } as Match;
 
-            const savedMatch = await saveMatch(match, result.steps);
+            const savedMatch = await saveMatch(match, result);
 
-            res.status(200).json({ ok: true, matchId: savedMatch.id, home, away });
+            res.status(200).json({ ok: true, matchId: savedMatch.id });
         } catch (error) {
             console.log("playMatch", error);
             res.status(404).json({ ok: false, message: "Error on playMatch.", body: req.body, error: error });
         }
 
     } else {
-        res.status(400).json({ message: "not supported yet" });
+        res.status(400).json({ message: "not supported" });
     }
 
 }

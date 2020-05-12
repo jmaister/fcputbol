@@ -65,8 +65,8 @@ export async function getServerSideProps(context) {
 
     // User leagues
     let leagues = await findUserLeagues(session.id);
+    // Hack
     leagues = JSON.parse(JSON.stringify(leagues));
-
 
     return {
         props: {

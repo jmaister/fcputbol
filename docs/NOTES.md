@@ -61,3 +61,13 @@ https://sass-lang.com/documentation/at-rules/control/for
 
 add withAuthSSP to all pages
 and withAuthAPI to API pages
+
+# Restart league
+
+delete from match where leagueId = 8;
+update league set status = "ORGANIZING" where id = 8;
+
+# Moment.js
+
+https://momentjs.com/docs/
+

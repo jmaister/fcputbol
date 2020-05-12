@@ -1,12 +1,12 @@
 import { getSession } from '../../lib/iron';
-import { createLeague } from '../../lib/LeagueService';
+import { startLeague } from '../../lib/LeagueService';
 
-export default async function leagues(req, res) {
+export default async function startleague(req, res) {
     const session = await getSession(req);
 
     if (req.method === 'POST') {
         try {
-            const response = await createLeague({
+            const response = await startLeague({
                 ...req.body,
                 userId: session.id
             });
