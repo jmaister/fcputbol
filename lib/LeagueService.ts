@@ -124,10 +124,6 @@ export async function startLeague({id, userId}) {
 
         // Matches start next day at 12:00:00
         let matchDate = moment().utc().hour(12).minute(0).second(0).add(1, "day");
-        console.log("matchDate 1a ", matchDate);
-        console.log("matchDate 1b ", matchDate.utc());
-        console.log("matchDate 1c ", matchDate.local());
-        console.log("matchDate 1d ", matchDate.toISOString());
 
         for (let r=0; r < rounds.length; r++) {
             const round = rounds[r];
@@ -145,7 +141,6 @@ export async function startLeague({id, userId}) {
             }
             // Calcualte next round date
             matchDate = matchDate.add(1, "day");
-            console.log("matchDate 2 ", matchDate);
         }
 
         // Status and Save
