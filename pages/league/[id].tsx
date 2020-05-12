@@ -68,7 +68,6 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             <p>Administrador: @{league.admin.username}</p>
             <div>Estado: <LeagueStatusChip status={league.status} /></div>
 
-
             {isAdmin && isOrganizing ?
             <Button
                 variant="contained"
@@ -112,7 +111,11 @@ export const getServerSideProps = withAuthSSP(async (context) => {
 
     // Sort matches
     league.matches.sort((a, b) => {
-        return a.round - b.round;
+        const df = a.round - b.round;
+        if (df === 0) {
+            return a.id - b.id;
+        }
+        return df;
     });
 
     const session = await getSession(context.req);

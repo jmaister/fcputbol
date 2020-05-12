@@ -25,7 +25,7 @@ export default function TeamName({team, user, isLink=true}:TeamName) {
     );
 
     if (isLink) {
-        return <Link href={'team/' + team.id}><a>{label}</a></Link>
+        return <Link href={'/team/' + team.id}><a>{label}</a></Link>
     } else {
         return label;
     }

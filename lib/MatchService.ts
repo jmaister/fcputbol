@@ -24,6 +24,26 @@ export async function saveMatch(match:Match, matchResult:MatchResult): Promise<M
 
             match.resultHome = matchResult.score[0];
             match.resultAway = matchResult.score[1];
+            if (match.resultHome > match.resultAway) {
+                match.homePoints = 3;
+                match.awayPoints = 0;
+                match.homeWin = true;
+                match.draw = false;
+                match.awayWin = false;
+            } else if (match.resultHome === match.resultAway) {
+                match.homePoints = 1;
+                match.awayPoints = 1;
+                match.homeWin = false;
+                match.draw = true;
+                match.awayWin = false;
+            } else if (match.resultHome < match.resultAway) {
+                match.homePoints = 0;
+                match.awayPoints = 3;
+                match.homeWin = false;
+                match.draw = false;
+                match.awayWin = true;
+            }
+
             match.stepsCount = matchResult.steps.length;
             match.playDate = moment().toDate();
             match.status = MatchStatus.FINISHED;

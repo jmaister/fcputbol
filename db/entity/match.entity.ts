@@ -68,6 +68,18 @@ export class Match {
     resultHome: number;
     @Column({ type: 'int', nullable: true })
     resultAway: number;
+
+    @Column({ type: 'int', nullable: true })
+    homePoints: number;
+    @Column({ type: 'int', nullable: true })
+    awayPoints: number;
+
+    @Column({ type: 'boolean', nullable: true })
+    homeWin: boolean;
+    @Column({ type: 'boolean', nullable: true })
+    awayWin: boolean;
+    @Column({ type: 'boolean', nullable: true })
+    draw: boolean;
 }
 
 
