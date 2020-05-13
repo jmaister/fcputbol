@@ -2,13 +2,14 @@ import { ConnectionManager, Connection, EntityManager, getConnectionManager, cre
 
 import ormconfig from '../ormconfig.json';
 
+import { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
 import { User } from './entity/user.entity';
 import { Team } from './entity/team.entity';
 import { Player } from './entity/player.entity';
 import { MatchStep, Match } from "./entity/match.entity";
 import { Lineup } from "./entity/lineup.entity";
-import { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
 import { League } from "./entity/league.entity";
+import { Classification } from "./entity/classification.entity";
 
 const databaseOptions = ({
     ...ormconfig,
@@ -20,6 +21,7 @@ const databaseOptions = ({
         MatchStep,
         Lineup,
         League,
+        Classification,
     ]
 });
 

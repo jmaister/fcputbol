@@ -46,7 +46,7 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                             <TableCell>{moment(match.matchDate).calendar()}</TableCell>
                             <TableCell><MatchStatusChip status={match.status} /></TableCell>
                             <TableCell>{match.status === MatchStatus.FINISHED ?
-                                <Link href={'matchresult/' + match.id}><a>Ver partido</a></Link>
+                                <Link href={'/matchresult/' + match.id}><a>Ver partido</a></Link>
                                 :null}
                             </TableCell>
                         </TableRow>

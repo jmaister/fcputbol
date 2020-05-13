@@ -6,7 +6,7 @@ const Home = () => {
 
     return (
         <Layout>
-            <h1>FC Púlbol</h1>
+            <h1>FC Pútbol</h1>
 
             <p>Juego inspirado en el mítico PC Fútbol</p>
 

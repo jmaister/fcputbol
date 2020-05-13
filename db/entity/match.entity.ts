@@ -31,6 +31,7 @@ export class Match {
     @CreateDateColumn()
     createdDate: Date;
 
+    // Expected date to play
     @Column({ type: 'datetime' })
     matchDate: Date;
 
@@ -55,6 +56,7 @@ export class Match {
 
     // Fields to set on FINISHED
 
+    // Date when the match is processed
     @Column({ type: 'datetime', nullable: true })
     playDate: Date;
 
@@ -68,6 +70,18 @@ export class Match {
     resultHome: number;
     @Column({ type: 'int', nullable: true })
     resultAway: number;
+
+    @Column({ type: 'int', nullable: true })
+    homePoints: number;
+    @Column({ type: 'int', nullable: true })
+    awayPoints: number;
+
+    @Column({ type: 'boolean', nullable: true })
+    homeWin: boolean;
+    @Column({ type: 'boolean', nullable: true })
+    awayWin: boolean;
+    @Column({ type: 'boolean', nullable: true })
+    draw: boolean;
 }
 
 
