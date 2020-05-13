@@ -12,6 +12,7 @@ import {
 import { Team } from './team.entity';
 import { User } from './user.entity';
 import { Match } from './match.entity';
+import { Classification } from './classification.entity';
 
 export enum LeagueStatus {
     ORGANIZING  = "ORGANIZING",
@@ -37,6 +38,9 @@ export class League {
     @ManyToMany(type => Team)
     @JoinTable()
     teams: Team[];
+
+    @OneToMany(type => Classification, c => c.league)
+    classifications: Classification[];
 
     @Column({
         type: "varchar",

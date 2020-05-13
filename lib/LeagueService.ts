@@ -7,10 +7,12 @@ import { tournament, MatchPair } from './Tournament';
 import { Match, MatchStatus } from 'db/entity/match.entity';
 import moment from 'moment';
 import { match } from 'assert';
+import { Classification } from 'db/entity/classification.entity';
 
 export async function createLeague({ name, yourteam, userId }) {
     const db = await new Database().getManager();
 
+    // TODO: transaction
     // TODO: try to avoid a team select
     const teamRepository = db.getRepository(Team);
     const adminTeam = await teamRepository.findOne(yourteam);
@@ -33,6 +35,7 @@ export async function findLeague(id:string):Promise<League> {
             "teams",
             "teams.user",
             "admin",
+            "classifications", "classifications.team", "classifications.team.user",
             "matches",
             "matches.home", "matches.home.user",
             "matches.away", "matches.away.user",
@@ -100,11 +103,13 @@ export async function enterLeague({ yourteam, code, userId }) {
     }
 }
 
-export async function startLeague({id, userId}) {
+export async function startLeague({id, userId}):Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     const matchRepository = db.getRepository(Match);
+    const classificationRepository = db.getRepository(Classification);
 
+    // TODO: transaction
     try {
         const league = await leagueRepository.findOne(id, {relations: [
             "admin",
@@ -147,11 +152,24 @@ export async function startLeague({id, userId}) {
         league.status = LeagueStatus.ONGOING;
         league.currentRound = 0;
         league.roundCount = rounds.length;
-        return leagueRepository.save(league);
+        const createdLeague =  await leagueRepository.save(league);
+
+        // Create classification
+        for (let i=0; i<teams.length; i++) {
+            await classificationRepository.save({
+                league,
+                team: teams[i],
+                points: 0,
+                goalsScored: 0,
+                goalsAgainst: 0,
+            });
+        }
+
+        return league;
 
     } catch (error) {
-        console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
-        throw new Error("Find leagues error:" + error);
+        console.log("_*_*_*_*_*_*_ startLeague error:", error)
+        throw new Error("startLeague error:" + error);
     }
 }
 

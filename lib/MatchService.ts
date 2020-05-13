@@ -3,6 +3,9 @@ import { MatchStep, Match, MatchStatus } from '../db/entity/match.entity';
 import Database from 'db/database';
 import moment from 'moment';
 import { MatchResult, play } from './play/probs';
+import { Team } from 'db/entity/team.entity';
+import { League } from 'db/entity/league.entity';
+import { Classification } from 'db/entity/classification.entity';
 
 
 export async function playMatch(match:Match): Promise<Match> {
@@ -55,6 +58,31 @@ export async function saveMatch(match:Match, matchResult:MatchResult): Promise<M
                 s.match = savedMatch;
                 await matchStepRepository.save(s);
             }
+
+            // Update classification
+            // Home
+            await transactionalEntityManager
+                .createQueryBuilder()
+                .update(Classification)
+                .set({
+                    points: () => "points + " + match.homePoints,
+                    goalsScored: () => "goalsScored + " + match.resultHome,
+                    goalsAgainst: () => "goalsAgainst + " + match.resultAway,
+                })
+                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.league.id, teamId: match.home.id })
+                .execute();
+            // Away
+            await transactionalEntityManager
+                .createQueryBuilder()
+                .update(Classification)
+                .set({
+                    points: () => "points + " + match.awayPoints,
+                    goalsScored: () => "goalsScored + " + match.resultAway,
+                    goalsAgainst: () => "goalsAgainst + " + match.resultHome,
+                })
+                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.league.id, teamId: match.away.id })
+                .execute();
+
             return savedMatch;
         });
         return matchToReturn;
@@ -95,6 +123,7 @@ export async function findMatchesByStatus(now:Date, status:MatchStatus):Promise<
     const db = await new Database().getManager();
     const matchRepository = db.getRepository(Match);
     return matchRepository.createQueryBuilder("match")
+        .leftJoinAndSelect("match.league", "league")
         .leftJoinAndSelect("match.home", "home")
         .leftJoinAndSelect("home.user", "homeUser")
         .leftJoinAndSelect("home.lineup", "homeLineup").leftJoinAndSelect("homeLineup.players", "homePlayers")

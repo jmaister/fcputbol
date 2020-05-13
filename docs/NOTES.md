@@ -68,7 +68,7 @@ delete from match_step;
 delete from match where leagueId = 8;
 update league set status = "ORGANIZING" where id = 8;
 
-update match set matchDate = date('now', '-1 day') where leagueId = 8;
+update match set matchDate = date('now', '-2 day'), status="SCHEDULED" where leagueId = 8;
 
 # calculate classification
 
@@ -81,6 +81,20 @@ from match
 where leagueId = 8
 and status = "FINISHED"
 and (homeId = 3 or awayId = 3);
+
+export async function calculateClassification(team:Team, league:League):Promise<Match[]> {
+    const db = await new Database().getManager();
+    const matchRepository = db.getRepository(Match);
+    return matchRepository.createQueryBuilder("match")
+        .select(`
+            SUM(CASE WHEN match.home.id=:teamId THEN match.homePoints ELSE match.awayPoints END) as points,
+            SUM(CASE WHEN match.home.id=:teamId THEN match.resultHome ELSE match.resultAway END) as scored,
+            SUM(CASE WHEN match.away.id=:teamId THEN match.resultHome ELSE match.resultAway END) as against
+        `)
+        .where("match.league.id = :leagueId", {leagueId: league.id})
+        .andWhere("match.home.id = :teamId or match.away.id = :teamId", {teamId: team.id})
+        .getRawOne();
+}
 
 
 # Moment.js

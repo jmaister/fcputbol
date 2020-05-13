@@ -23,9 +23,6 @@ export class Classification {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'datetime' })
-    matchDate: Date;
-
     @ManyToOne(type => League)
     league: League;
 
@@ -43,4 +40,5 @@ export class Classification {
     @Column('int')
     goalsAgainst: number;
 
+    //TODO: match wins, draws, loses
 }

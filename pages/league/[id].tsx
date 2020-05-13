@@ -16,6 +16,8 @@ import { findUser } from 'lib/UserService';
 import LeagueStatusChip from 'components/league/LeagueStatusChip';
 import MatchesTable from 'components/match/MatchesTable';
 import { withAuthSSP } from 'lib/withAuth';
+import { Classification } from 'db/entity/classification.entity';
+import ClassificationTable from 'components/league/ClassificationTable';
 
 interface LeaguePageParams {
     league: League
@@ -83,21 +85,29 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             {isOngoing ? <p>La liga ya está en marcha. No se pueden añadir más jugadores.</p> : null}
             {isFinished ? <p>La liga ya ha finalizado.</p> : null}
 
-            <h2>Equipos participando</h2>
-            <List>
-            {league.teams.map(t => (
-                <ListItem key={t.id}>
-                    <TeamName team={t} />
-                </ListItem>
-            ))}
-            </List>
+            {isOrganizing ?
+            <>
+                <h2>Equipos participando</h2>
+                <List>
+                {league.teams.map(t => (
+                    <ListItem key={t.id}>
+                        <TeamName team={t} />
+                    </ListItem>
+                ))}
+                </List>
+                </>
+            : null}
 
             {isOngoing || isFinished ?
             <>
+                <h2>Clasificación</h2>
+                <ClassificationTable classifications={league.classifications} />
+
                 <h2>Partidos</h2>
                 <MatchesTable matches={league.matches} />
             </>
             : null}
+
         </Layout>
     )
 }

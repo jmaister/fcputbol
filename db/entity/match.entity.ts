@@ -31,6 +31,7 @@ export class Match {
     @CreateDateColumn()
     createdDate: Date;
 
+    // Expected date to play
     @Column({ type: 'datetime' })
     matchDate: Date;
 
@@ -55,6 +56,7 @@ export class Match {
 
     // Fields to set on FINISHED
 
+    // Date when the match is processed
     @Column({ type: 'datetime', nullable: true })
     playDate: Date;
 
