@@ -1,18 +1,15 @@
 import { getSession } from 'lib/iron';
-import { createTeam } from 'lib/TeamService';
+import { saveLineup } from 'lib/TeamService';
 
-export default async function teams(req, res) {
+export default async function savelineup(req, res) {
     const session = await getSession(req);
 
     if (req.method === 'POST') {
         try {
-            const response = await createTeam({
-                ...req.body,
-                userId: session.id
-            });
+            const userId = session.id;
+            const response = await saveLineup(req.body.teamId, req.body.playerIds, userId);
             res.status(200).json({ ok: true, data: response });
         } catch (error) {
-            console.log("Create team error api", error);
             res.status(400).json({ ok: false, error: error });
         };
     } else {

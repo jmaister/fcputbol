@@ -1,23 +1,24 @@
 
 import { useState } from 'react'
+import Router from 'next/router'
 
-import Layout from 'components/layout';
-
-import { League, LeagueStatus } from 'db/entity/league.entity';
-import TeamName from 'components/team/TeamName';
-import { findLeague } from 'lib/LeagueService';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Button from '@material-ui/core/Button';
+
+import { League, LeagueStatus } from 'db/entity/league.entity';
 import { User } from 'db/entity/user.entity';
-import Router from 'next/router'
-import { getSession } from 'lib/iron';
-import { findUser } from 'lib/UserService';
+
+import Layout from 'components/layout';
+import TeamName from 'components/team/TeamName';
+import ClassificationTable from 'components/league/ClassificationTable';
 import LeagueStatusChip from 'components/league/LeagueStatusChip';
 import MatchesTable from 'components/match/MatchesTable';
+
+import { findLeague } from 'lib/LeagueService';
+import { getSession } from 'lib/iron';
+import { findUser } from 'lib/UserService';
 import { withAuthSSP } from 'lib/withAuth';
-import { Classification } from 'db/entity/classification.entity';
-import ClassificationTable from 'components/league/ClassificationTable';
 
 interface LeaguePageParams {
     league: League

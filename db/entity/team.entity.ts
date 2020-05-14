@@ -17,9 +17,7 @@ export class Team {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('varchar', {
-        unique: true
-    })
+    @Column('varchar')
     name: string;
 
     @Column('varchar')
@@ -31,8 +29,8 @@ export class Team {
     @OneToMany(type => Player, player => player.team)
     players: Player[];
 
-    @OneToOne(type => Lineup, lineup => lineup.team)
-    lineup: Lineup;
+    @ManyToOne(type => Lineup)
+    currentLineup: Lineup;
 
 }
 

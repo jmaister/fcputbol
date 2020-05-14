@@ -9,6 +9,10 @@ https://www.youtube.com/watch?v=QABkof8ygzI
 
 https://flaviocopes.com/nextjs-api-routes/
 
+# TypeORM
+
+https://github.com/typeorm/typeorm/tree/master/docs
+
 # Formik
 
 https://jaredpalmer.com/formik/docs/overview

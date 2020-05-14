@@ -18,10 +18,6 @@ export class Lineup {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(type => Team, team => team.lineup)
-    @JoinColumn()
-    team: Team;
-
     @ManyToMany(type=> Player)
     @JoinTable()
     players: Player[];

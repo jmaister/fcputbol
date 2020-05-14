@@ -20,7 +20,7 @@ export default function TeamPage({team}: TeamPageParams) {
         <Layout>
             <h1>Equipo: <b>{team.name}</b></h1>
 
-            <PlayersTable players={team.players}></PlayersTable>
+            <PlayersTable team={team} players={team.players} lineup={team.currentLineup}></PlayersTable>
         </Layout>
     )
 }

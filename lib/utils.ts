@@ -65,3 +65,18 @@ export function generateCode(count:number): string {
     }
     return str;
 }
+
+export function findById<T>(arr:T[], id:number): T {
+    return arr.find(e => {
+        return e['id'] === id;
+    });
+};
+
+export function containsId<T>(arr:T[], id:number): boolean {
+    const found = findById(arr, id);
+    return !!found;
+};
+
+export function containsElement<T>(arr:T[], id:T): boolean {
+    return !!arr.find(e => e === id);
+};

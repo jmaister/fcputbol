@@ -3,7 +3,6 @@ import Router from 'next/router';
 
 import { useState } from 'react';
 
-import { useUser } from '../lib/hooks';
 import Layout from '../components/layout';
 
 import { Formik, Field } from 'formik';
@@ -18,7 +17,6 @@ import { TextField } from 'formik-material-ui';
 import {Team} from '../db/entity/team.entity';
 
 export default function CreateTeam({}) {
-    const user = useUser();
     const [errorMsg, setErrorMsg] = useState('');
 
     const team = {
@@ -53,17 +51,17 @@ export default function CreateTeam({}) {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(values),
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            console.log("fetch response data", data);
-                            if (data.ok) {
-                                setErrorMsg(null);
-                                Router.push('/teams');
-                            } else {
-                                actions.setSubmitting(false);
-                                setErrorMsg(JSON.stringify(data.error.message));
-                            }
-                        });
+                    .then((response) => response.json())
+                    .then(response => {
+                        console.log("fetch response data", response);
+                        if (response.ok) {
+                            setErrorMsg(null);
+                            Router.push('/teams');
+                        } else {
+                            actions.setSubmitting(false);
+                            setErrorMsg(JSON.stringify(response.error));
+                        }
+                    });
                 }}
             >{({
                 values,
@@ -75,7 +73,6 @@ export default function CreateTeam({}) {
                 errors
             }) => (
                     <form onSubmit={handleSubmit} method="POST">
-                        <div>{JSON.stringify(errors)}</div>
                         <Field
                             component={TextField}
                             id="name"

@@ -4,87 +4,105 @@ import { Team } from '../db/entity/team.entity';
 import { Lineup } from '../db/entity/lineup.entity';
 import { Player, Positions } from '../db/entity/player.entity';
 
-import RandomData from './random-data'
-
-import {randomIntInterval, sample} from './utils';
+import {randomIntInterval, sample, containsElement} from './utils';
 import Database from 'db/database';
+import { createTeamPlayers, createRandomLineup } from './playerUtils';
 
-export async function createTeam({ name, jersey_color, username }) {
-    // TODO: transaction
+export async function createTeam({ name, jersey_color, userId }) {
 
     const db = await new Database().getManager();
+    return await db.transaction(async (transactionalEntityManager):Promise<Team> => {
+        const lineupRepository = transactionalEntityManager.getRepository(Lineup);
+        const userRepository = transactionalEntityManager.getRepository(User);
+        const teamRepository = transactionalEntityManager.getRepository(Team);
+        const playerRepository = transactionalEntityManager.getRepository(Player);
 
-    const userRepository = db.getRepository(User);
-    const user = await userRepository.findOne({ username: username });
+        try {
+            const user = await userRepository.findOne(userId);
 
-    const teamRepository = db.getRepository(Team);
-    const team = await teamRepository.save({
-        name: name,
-        jersey_color,
-        user: user
-    });
+            // Create team
+            const team = await teamRepository.save({
+                name: name,
+                jersey_color,
+                user: user
+            });
 
-    // TODO: create and assign team players
-    const quantities = [3, 5, 5, 5];
-    const positions = [Positions.gk, Positions.def, Positions.mid, Positions.fw];
-    const avg = 25;
-    const std = 5;
+            // Create players
+            const players = createTeamPlayers(team);
+            const savedPlayers:Player[] = [];
+            for (let i=0; i<players.length; i++) {
+                const savedPlayer:Player = await playerRepository.save(players[i]);
+                savedPlayers.push(savedPlayer);
+            }
 
-    const playerRepository = db.getRepository(Player);
+            // Save default lineup
+            const lineupPlayers = createRandomLineup(savedPlayers);
+            const currentLineup = await lineupRepository.save({
+                players: lineupPlayers,
+            });
 
-    const players = {
-        [Positions.gk]: [],
-        [Positions.def]: [],
-        [Positions.mid]: [],
-        [Positions.fw]: [],
-    };
-    // Create players
-    let num = 1;
-    for (let type = 0; type < quantities.length; type++) {
-        const q = quantities[type];
-        for (let idx = 0; idx < q; idx++) {
-            const pos = positions[type];
-            const playerData = {
-                name: RandomData.getName(),
-                surname: RandomData.getSurname(),
-                num: num,
-                position: pos,
-                save: randomIntInterval(avg-std, avg+std),
-                defense: randomIntInterval(avg-std, avg+std),
-                pass: randomIntInterval(avg-std, avg+std),
-                dribble: randomIntInterval(avg-std, avg+std),
-                shot: randomIntInterval(avg-std, avg+std),
-                team: team
-            };
-            const player = await playerRepository.save(playerData);
-            players[pos].push(player);
-            num++;
+            // Set current lineup
+            team.currentLineup = currentLineup;
+            await teamRepository.save(team);
+
+            // Avoid circular reference
+            return teamRepository.findOne(team.id);
+        } catch (error) {
+            console.log("create team error: ", error);
+            throw new Error("create team error: " + error);
         }
-    }
-
-    // Create default lineup
-    const lineupPlayers = []
-        .concat(sample(players[Positions.gk], 1))
-        .concat(sample(players[Positions.def], 3))
-        .concat(sample(players[Positions.mid], 4))
-        .concat(sample(players[Positions.fw], 3));
-
-    const lineupRepository = db.getRepository(Lineup);
-    await lineupRepository.save({
-        team: team,
-        players: lineupPlayers,
     });
-
-    return team;
 }
 
 export async function findTeam(id:string):Promise<Team> {
     const db = await new Database().getManager();
     const teamRepository = db.getRepository(Team);
     try {
-        return teamRepository.findOne(id, {relations: ["players", "lineup", "lineup.players"]});
+        return teamRepository.findOne(id, {relations: ["players", "currentLineup", "currentLineup.players"]});
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findTeam error:", error)
         throw new Error("Team not found:" + error);
+    }
+}
+
+
+
+export async function saveLineup(teamId:string, playerIds:number[], userId:number):Promise<Lineup> {
+    const db = await new Database().getManager();
+    const lineupRepository = db.getRepository(Lineup);
+    const teamRepository = db.getRepository(Team);
+
+    console.log("saveLineup", teamId, playerIds, userId);
+
+    // TODO: transaction
+    try {
+        const team = await teamRepository.findOne(teamId, {relations: ["user", "players"]});
+        if (team.user.id != userId) {
+            throw new Error("Este no es tu equipo.");
+        }
+
+        console.log("saveLineup team players", team.players);
+
+        const lineupPlayers = team.players.filter(p => containsElement(playerIds, p.id));
+        console.log("saveLineup found playes", lineupPlayers.length, lineupPlayers);
+
+        // TODO: utilizar la misma función de validación
+        if (lineupPlayers.length != 11) {
+            throw new Error("Debe seleccionar 11 jugadores...");
+        }
+
+        const lineup = await lineupRepository.save({
+            players: lineupPlayers
+        });
+
+        // Assign to team
+        team.currentLineup = lineup;
+        teamRepository.save(team);
+
+        return lineup;
+
+    } catch (error) {
+        console.log("_*_*_*_*_*_*_ saveLineup error:", error)
+        throw new Error("saveLineup error:" + error);
     }
 }

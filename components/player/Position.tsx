@@ -9,13 +9,13 @@ export default function Position({pos}:PositionParams) {
 
     let name = "UNK";
     if (pos === Positions.gk) {
-        name = "POR";
+        name = "POR 🥅";
     } else if (pos === Positions.def) {
-        name = "DEF";
+        name = "DEF 🪓";
     } else if (pos === Positions.mid) {
-        name = "MED";
+        name = "MED 👨‍🔬";
     } else if (pos === Positions.fw) {
-        name = "DEL";
+        name = "DEL ⚽";
     }
 
     return (
