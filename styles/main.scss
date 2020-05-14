@@ -39,3 +39,13 @@ a {
         margin-right: $spacing;
     }
 }
+
+// backdrop
+.MuiBackdrop-root.backdrop {
+    z-index: 1;
+    color: white;
+
+    & .backdrop-text {
+        margin-left: 10px;
+    }
+}
