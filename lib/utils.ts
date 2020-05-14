@@ -68,14 +68,12 @@ export function generateCode(count:number): string {
 
 export function findById<T>(arr:T[], id:number): T {
     return arr.find(e => {
-        console.log("findbyid", e['id'], id);
         return e['id'] === id;
     });
 };
 
 export function containsId<T>(arr:T[], id:number): boolean {
     const found = findById(arr, id);
-    console.log("contains", id, found);
     return !!found;
 };
 
