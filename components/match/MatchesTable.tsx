@@ -43,7 +43,7 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>
-                            <TableCell>{moment(match.matchDate).calendar()}</TableCell>
+                            <TableCell>{moment(match.round.roundDate).calendar()}</TableCell>
                             <TableCell><MatchStatusChip status={match.status} /></TableCell>
                             <TableCell>{match.status === MatchStatus.FINISHED ?
                                 <Link href={'/matchresult/' + match.id}><a>Ver partido</a></Link>

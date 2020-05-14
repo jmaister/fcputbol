@@ -10,7 +10,7 @@ import MatchesTable from 'components/match/MatchesTable';
 import { getSession } from 'lib/iron';
 import { User } from 'db/entity/user.entity';
 import { Match } from 'db/entity/match.entity';
-import { findMatches } from 'lib/MatchService';
+import { findMatchesByUser } from 'lib/MatchService';
 
 
 interface MatchPageParams {
@@ -79,7 +79,7 @@ export async function getServerSideProps({req, res}) {
     // Hack
     user = JSON.parse(JSON.stringify(user));
 
-    let matches = await findMatches(session.id);
+    let matches = await findMatchesByUser(session.id);
     // Hack
     matches = JSON.parse(JSON.stringify(matches));
 

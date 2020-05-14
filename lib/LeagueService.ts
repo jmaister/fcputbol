@@ -1,13 +1,14 @@
+import moment from 'moment';
 
 import Database from 'db/database';
 import { League, LeagueStatus } from 'db/entity/league.entity';
 import { Team } from 'db/entity/team.entity';
+import { Match, MatchStatus } from 'db/entity/match.entity';
+import { Classification } from 'db/entity/classification.entity';
+import { Round, RoundStatus } from 'db/entity/round.entity';
+
 import { generateCode } from './utils';
 import { tournament, MatchPair } from './Tournament';
-import { Match, MatchStatus } from 'db/entity/match.entity';
-import moment from 'moment';
-import { match } from 'assert';
-import { Classification } from 'db/entity/classification.entity';
 
 export async function createLeague({ name, yourteam, userId }) {
     const db = await new Database().getManager();
@@ -36,9 +37,10 @@ export async function findLeague(id:string):Promise<League> {
             "teams.user",
             "admin",
             "classifications", "classifications.team", "classifications.team.user",
-            "matches",
-            "matches.home", "matches.home.user",
-            "matches.away", "matches.away.user",
+            "rounds",
+            "rounds.matches",
+            "rounds.matches.home", "rounds.matches.home.user",
+            "rounds.matches.away", "rounds.matches.away.user",
         ]});
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findLeague error:", error)
@@ -106,6 +108,7 @@ export async function enterLeague({ yourteam, code, userId }) {
 export async function startLeague({id, userId}):Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
+    const roundRepository = db.getRepository(Round);
     const matchRepository = db.getRepository(Match);
     const classificationRepository = db.getRepository(Classification);
 
@@ -125,33 +128,40 @@ export async function startLeague({id, userId}):Promise<League> {
         // Calculate matches
         const teams = league.teams;
         const n = league.teams.length;
-        const rounds:MatchPair[][] = tournament(n);
+        const calculatedRounds:MatchPair[][] = tournament(n);
 
         // Matches start next day at 12:00:00
-        let matchDate = moment().utc().hour(12).minute(0).second(0).add(1, "day");
+        let roundDate = moment().utc().hour(12).minute(0).second(0).add(1, "day");
 
-        for (let r=0; r < rounds.length; r++) {
-            const round = rounds[r];
-            for (let p=0; p < round.length; p++) {
-                const pair = round[p];
+        for (let r=0; r < calculatedRounds.length; r++) {
+            const calculatedRound = calculatedRounds[r];
+
+            const round = await roundRepository.save({
+                league,
+                roundNumber: r,
+                roundCount: calculatedRounds.length,
+                roundDate: roundDate.toISOString(),
+                status: RoundStatus.SCHEDULED,
+            });
+
+            for (let p=0; p < calculatedRound.length; p++) {
+                const pair = calculatedRound[p];
                 // TODO: calculate team date + time
-                matchRepository.save({
-                    league,
+                await matchRepository.save({
                     home: teams[pair.home-1],
                     away: teams[pair.away-1],
                     status: MatchStatus.SCHEDULED,
-                    round: r,
-                    matchDate: matchDate.toISOString()
+                    round: round,
                 });
             }
             // Calcualte next round date
-            matchDate = matchDate.add(1, "day");
+            roundDate = roundDate.add(1, "day");
         }
 
         // Status and Save
         league.status = LeagueStatus.ONGOING;
         league.currentRound = 0;
-        league.roundCount = rounds.length;
+        league.roundCount = calculatedRounds.length;
         const createdLeague =  await leagueRepository.save(league);
 
         // Create classification

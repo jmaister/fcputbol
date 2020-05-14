@@ -3,8 +3,6 @@ import { MatchStep, Match, MatchStatus } from '../db/entity/match.entity';
 import Database from 'db/database';
 import moment from 'moment';
 import { MatchResult, play } from './play/probs';
-import { Team } from 'db/entity/team.entity';
-import { League } from 'db/entity/league.entity';
 import { Classification } from 'db/entity/classification.entity';
 
 
@@ -69,7 +67,7 @@ export async function saveMatch(match:Match, matchResult:MatchResult): Promise<M
                     goalsScored: () => "goalsScored + " + match.resultHome,
                     goalsAgainst: () => "goalsAgainst + " + match.resultAway,
                 })
-                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.league.id, teamId: match.home.id })
+                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.round.league.id, teamId: match.home.id })
                 .execute();
             // Away
             await transactionalEntityManager
@@ -80,7 +78,7 @@ export async function saveMatch(match:Match, matchResult:MatchResult): Promise<M
                     goalsScored: () => "goalsScored + " + match.resultAway,
                     goalsAgainst: () => "goalsAgainst + " + match.resultHome,
                 })
-                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.league.id, teamId: match.away.id })
+                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.round.league.id, teamId: match.away.id })
                 .execute();
 
             return savedMatch;
@@ -107,7 +105,7 @@ export async function findMatch(id:string):Promise<Match> {
     }
 }
 
-export async function findMatches(userId:string):Promise<Match[]> {
+export async function findMatchesByUser(userId:string):Promise<Match[]> {
     const db = await new Database().getManager();
     const matchRepository = db.getRepository(Match);
     return matchRepository.createQueryBuilder("match")
@@ -119,18 +117,18 @@ export async function findMatches(userId:string):Promise<Match[]> {
         .getMany();
 }
 
-export async function findMatchesByStatus(now:Date, status:MatchStatus):Promise<Match[]> {
+export async function findMatchToPlay(matchId:number):Promise<Match> {
     const db = await new Database().getManager();
     const matchRepository = db.getRepository(Match);
     return matchRepository.createQueryBuilder("match")
-        .leftJoinAndSelect("match.league", "league")
+        .leftJoinAndSelect("match.round", "round")
+        .leftJoinAndSelect("round.league", "league")
         .leftJoinAndSelect("match.home", "home")
         .leftJoinAndSelect("home.user", "homeUser")
         .leftJoinAndSelect("home.currentLineup", "homeLineup").leftJoinAndSelect("homeLineup.players", "homePlayers")
         .leftJoinAndSelect("match.away", "away")
         .leftJoinAndSelect("away.user", "awayUser")
         .leftJoinAndSelect("away.currentLineup", "awayLineup").leftJoinAndSelect("awayLineup.players", "awayPlayers")
-        .where("match.matchDate < :now", {now: now.toISOString()})
-        .andWhere("match.status = :status", {status})
-        .getMany();
+        .where("match.id < :matchId", {matchId})
+        .getOne();
 }

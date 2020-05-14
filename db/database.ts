@@ -10,6 +10,7 @@ import { MatchStep, Match } from "./entity/match.entity";
 import { Lineup } from "./entity/lineup.entity";
 import { League } from "./entity/league.entity";
 import { Classification } from "./entity/classification.entity";
+import { Round } from "./entity/round.entity";
 
 const databaseOptions = ({
     ...ormconfig,
@@ -21,6 +22,7 @@ const databaseOptions = ({
         MatchStep,
         Lineup,
         League,
+        Round,
         Classification,
     ]
 });

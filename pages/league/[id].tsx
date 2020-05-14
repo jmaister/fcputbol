@@ -104,8 +104,8 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 <h2>Clasificación</h2>
                 <ClassificationTable classifications={league.classifications} />
 
-                <h2>Partidos</h2>
-                <MatchesTable matches={league.matches} />
+                <h2>Partidos //TODO: add pagination for rounds</h2>
+                <MatchesTable matches={league.rounds[league.currentRound].matches} />
             </>
             : null}
 
@@ -121,8 +121,8 @@ export const getServerSideProps = withAuthSSP(async (context) => {
     league = JSON.parse(JSON.stringify(league));
 
     // Sort matches
-    league.matches.sort((a, b) => {
-        const df = a.round - b.round;
+    league.rounds.sort((a, b) => {
+        const df = a.roundNumber - b.roundNumber;
         if (df === 0) {
             return a.id - b.id;
         }

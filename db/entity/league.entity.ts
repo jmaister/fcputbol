@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 import { Team } from './team.entity';
 import { User } from './user.entity';
-import { Match } from './match.entity';
 import { Classification } from './classification.entity';
+import { Round } from './round.entity';
 
 export enum LeagueStatus {
     ORGANIZING  = "ORGANIZING",
@@ -48,8 +48,8 @@ export class League {
     })
     status: LeagueStatus;
 
-    @OneToMany(type => Match, m => m.league)
-    matches: Match[]
+    @OneToMany(type => Round, r => r.league)
+    rounds: Round[]
 
     @Column("int", {nullable: true})
     currentRound: number;
