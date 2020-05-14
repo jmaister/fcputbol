@@ -12,8 +12,8 @@ export async function playMatch(match:Match): Promise<Match> {
     // Play a match
     const result: MatchResult = play(match.home, match.away);
 
-    match.homeLineup = match.home.lineup;
-    match.awayLineup = match.away.lineup;
+    match.homeLineup = match.home.currentLineup;
+    match.awayLineup = match.away.currentLineup;
 
     return saveMatch(match, result);
 }

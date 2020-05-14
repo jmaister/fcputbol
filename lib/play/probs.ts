@@ -23,7 +23,7 @@ function teamToFormation(team:Team) : Formation {
         fw: []
     } as Formation;
 
-    const lineup = team.lineup;
+    const lineup = team.currentLineup;
     for (let i=0; i < lineup.players.length; i++) {
         let pl = lineup.players[i];
         formation[pl.position].push(pl);

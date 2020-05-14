@@ -8,10 +8,11 @@ export default async function teams(req, res) {
         try {
             const response = await createTeam({
                 ...req.body,
-                username: session.username
+                userId: session.id
             });
-            res.status(200).json({ ok: true, response });
+            res.status(200).json({ ok: true, data: response });
         } catch (error) {
+            console.log("Create team error api", error);
             res.status(400).json({ ok: false, error: error });
         };
     } else {

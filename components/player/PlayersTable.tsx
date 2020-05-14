@@ -8,13 +8,18 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
-import { Player } from '../../db/entity/player.entity';
+import { Player } from 'db/entity/player.entity';
 import { Lineup } from 'db/entity/lineup.entity';
+import { Team } from 'db/entity/team.entity';
 
 import Position from './Position';
+import { findById, containsId } from 'lib/utils';
 
 interface PlayersTableParams {
+    team: Team
     players: Player[]
     lineup: Lineup
 }
@@ -23,39 +28,88 @@ const colorFn = (power) => {
     return "power-" + Math.floor((power / 10) + 1);
 };
 
-const findById = (arr:Player[], id:number): Player => {
-    return arr.find(e => e.id === id);
-};
+interface Message {
+    type: string
+    msg: string
+}
 
-const containsId = (arr:Player[], id:number): boolean => {
-    const found = findById(arr, id);
-    return found != null;
-};
+interface ValidationResult {
+    messages: Message[]
+    hasErrors: boolean
+}
 
-export default function PlayersTable({ players, lineup }: PlayersTableParams) {
+const validateLineup = (players:Player[]):ValidationResult => {
+    let count = players.length;
+    const msgs = [];
+    if (count > 11) {
+        msgs.push({ type: "error", msg: "Demasiados jugadores alineados, debes tener 11."});
+    } else if (count < 11) {
+        msgs.push({ type: "error", msg: "Pocos jugadores alineados, debes tener 11."});
+    } else {
+        msgs.push({ type: "primary", msg: "11 jugadores selecionados."});
+    }
+
+    // TODO: validate only 1 GK
+    // TODO: validate at least one of each type
+
+    const hasErrors = msgs.filter(m => m.type === "error").length > 0;
+
+    return {
+        messages:msgs,
+        hasErrors
+    };
+}
+
+export default function PlayersTable({ team, players, lineup }: PlayersTableParams) {
     const [lineupPlayers, setLineupPlayers] = useState(lineup.players);
     const [selectedCount, setSelectedCount] = useState(11);
     const [messages, setMessages] = useState([]);
+    const [hasErrors, setHasErrors] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
-        let count = lineupPlayers.length;
-        setSelectedCount(count);
-        const msgs = [];
-        if (count > 11) {
-            msgs.push("Demasiados jugadores alineados, debes tener 11.");
-        } else if (count < 11) {
-            msgs.push("Pocos jugadores alineados, debes tener 11.")
-        }
-        setMessages(msgs);
+        setSelectedCount(lineupPlayers.length);
+        const result = validateLineup(lineupPlayers);
+        setMessages(result.messages);
+        setHasErrors(result.hasErrors);
     }, [lineupPlayers]);
 
-    const changeSelection = (id:number) => {
+    const saveLineup = async () => {
+        setIsLoading(true);
+
+        const body = {
+            teamId: team.id,
+            playerIds: lineupPlayers.map(p => p.id)
+        }
+        try {
+            const res = await fetch('/api/savelineup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            if (res.status === 200) {
+                const response = await res.json();
+                //Router.push('/matchresult/' + response.matchId);
+                // TODO: show saved is OK
+            } else {
+                setIsLoading(false);
+                throw new Error(await res.text())
+            }
+        } catch (error) {
+            setIsLoading(false);
+            console.error('An unexpected error happened occurred:', error);
+            setErrorMsg(error.message);
+        }
+    };
+
+    const changeSelection = (id:number, isPlayerSelected:boolean) => {
         console.log("click", id);
-        const found = containsId(lineupPlayers, id);
-        if (found) {
-            const newLineup = lineupPlayers.filter(lp => lp.id === id);
-            setLineupPlayers(newLineup);
+        if (isPlayerSelected) {
+            // Remove player from lineup
+            setLineupPlayers(lp => lp.filter(e => e.id !== id));
         } else {
+            // Add player to lineup
             const addedPlayer = findById(players, id);
             setLineupPlayers(lp => lp.concat([addedPlayer]));
         }
@@ -63,11 +117,6 @@ export default function PlayersTable({ players, lineup }: PlayersTableParams) {
 
     return (<>
         <h3>Jugadores en la alineación: {selectedCount}</h3>
-        {messages.length > 0 ?
-            <ul className="error">
-                {messages.map(m => <li>{m}</li>)}
-            </ul>
-        : null}
         <TableContainer component={Paper}>
             <Table className="players-table" size="small" aria-label="a dense table">
                 <TableHead>
@@ -86,7 +135,6 @@ export default function PlayersTable({ players, lineup }: PlayersTableParams) {
                 </TableHead>
                 <TableBody>
                     {players.map((player) => {
-                        // const isPlayerSelected = selectedPlayers[player.id];
                         const isPlayerSelected = containsId(lineupPlayers, player.id);
                         return <TableRow
                                 key={player.id}
@@ -95,9 +143,10 @@ export default function PlayersTable({ players, lineup }: PlayersTableParams) {
                             <TableCell>{player.id}</TableCell>
                             <TableCell>{player.num}</TableCell>
                             <TableCell padding="checkbox">
-                                <Checkbox
+                                <input type="checkbox"
                                     checked={isPlayerSelected}
-                                    onChange={() => changeSelection(player.id)}
+                                    disabled={isLoading}
+                                    onChange={() => changeSelection(player.id, isPlayerSelected)}
                                     />
                             </TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
@@ -112,5 +161,26 @@ export default function PlayersTable({ players, lineup }: PlayersTableParams) {
                 </TableBody>
             </Table>
         </TableContainer>
+        {messages.length > 0 ?
+            <ul>
+                {messages.map(m => <li><Typography color={m.type}>{m.msg}</Typography></li>)}
+            </ul>
+        : null}
+        {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
+        <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={saveLineup}
+            disabled={isLoading || hasErrors}>
+            Guardar alineación
+        </Button>
     </>);
 }
+
+/*
+                                <Checkbox
+                                    checked={isPlayerSelected}
+                                    onChange={() => changeSelection(player.id)}
+                                    />
+*/
