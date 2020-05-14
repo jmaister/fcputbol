@@ -50,14 +50,6 @@ export function createTeamPlayers(team:Team): Player[] {
     return players;
 }
 
-export function flattenPlayers(playersObject) {
-    let players = [];
-    allPositions.forEach(p => {
-        players = players.concat(playersObject[p]);
-    });
-    return players;
-}
-
 export function createRandomLineup(players:Player[]) {
     const sortedPlayers = {
         [Positions.gk]: [],

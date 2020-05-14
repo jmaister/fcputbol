@@ -126,10 +126,10 @@ export async function findMatchesByStatus(now:Date, status:MatchStatus):Promise<
         .leftJoinAndSelect("match.league", "league")
         .leftJoinAndSelect("match.home", "home")
         .leftJoinAndSelect("home.user", "homeUser")
-        .leftJoinAndSelect("home.lineup", "homeLineup").leftJoinAndSelect("homeLineup.players", "homePlayers")
+        .leftJoinAndSelect("home.currentLineup", "homeLineup").leftJoinAndSelect("homeLineup.players", "homePlayers")
         .leftJoinAndSelect("match.away", "away")
         .leftJoinAndSelect("away.user", "awayUser")
-        .leftJoinAndSelect("away.lineup", "awayLineup").leftJoinAndSelect("awayLineup.players", "awayPlayers")
+        .leftJoinAndSelect("away.currentLineup", "awayLineup").leftJoinAndSelect("awayLineup.players", "awayPlayers")
         .where("match.matchDate < :now", {now: now.toISOString()})
         .andWhere("match.status = :status", {status})
         .getMany();

@@ -1,5 +1,5 @@
-import { getSession } from '../../lib/iron';
-import { createTeam } from '../../lib/TeamService';
+import { getSession } from 'lib/iron';
+import { createTeam } from 'lib/TeamService';
 
 export default async function teams(req, res) {
     const session = await getSession(req);

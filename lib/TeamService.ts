@@ -6,7 +6,7 @@ import { Player, Positions } from '../db/entity/player.entity';
 
 import {randomIntInterval, sample, containsElement} from './utils';
 import Database from 'db/database';
-import { createTeamPlayers, createRandomLineup, flattenPlayers } from './playerUtils';
+import { createTeamPlayers, createRandomLineup } from './playerUtils';
 
 export async function createTeam({ name, jersey_color, userId }) {
 
@@ -29,7 +29,7 @@ export async function createTeam({ name, jersey_color, userId }) {
 
             // Create players
             const players = createTeamPlayers(team);
-            const savedPlayers = [];
+            const savedPlayers:Player[] = [];
             for (let i=0; i<players.length; i++) {
                 const savedPlayer:Player = await playerRepository.save(players[i]);
                 savedPlayers.push(savedPlayer);
@@ -43,7 +43,10 @@ export async function createTeam({ name, jersey_color, userId }) {
 
             // Set current lineup
             team.currentLineup = currentLineup;
-            return teamRepository.save(team);
+            await teamRepository.save(team);
+
+            // Avoid circular reference
+            return teamRepository.findOne(team.id);
         } catch (error) {
             console.log("create team error: ", error);
             throw new Error("create team error: " + error);

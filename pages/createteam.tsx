@@ -73,7 +73,6 @@ export default function CreateTeam({}) {
                 errors
             }) => (
                     <form onSubmit={handleSubmit} method="POST">
-                        <div>{JSON.stringify(errors)}</div>
                         <Field
                             component={TextField}
                             id="name"

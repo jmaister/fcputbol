@@ -95,7 +95,6 @@ export default function EnterLeague({user, league}:CreateLeagueParams) {
                         errors
                     }) => (
                         <form onSubmit={handleSubmit} method="POST">
-                            <div>{JSON.stringify(errors)}</div>
                             <Field
                                 component={TextField}
                                 type="text"

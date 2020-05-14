@@ -17,9 +17,7 @@ export class Team {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('varchar', {
-        unique: true
-    })
+    @Column('varchar')
     name: string;
 
     @Column('varchar')
