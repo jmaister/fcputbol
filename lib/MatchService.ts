@@ -67,7 +67,7 @@ export async function saveMatch(match:Match, matchResult:MatchResult): Promise<M
                     goalsScored: () => "goalsScored + " + match.resultHome,
                     goalsAgainst: () => "goalsAgainst + " + match.resultAway,
                 })
-                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.round.league.id, teamId: match.home.id })
+                .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.home.id })
                 .execute();
             // Away
             await transactionalEntityManager
@@ -78,7 +78,7 @@ export async function saveMatch(match:Match, matchResult:MatchResult): Promise<M
                     goalsScored: () => "goalsScored + " + match.resultAway,
                     goalsAgainst: () => "goalsAgainst + " + match.resultHome,
                 })
-                .where("league.id = :leagueId and team.id = :teamId", { leagueId: match.round.league.id, teamId: match.away.id })
+                .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.away.id })
                 .execute();
 
             return savedMatch;

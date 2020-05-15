@@ -105,3 +105,30 @@ export async function calculateClassification(team:Team, league:League):Promise<
 
 https://momentjs.com/docs/
 
+
+# League States
+
+League > Season > Round > Match
+
+Admin crea la liga:
+League.ORGANIZING
+- Se pueden añadir equipos
+
+
+Admin comienza la liga:
+League.ONGOING
+- Se bloquean los equipos, no se pueden añadir más
+
+
+    Admin crea una temporada:
+    - No se pueden crear otras temporadas
+    - Crear jornadas y partidos.
+    - Asignar la temporada a la liga
+
+    Se termina la temporada:
+    - LEAGUE.ORGANIZING
+
+Admin cierra la liga:
+Leagues.CLOSED
+- Solo si no hay temporadas en marcha
+

@@ -12,6 +12,7 @@ import { Player } from './player.entity';
 import { Lineup } from './lineup.entity';
 import { League } from './league.entity';
 import { Match } from './match.entity';
+import { Season } from './season.entity';
 
 export enum RoundStatus {
     SCHEDULED = "SCHEDULED",
@@ -31,12 +32,15 @@ export class Round {
     @Column({ type: 'int' })
     roundCount: number;
 
-    @ManyToOne(type => League, l => l.rounds)
-    league: League
+    @ManyToOne(type => Season, l => l.rounds)
+    season: Season
 
     // Expected date to play
     @Column({ type: 'datetime' })
     roundDate: Date;
+
+    @Column({ type: 'datetime' })
+    freezeLineupDate: Date;
 
     @Column({
         type: "varchar",
@@ -49,7 +53,7 @@ export class Round {
 
     // Fields to set on FINISHED
 
-    // Date when the match is processed
+    // Date when the round is processed
     @Column({ type: 'datetime', nullable: true })
     finishDate: Date;
 
