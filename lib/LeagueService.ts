@@ -35,6 +35,7 @@ export async function findLeague(id:string):Promise<League> {
             "currentSeason.classifications", "currentSeason.classifications.team", "currentSeason.classifications.team.user",
             "currentSeason.rounds",
             "currentSeason.rounds.matches",
+            "currentSeason.rounds.matches.round",
             "currentSeason.rounds.matches.home", "currentSeason.rounds.matches.home.user",
             "currentSeason.rounds.matches.away", "currentSeason.rounds.matches.away.user",
         ]});

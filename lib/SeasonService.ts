@@ -64,7 +64,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         // Matches start next day at 12:00:00 UTC
         let roundDate = moment().utc().hour(12).minute(0).second(0).add(1, "day");
         // Lineup freeze is 30 minutes before
-        let freezeLineupDate = roundDate.add(-30, "minute");
+        let freezeLineupDate = moment(roundDate).add(-30, "minute");
 
         for (let r=0; r < calculatedRounds.length; r++) {
             const calculatedRound = calculatedRounds[r];

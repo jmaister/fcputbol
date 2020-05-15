@@ -6,12 +6,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import { Match, MatchStatus } from 'db/entity/match.entity';
 import Link from 'next/link';
 import TeamName from 'components/team/TeamName';
 import MatchStatusChip from './MatchStatusChip';
 
 import moment from 'moment';
+
+import { Match, MatchStatus } from 'db/entity/match.entity';
 
 interface MatchesTableParams {
     matches: Match[]
@@ -39,7 +40,7 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                     {matches.map((match) => (
                         <TableRow key={match.id}>
                             <TableCell>{match.id}</TableCell>
-                            <TableCell>{match.round}</TableCell>
+                            <TableCell>{match.round.roundNumber + 1}</TableCell>
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>

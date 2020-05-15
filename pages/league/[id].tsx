@@ -39,6 +39,8 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
     const isOngoing = league.status === LeagueStatus.ONGOING;
     const isFinished = league.status === LeagueStatus.FINISHED;
 
+    const canStartSeason = isAdmin && isOrganizing && league.teams.length > 1;
+
     const formValues = {
         leagueId: league.id,
         name: ''
@@ -51,7 +53,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             <p>Administrador: @{league.admin.username}</p>
             <div>Estado: <LeagueStatusChip status={league.status} /></div>
 
-            {isAdmin && isOrganizing ? <>
+            {canStartSeason ? <>
 
                 <Formik
                 initialValues={formValues}
@@ -70,7 +72,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                         console.log("fetch response data", response);
                         if (response.ok) {
                             setErrorMsg(null);
-                            Router.push('/league/' + response.data.id);
+                            Router.push('/league/' + league.id);
                         } else {
                             actions.setSubmitting(false);
                             setErrorMsg(JSON.stringify(response.error.message));
@@ -131,7 +133,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 </>
             : null}
 
-            {isOngoing || isFinished ?
+            {league.currentSeason ?
             <>
                 <h2>Clasificación</h2>
                 <ClassificationTable classifications={league.currentSeason.classifications} />
