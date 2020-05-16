@@ -38,7 +38,7 @@ export class Season {
     @OneToMany(type => Round, r => r.season)
     rounds: Round[]
 
-    @OneToMany(type => Classification, c => c.league)
+    @OneToMany(type => Classification, c => c.season)
     classifications: Classification[];
 
     @Column({

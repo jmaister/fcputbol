@@ -62,12 +62,12 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         const calculatedRounds:MatchPair[][] = tournament(n);
 
         // Matches start next day at 12:00:00 UTC
-        let roundDate = moment().utc().hour(12).minute(0).second(0).add(1, "day");
-        // Lineup freeze is 30 minutes before
-        let freezeLineupDate = moment(roundDate).add(-30, "minute");
+        let roundDate = moment().utc().hour(12).minute(0).second(0).millisecond(0).add(1, "day");
 
         for (let r=0; r < calculatedRounds.length; r++) {
             const calculatedRound = calculatedRounds[r];
+            // Lineup freeze is 30 minutes before roundDate
+            let freezeLineupDate = moment(roundDate).add(-30, "minute");
 
             const round = await roundRepository.save({
                 season,
@@ -96,6 +96,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         for (let i=0; i<teams.length; i++) {
             await classificationRepository.save({
                 season,
+                league,
                 team: teams[i],
                 points: 0,
                 goalsScored: 0,

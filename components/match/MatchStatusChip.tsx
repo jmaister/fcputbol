@@ -9,7 +9,7 @@ interface MatchStatusParams {
 const strings = {
 };
 strings[MatchStatus.SCHEDULED] = "Previsto";
-strings[MatchStatus.READY] = "Preparado";
+strings[MatchStatus.READY] = "Processando...";
 strings[MatchStatus.FINISHED] = "Finalizado";
 
 export default function MatchStatusChip({status}: MatchStatusParams) {
