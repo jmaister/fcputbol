@@ -19,7 +19,6 @@ interface MatchesTableParams {
 }
 
 export default function MatchesTable({ matches }: MatchesTableParams) {
-    moment.locale("es");
 
     return (
         <TableContainer component={Paper}>
@@ -27,7 +26,6 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                 <TableHead>
                     <TableRow>
                         <TableCell>#</TableCell>
-                        <TableCell>Jornada</TableCell>
                         <TableCell>Casa</TableCell>
                         <TableCell>Visitante</TableCell>
                         <TableCell>Resultado</TableCell>
@@ -40,7 +38,6 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                     {matches.map((match) => (
                         <TableRow key={match.id}>
                             <TableCell>{match.id}</TableCell>
-                            <TableCell>{match.round.roundNumber + 1}</TableCell>
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>

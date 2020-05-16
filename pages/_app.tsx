@@ -11,6 +11,8 @@ import theme from '../components/theme';
 import moment from 'moment';
 
 export default function MyApp({ Component, pageProps }) {
+    // TODO: get locale from user
+    moment.locale("es");
 
     return (
         <ThemeProvider theme={theme}>

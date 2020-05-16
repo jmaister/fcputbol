@@ -132,3 +132,14 @@ Admin cierra la liga:
 Leagues.CLOSED
 - Solo si no hay temporadas en marcha
 
+
+# moment.js issue
+
+https://github.com/moment/moment/issues/5416
+
+I've found the same problem for Spanish 'es'. (Found this issue already open)
+
+Tomorrow at 2pm, works fine: "mañana a las 14:00"
+Today at 2pm, works fine: "hoy a las 14:00"
+Last Thursday at 2pm, works fine: "el jueves pasado a las 14:00"
+

@@ -1,6 +1,7 @@
 
 import { useState } from 'react'
 import Router from 'next/router'
+import moment from 'moment';
 
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +11,7 @@ import ListItem from '@material-ui/core/ListItem';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import Pagination from '@material-ui/lab/Pagination';
 
 import { League, LeagueStatus } from 'db/entity/league.entity';
 import { User } from 'db/entity/user.entity';
@@ -32,6 +34,7 @@ interface LeaguePageParams {
 
 export default function LeaguePage({league, user}: LeaguePageParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    const [selectedRound, setSelectedRound] = useState(league.currentSeason ? league.currentSeason.currentRound : 0);
 
     const isAdmin = league.admin.id === user.id;
 
@@ -44,6 +47,9 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
     const formValues = {
         leagueId: league.id,
         name: ''
+    };
+    const handleRoundChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setSelectedRound(value-1);
     };
 
     return (
@@ -138,8 +144,15 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 <h2>Clasificación</h2>
                 <ClassificationTable classifications={league.currentSeason.classifications} />
 
-                <h2>Partidos //TODO: add pagination for rounds</h2>
-                <MatchesTable matches={league.currentSeason.rounds[league.currentSeason.currentRound].matches} />
+                <h2>Partidos</h2>
+                <p>
+                    Las alineaciones para la jornada <b>{selectedRound+1}</b> se bloquearán <b>{moment(league.currentSeason.rounds[selectedRound].freezeLineupDate).calendar()}</b>
+                </p>
+                <div>
+                    Jornadas:
+                    <Pagination count={league.currentSeason.roundCount} page={selectedRound+1} onChange={handleRoundChange} color="primary" />
+                </div>
+                <MatchesTable matches={league.currentSeason.rounds[selectedRound].matches} />
             </>
             : null}
 

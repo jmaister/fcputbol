@@ -7,6 +7,8 @@ import { findRoundByStatus, saveRound } from 'lib/RoundService';
 
 export default async function playMatches(req, res) {
 
+    // TODO: freeze lineups
+
     if (req.method === 'GET') {
         const now = moment().toDate();
         const status = RoundStatus.SCHEDULED;
