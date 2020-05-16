@@ -11,8 +11,7 @@ import {
 } from 'typeorm';
 import { Team } from './team.entity';
 import { User } from './user.entity';
-import { Match } from './match.entity';
-import { Classification } from './classification.entity';
+import { Season } from './season.entity';
 
 export enum LeagueStatus {
     ORGANIZING  = "ORGANIZING",
@@ -35,26 +34,20 @@ export class League {
     @ManyToOne(type => User)
     admin: User;
 
-    @ManyToMany(type => Team)
-    @JoinTable()
-    teams: Team[];
-
-    @OneToMany(type => Classification, c => c.league)
-    classifications: Classification[];
-
     @Column({
         type: "varchar",
         default: LeagueStatus.ORGANIZING
     })
     status: LeagueStatus;
 
-    @OneToMany(type => Match, m => m.league)
-    matches: Match[]
+    @ManyToMany(type => Team)
+    @JoinTable()
+    teams: Team[];
 
-    @Column("int", {nullable: true})
-    currentRound: number;
+    @OneToMany(type => Season, s => s.league)
+    seasons: Season[]
 
-    @Column("int", {nullable: true})
-    roundCount: number;
+    @ManyToOne(type => Season, {nullable: true})
+    currentSeason: Season
 
 }

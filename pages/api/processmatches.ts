@@ -1,24 +1,69 @@
-import { Match, MatchStatus } from 'db/entity/match.entity';
 
-import { playMatch, findMatchesByStatus } from 'lib/MatchService';
+import { playAndSaveMatch, findMatchToPlay } from 'lib/MatchService';
 
 import moment from 'moment';
+import { RoundStatus, Round } from 'db/entity/round.entity';
+import { findRoundByStatus, saveRound, updateRoundState } from 'lib/RoundService';
+
+interface RoundProcessInfo {
+    roundId: number
+    processedMatches: number
+    totalMatches: number
+    errors: any[]
+    errorCount: number
+}
 
 export default async function playMatches(req, res) {
 
     if (req.method === 'GET') {
         const now = moment().toDate();
-        const status = MatchStatus.SCHEDULED;
+        const status = RoundStatus.SCHEDULED;
         try {
-            const matches:Match[] = await findMatchesByStatus(now, status);
-            const matchesCount = matches.length;
-            let processed = 0;
-            for (let i=0; i<matches.length; i++) {
-                await playMatch(matches[i]);
-                processed++;
+            const rounds:Round[] = await findRoundByStatus(now, status);
+            const roundsCount = rounds.length;
+            let processedRounds = 0;
+            const infoList:RoundProcessInfo[] = [];
+
+            for (let i=0; i<rounds.length; i++) {
+                const round = rounds[i];
+
+                const errors = [];
+                let processedMatches = 0;
+                let roundErrorCount = 0;
+
+                for (let m=0; m<round.matches.length; m++) {
+                    console.log("match-a", round.matches[m]);
+                    const matchId = round.matches[m].id;
+                    console.log("match-b", matchId)
+                    const match = await findMatchToPlay(matchId);
+                    try {
+                        await playAndSaveMatch(match);
+                    } catch (error) {
+                        console.log(error);
+                        errors.push("Failed match id " + match.id + ": " + error.message);
+                        roundErrorCount++;
+                    }
+                    processedMatches++;
+                }
+
+                // Update season state
+                if (roundErrorCount === 0) {
+                    // Update round
+                    await updateRoundState(round.id, RoundStatus.FINISHED);
+                }
+
+                const info:RoundProcessInfo = {
+                    roundId: round.id,
+                    errorCount: roundErrorCount,
+                    errors: errors,
+                    processedMatches: processedMatches,
+                    totalMatches: round.matches.length,
+                };
+                infoList.push(info);
+                processedRounds++;
             }
 
-            res.status(200).json({ok: true, processed: processed, toProcess: matchesCount});
+            res.status(200).json({ok: true, processedRounds, roundsToProcess: roundsCount, infoList});
         } catch (error) {
             console.log("error", error);
             res.status(400).json({ ok: false, error: error });

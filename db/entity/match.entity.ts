@@ -11,6 +11,7 @@ import { Team } from './team.entity';
 import { Player } from './player.entity';
 import { Lineup } from './lineup.entity';
 import { League } from './league.entity';
+import { Round } from './round.entity';
 
 export enum MatchStatus {
     SCHEDULED = "SCHEDULED",
@@ -28,24 +29,14 @@ export class Match {
     @ManyToOne(type => Team)
     away: Team;
 
-    @CreateDateColumn()
-    createdDate: Date;
-
-    // Expected date to play
-    @Column({ type: 'datetime' })
-    matchDate: Date;
-
     @Column({
         type: "varchar",
         default: MatchStatus.SCHEDULED
     })
     status: MatchStatus;
 
-    @ManyToOne(type => League, l => l.matches, {nullable: true})
-    league: League;
-
-    @Column({ type: 'int', nullable: true })
-    round: number;
+    @ManyToOne(type => Round, r => r.matches, {nullable: true})
+    round: Round;
 
     // Fields to set on READY
 

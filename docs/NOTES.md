@@ -105,3 +105,41 @@ export async function calculateClassification(team:Team, league:League):Promise<
 
 https://momentjs.com/docs/
 
+
+# League States
+
+League > Season > Round > Match
+
+Admin crea la liga:
+League.ORGANIZING
+- Se pueden añadir equipos
+
+
+Admin comienza la liga:
+League.ONGOING
+- Se bloquean los equipos, no se pueden añadir más
+
+
+    Admin crea una temporada:
+    - No se pueden crear otras temporadas
+    - Crear jornadas y partidos.
+    - Asignar la temporada a la liga
+
+    Se termina la temporada:
+    - LEAGUE.ORGANIZING
+
+Admin cierra la liga:
+Leagues.CLOSED
+- Solo si no hay temporadas en marcha
+
+
+# moment.js issue
+
+https://github.com/moment/moment/issues/5416
+
+I've found the same problem for Spanish 'es'. (Found this issue already open)
+
+Tomorrow at 2pm, works fine: "mañana a las 14:00"
+Today at 2pm, works fine: "hoy a las 14:00"
+Last Thursday at 2pm, works fine: "el jueves pasado a las 14:00"
+

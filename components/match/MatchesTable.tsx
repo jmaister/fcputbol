@@ -6,19 +6,19 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import { Match, MatchStatus } from 'db/entity/match.entity';
 import Link from 'next/link';
 import TeamName from 'components/team/TeamName';
 import MatchStatusChip from './MatchStatusChip';
 
 import moment from 'moment';
 
+import { Match, MatchStatus } from 'db/entity/match.entity';
+
 interface MatchesTableParams {
     matches: Match[]
 }
 
 export default function MatchesTable({ matches }: MatchesTableParams) {
-    moment.locale("es");
 
     return (
         <TableContainer component={Paper}>
@@ -26,7 +26,6 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                 <TableHead>
                     <TableRow>
                         <TableCell>#</TableCell>
-                        <TableCell>Jornada</TableCell>
                         <TableCell>Casa</TableCell>
                         <TableCell>Visitante</TableCell>
                         <TableCell>Resultado</TableCell>
@@ -39,11 +38,10 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                     {matches.map((match) => (
                         <TableRow key={match.id}>
                             <TableCell>{match.id}</TableCell>
-                            <TableCell>{match.round}</TableCell>
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>
-                            <TableCell>{moment(match.matchDate).calendar()}</TableCell>
+                            <TableCell>{moment(match.round.roundDate).calendar()}</TableCell>
                             <TableCell><MatchStatusChip status={match.status} /></TableCell>
                             <TableCell>{match.status === MatchStatus.FINISHED ?
                                 <Link href={'/matchresult/' + match.id}><a>Ver partido</a></Link>

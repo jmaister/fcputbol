@@ -8,15 +8,8 @@ import {
 } from 'typeorm';
 
 import { Team } from './team.entity';
-import { Player } from './player.entity';
-import { Lineup } from './lineup.entity';
 import { League } from './league.entity';
-
-export enum MatchStatus {
-    SCHEDULED = "SCHEDULED",
-    READY = "READY",
-    FINISHED = "FINISHED",
-}
+import { Season } from './season.entity';
 
 @Entity()
 export class Classification {
@@ -25,6 +18,9 @@ export class Classification {
 
     @ManyToOne(type => League)
     league: League;
+
+    @ManyToOne(type => Season)
+    season: Season;
 
     @ManyToOne(type => Team)
     team: Team;
