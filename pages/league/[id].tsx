@@ -145,16 +145,22 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 <ClassificationTable classifications={league.currentSeason.classifications} />
 
                 <p>
-                    Estamos en la jornada <b>{league.currentSeason.seasonNumber+1}</b>.
+                    Estamos en la jornada <b>{league.currentSeason.currentRound+1}</b> de <b>{league.currentSeason.roundCount}</b>.
                 </p>
                 <h2>Partidos</h2>
                 <div>
                     Jornadas:
                     <Pagination count={league.currentSeason.roundCount} page={selectedRound+1} onChange={handleRoundChange} color="primary" />
                 </div>
+                {selectedRound >= league.currentSeason.currentRound ?
                 <p>
                     Las alineaciones para la jornada <b>{selectedRound+1}</b> se bloquearán <b>{moment(league.currentSeason.rounds[selectedRound].freezeLineupDate).calendar()}</b>
                 </p>
+                :
+                <p>
+                    La jornada <b>{selectedRound+1}</b> terminó <b>{moment(league.currentSeason.rounds[selectedRound].finishDate).calendar()}</b>
+                </p>
+                }
                 <MatchesTable matches={league.currentSeason.rounds[selectedRound].matches} />
             </>
             : null}

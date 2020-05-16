@@ -3,7 +3,7 @@ import { playAndSaveMatch, findMatchToPlay } from 'lib/MatchService';
 
 import moment from 'moment';
 import { RoundStatus, Round } from 'db/entity/round.entity';
-import { findRoundByStatus, saveRound } from 'lib/RoundService';
+import { findRoundByStatus, saveRound, updateRoundState } from 'lib/RoundService';
 
 interface RoundProcessInfo {
     roundId: number
@@ -14,8 +14,6 @@ interface RoundProcessInfo {
 }
 
 export default async function playMatches(req, res) {
-
-    // TODO: freeze lineups
 
     if (req.method === 'GET') {
         const now = moment().toDate();
@@ -51,10 +49,10 @@ export default async function playMatches(req, res) {
                 // TODO: update league current match
 
                 if (roundErrorCount === 0) {
-                    round.status = RoundStatus.FINISHED;
-                    round.finishDate = moment().toDate();
-                    await saveRound(round);
+                    // Update round
+                    await updateRoundState(round.id, RoundStatus.FINISHED);
                 }
+
                 const info:RoundProcessInfo = {
                     roundId: round.id,
                     errorCount: roundErrorCount,
