@@ -31,13 +31,13 @@ export async function findLeague(id:string):Promise<League> {
             "teams",
             "teams.user",
             "admin",
-            "currentSeason",
-            "currentSeason.classifications", "currentSeason.classifications.team", "currentSeason.classifications.team.user",
-            "currentSeason.rounds",
-            "currentSeason.rounds.matches",
-            "currentSeason.rounds.matches.round",
-            "currentSeason.rounds.matches.home", "currentSeason.rounds.matches.home.user",
-            "currentSeason.rounds.matches.away", "currentSeason.rounds.matches.away.user",
+            "seasons",
+            "seasons.classifications", "seasons.classifications.team", "seasons.classifications.team.user",
+            "seasons.rounds",
+            "seasons.rounds.matches",
+            "seasons.rounds.matches.round",
+            "seasons.rounds.matches.home", "seasons.rounds.matches.home.user",
+            "seasons.rounds.matches.away", "seasons.rounds.matches.away.user",
         ]});
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findLeague error:", error)
