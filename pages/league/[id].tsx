@@ -55,7 +55,6 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
     if (showSeasonClassification) {
         seasonToShow = league.seasons[selectedSeason];
     }
-    console.log("season to show", showSeasonClassification, seasonToShow, league.seasons);
 
     const formValues = {
         leagueId: league.id,
@@ -101,7 +100,6 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                             setErrorMsg(JSON.stringify(response.error.message));
                         }
                     });
-                    // TODO: catch
                 }}
                 >{({
                     values,

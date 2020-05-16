@@ -46,8 +46,7 @@ export default async function playMatches(req, res) {
                     processedMatches++;
                 }
 
-                // TODO: update league current match
-
+                // Update season state
                 if (roundErrorCount === 0) {
                     // Update round
                     await updateRoundState(round.id, RoundStatus.FINISHED);

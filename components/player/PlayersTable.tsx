@@ -71,9 +71,11 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
             });
             if (res.status === 200) {
                 const response = await res.json();
-                //Router.push('/matchresult/' + response.matchId);
-                // TODO: show saved is OK
-                setIsLoading(false);
+                if (response.ok) {
+                    setIsLoading(false);
+                } else {
+                    throw new Error(response.error);
+                }
             } else {
                 setIsLoading(false);
                 throw new Error(await res.text())

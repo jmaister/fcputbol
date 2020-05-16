@@ -36,8 +36,6 @@ export default function CreateTeam({}) {
         {label: "Marrón", value: "brown"},
     ];
 
-    // TODO: backout
-
     return (
         <Layout>
             <h1>Equipo</h1>
