@@ -4,8 +4,7 @@ import '../styles/stadium.scss';
 
 import Head from 'next/head';
 import Header from 'components/header';
-import Container from '@material-ui/core/Container';
-import { ThemeProvider } from '@material-ui/core';
+import { Container, ThemeProvider } from '@material-ui/core';
 import theme from '../components/theme';
 
 import moment from 'moment';
@@ -21,9 +20,10 @@ export default function MyApp({ Component, pageProps }) {
             </Head>
             <Header />
 
-            <Container>
+            <Container className="app-container">
                 <Component {...pageProps} />
             </Container>
+
         </ThemeProvider>
     );
 }

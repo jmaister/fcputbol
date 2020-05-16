@@ -15,9 +15,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { TextField } from 'formik-material-ui';
 
 import {Team} from '../db/entity/team.entity';
+import Loading from 'components/Loading';
 
 export default function CreateTeam({}) {
     const [errorMsg, setErrorMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const team = {
         name: "",
@@ -48,6 +50,7 @@ export default function CreateTeam({}) {
                 })}
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
+                    setIsLoading(true);
                     fetch('/api/teams', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -63,6 +66,7 @@ export default function CreateTeam({}) {
                             actions.setSubmitting(false);
                             setErrorMsg(JSON.stringify(response.error));
                         }
+                        setIsLoading(false);
                     });
                 }}
             >{({
@@ -119,7 +123,7 @@ export default function CreateTeam({}) {
                     </form>
                 )}
             </Formik>
-
+            <Loading isLoading={isLoading} />
         </Layout>
     )
 }

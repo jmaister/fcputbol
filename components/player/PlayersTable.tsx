@@ -10,14 +10,13 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Player } from 'db/entity/player.entity';
 import { Lineup } from 'db/entity/lineup.entity';
 import { Team } from 'db/entity/team.entity';
 
 import Position from './Position';
+import Loading from 'components/Loading';
 import { findById, containsId } from 'lib/utils';
 import { validateLineup } from 'lib/playerUtils';
 
@@ -158,12 +157,7 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
             disabled={isLoading || hasErrors}>
             Guardar alineación
         </Button>
-        <Backdrop open={isLoading} className="backdrop">
-            <CircularProgress color="inherit" />
-            <div className="backdrop-text">
-                <Typography>Guardando...</Typography>
-            </div>
-        </Backdrop>
+        <Loading isLoading={isLoading} />
     </>);
 }
 
