@@ -80,7 +80,6 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
 
             for (let m=0; m < calculatedRound.length; m++) {
                 const matchPair = calculatedRound[m];
-                // TODO: calculate team date + time
                 await matchRepository.save({
                     home: teams[matchPair.home-1],
                     away: teams[matchPair.away-1],

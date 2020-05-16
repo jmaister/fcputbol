@@ -8,8 +8,6 @@ import { generateCode } from './utils';
 export async function createLeague({ name, yourteam, userId }) {
     const db = await new Database().getManager();
 
-    // TODO: transaction
-    // TODO: try to avoid a team select
     const teamRepository = db.getRepository(Team);
     const adminTeam = await teamRepository.findOne(yourteam);
 

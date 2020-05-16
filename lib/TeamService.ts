@@ -1,12 +1,13 @@
 
-import { User } from '../db/entity/user.entity';
-import { Team } from '../db/entity/team.entity';
-import { Lineup } from '../db/entity/lineup.entity';
-import { Player, Positions } from '../db/entity/player.entity';
+import { User } from 'db/entity/user.entity';
+import { Team } from 'db/entity/team.entity';
+import { Lineup } from 'db/entity/lineup.entity';
+import { Player } from 'db/entity/player.entity';
 
-import {randomIntInterval, sample, containsElement} from './utils';
+import {containsElement} from './utils';
 import Database from 'db/database';
-import { createTeamPlayers, createRandomLineup } from './playerUtils';
+import { createRandomLineup, validateLineup } from './playerUtils';
+import { createTeamPlayers } from './playerUtilsServer';
 
 export async function createTeam({ name, jersey_color, userId }) {
 
@@ -69,26 +70,22 @@ export async function findTeam(id:string):Promise<Team> {
 
 export async function saveLineup(teamId:string, playerIds:number[], userId:number):Promise<Lineup> {
     const db = await new Database().getManager();
-    const lineupRepository = db.getRepository(Lineup);
-    const teamRepository = db.getRepository(Team);
 
-    console.log("saveLineup", teamId, playerIds, userId);
+    return db.transaction(async (transactionalEntityManager) => {
+        const lineupRepository = transactionalEntityManager.getRepository(Lineup);
+        const teamRepository = transactionalEntityManager.getRepository(Team);
 
-    // TODO: transaction
-    try {
         const team = await teamRepository.findOne(teamId, {relations: ["user", "players"]});
         if (team.user.id != userId) {
             throw new Error("Este no es tu equipo.");
         }
 
-        console.log("saveLineup team players", team.players);
-
         const lineupPlayers = team.players.filter(p => containsElement(playerIds, p.id));
-        console.log("saveLineup found playes", lineupPlayers.length, lineupPlayers);
 
         // TODO: utilizar la misma función de validación
-        if (lineupPlayers.length != 11) {
-            throw new Error("Debe seleccionar 11 jugadores...");
+        const validationResult = validateLineup(lineupPlayers, true);
+        if (validationResult.hasErrors) {
+            throw new Error(validationResult.messages[0].msg);
         }
 
         const lineup = await lineupRepository.save({
@@ -100,9 +97,7 @@ export async function saveLineup(teamId:string, playerIds:number[], userId:numbe
         teamRepository.save(team);
 
         return lineup;
+    });
 
-    } catch (error) {
-        console.log("_*_*_*_*_*_*_ saveLineup error:", error)
-        throw new Error("saveLineup error:" + error);
-    }
+
 }

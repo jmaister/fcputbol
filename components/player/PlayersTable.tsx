@@ -19,6 +19,7 @@ import { Team } from 'db/entity/team.entity';
 
 import Position from './Position';
 import { findById, containsId } from 'lib/utils';
+import { validateLineup } from 'lib/playerUtils';
 
 interface PlayersTableParams {
     team: Team
@@ -40,27 +41,6 @@ interface ValidationResult {
     hasErrors: boolean
 }
 
-const validateLineup = (players:Player[]):ValidationResult => {
-    let count = players.length;
-    const msgs = [];
-    if (count > 11) {
-        msgs.push({ type: "error", msg: "Demasiados jugadores alineados, debes tener 11."});
-    } else if (count < 11) {
-        msgs.push({ type: "error", msg: "Pocos jugadores alineados, debes tener 11."});
-    } else {
-        msgs.push({ type: "primary", msg: "11 jugadores selecionados."});
-    }
-
-    // TODO: validate only 1 GK
-    // TODO: validate at least one of each type
-
-    const hasErrors = msgs.filter(m => m.type === "error").length > 0;
-
-    return {
-        messages:msgs,
-        hasErrors
-    };
-}
 
 export default function PlayersTable({ team, players, lineup }: PlayersTableParams) {
     const [lineupPlayers, setLineupPlayers] = useState(lineup.players);
@@ -72,7 +52,7 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
 
     useEffect(() => {
         setSelectedCount(lineupPlayers.length);
-        const result = validateLineup(lineupPlayers);
+        const result = validateLineup(lineupPlayers, false);
         setMessages(result.messages);
         setHasErrors(result.hasErrors);
     }, [lineupPlayers]);
@@ -166,7 +146,7 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
         </TableContainer>
         {messages.length > 0 ?
             <ul>
-                {messages.map(m => <li><Typography color={m.type}>{m.msg}</Typography></li>)}
+                {messages.map(m => <li><Typography color={m.type}>{m.type=="error"?"❌":"✓"} {m.msg}</Typography></li>)}
             </ul>
         : null}
         {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}

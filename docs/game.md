@@ -46,13 +46,3 @@ READY - PREPARADO
 
 FINISHED - FINALIZADO
     - Play, save steps and score
-
-
-# TODO
-
-* League creation: add play hour (utc)
-
-* Match: add play date
-* Match: Update match status after play
-* Match: Update match status after play
-* Match: cron job to play if match.status==READY

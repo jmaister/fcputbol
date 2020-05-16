@@ -1,6 +1,5 @@
 import { Player, Positions } from "db/entity/player.entity";
 
-import RandomData from './random-data'
 import { randomIntInterval, sample } from "./utils";
 import { Team } from "db/entity/team.entity";
 
@@ -17,40 +16,14 @@ export function containsId(arr:Player[], id:number): boolean {
 
 export const allPositions = [Positions.gk, Positions.def, Positions.mid, Positions.fw];
 
-export function createTeamPlayers(team:Team): Player[] {
-    // Create and assign team players
-    const quantities = [3, 5, 5, 5];
-    const avg = 25;
-    const std = 5;
+export const PositionNames = {
+    [Positions.gk]: "portero",
+    [Positions.def]: "defensa",
+    [Positions.mid]: "centrocampista",
+    [Positions.fw]: "delantero",
+};
 
-    const players:Player[] = [];
-    // Create players
-    let num = 1;
-    for (let type = 0; type < allPositions.length; type++) {
-        const pos = allPositions[type];
-        const q = quantities[type];
-        for (let idx = 0; idx < q; idx++) {
-            const playerData = {
-                name: RandomData.getName(),
-                surname: RandomData.getSurname(),
-                num: num,
-                position: pos,
-                save: randomIntInterval(avg-std, avg+std),
-                defense: randomIntInterval(avg-std, avg+std),
-                pass: randomIntInterval(avg-std, avg+std),
-                dribble: randomIntInterval(avg-std, avg+std),
-                shot: randomIntInterval(avg-std, avg+std),
-                team: team
-            } as Player;
-            players.push(playerData);
-            num++;
-        }
-    }
-
-    return players;
-}
-
-export function createRandomLineup(players:Player[]) {
+export function sortPlayersByPosition(players:Player[]) {
     const sortedPlayers = {
         [Positions.gk]: [],
         [Positions.def]: [],
@@ -61,6 +34,12 @@ export function createRandomLineup(players:Player[]) {
         sortedPlayers[p.position].push(p);
     })
 
+    return sortedPlayers;
+}
+
+export function createRandomLineup(players:Player[]) {
+    const sortedPlayers = sortPlayersByPosition(players);
+
     const lineupPlayers = []
         .concat(sample(sortedPlayers[Positions.gk], 1))
         .concat(sample(sortedPlayers[Positions.def], 3))
@@ -68,4 +47,58 @@ export function createRandomLineup(players:Player[]) {
         .concat(sample(sortedPlayers[Positions.fw], 3));
     return lineupPlayers;
 
+}
+
+export interface Message {
+    type: string
+    msg: string
+}
+
+export interface LineupValidationResult {
+    messages: Message[]
+    hasErrors: boolean
+}
+
+export function validateLineup(players:Player[], onlyError:boolean):LineupValidationResult {
+    let count = players.length;
+    let msgs = [];
+    if (count > 11) {
+        msgs.push({ type: "error", msg: "Demasiados jugadores alineados, debes tener 11."});
+    } else if (count < 11) {
+        msgs.push({ type: "error", msg: "Pocos jugadores alineados, debes tener 11."});
+    } else {
+        msgs.push({ type: "primary", msg: "11 jugadores selecionados."});
+    }
+
+    const sortedPlayers = sortPlayersByPosition(players);
+    // GK
+    if (sortedPlayers[Positions.gk].length == 0) {
+        msgs.push({ type: "error", msg: "Añade un portero."});
+    } else if (sortedPlayers[Positions.gk].length > 1) {
+        msgs.push({ type: "error", msg: "Sólo se puede alinear un portero."});
+    } else {
+        msgs.push({ type: "primary", msg: "Un portero seleccionado."});
+    }
+
+    // At least one of each type
+    [Positions.def, Positions.mid, Positions.fw].forEach(pos => {
+        const posName = PositionNames[pos];
+        if (sortedPlayers[pos].length == 0) {
+            msgs.push({ type: "error", msg: "Selecciona al menos un " + posName + "."});
+        } else {
+            msgs.push({ type: "primary", msg: "Al menos un " + posName + " seleccionado."});
+        }
+    });
+
+    const hasErrors = msgs.filter(m => m.type === "error").length > 0;
+
+    // keep only errors
+    if (onlyError) {
+        msgs = msgs.filter(m => m.type !== "error")
+    }
+
+    return {
+        messages:msgs,
+        hasErrors
+    };
 }
