@@ -27,7 +27,6 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
             <Table className="matches-table" size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>#</TableCell>
                         <TableCell>Casa</TableCell>
                         <TableCell>Visitante</TableCell>
                         <TableCell>Resultado</TableCell>
@@ -39,7 +38,6 @@ export default function MatchesTable({ matches }: MatchesTableParams) {
                 <TableBody>
                     {matches.map((match) => (
                         <TableRow key={match.id}>
-                            <TableCell>{match.id}</TableCell>
                             <TableCell><TeamName team={match.home} /></TableCell>
                             <TableCell><TeamName team={match.away} /></TableCell>
                             <TableCell>{match.resultHome} - {match.resultAway}</TableCell>

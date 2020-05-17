@@ -35,7 +35,6 @@ export default function ClassificationTable({ classifications }: Classifications
             <Table className="matches-table" size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>#</TableCell>
                         <TableCell>Pos</TableCell>
                         <TableCell>Equipo</TableCell>
                         <TableCell>Puntos</TableCell>
@@ -46,7 +45,6 @@ export default function ClassificationTable({ classifications }: Classifications
                 <TableBody>
                     {classifications.map((cl, i) => (
                         <TableRow key={cl.id}>
-                            <TableCell>{cl.id}</TableCell>
                             <TableCell>{i+1}</TableCell>
                             <TableCell><TeamName team={cl.team} /></TableCell>
                             <TableCell>{cl.points}</TableCell>
