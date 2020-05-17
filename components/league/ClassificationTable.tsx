@@ -8,7 +8,6 @@ import Paper from '@material-ui/core/Paper';
 
 import TeamName from 'components/team/TeamName';
 
-import moment from 'moment';
 import { Classification } from 'db/entity/classification.entity';
 
 interface ClassificationsTableParams {

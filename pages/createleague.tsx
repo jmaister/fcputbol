@@ -33,7 +33,7 @@ export default function CreateLeague({user}:CreateLeaguePageParams) {
 
     return (
         <Layout>
-            <h1>Equipo</h1>
+            <h1>Crear una nueva liga</h1>
 
              <Formik
                 initialValues={league}
@@ -74,7 +74,7 @@ export default function CreateLeague({user}:CreateLeaguePageParams) {
                             component={TextField}
                             id="name"
                             name="name"
-                            label="Nombre"
+                            label="Nombre de la liga"
                             value={values.name}
                             onChange={handleChange}
                             onBlur={handleBlur}

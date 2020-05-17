@@ -41,6 +41,9 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
     const [selectedSeason, setSelectedSeason] = useState(league.seasons ? league.seasons.length-1 : -1);
     const [selectedRound, setSelectedRound] = useState(league.currentSeason ? league.currentSeason.currentRound : 0);
 
+    // TODO: get locale from user
+    moment.locale("es");
+
     const isAdmin = league.admin.id === user.id;
 
     const isOrganizing = league.status === LeagueStatus.ORGANIZING;

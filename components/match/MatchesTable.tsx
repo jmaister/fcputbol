@@ -19,6 +19,8 @@ interface MatchesTableParams {
 }
 
 export default function MatchesTable({ matches }: MatchesTableParams) {
+    // TODO: get locale from user
+    moment.locale("es");
 
     return (
         <TableContainer component={Paper}>
