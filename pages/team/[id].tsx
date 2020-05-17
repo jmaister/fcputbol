@@ -31,7 +31,6 @@ export async function getServerSideProps(context) {
     let team = await findTeam(teamId);
     // Hack
     team = JSON.parse(JSON.stringify(team));
-    console.log("team found", team);
 
     return {
         props: {

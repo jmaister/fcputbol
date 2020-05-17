@@ -1,4 +1,9 @@
 
+
+# TODO
+
+TODO: Create UserPrivateData to store password
+
 # Next.js
 
 ## Fetch props directly from the Database?!?! New Hooks in Next.js 9.3!

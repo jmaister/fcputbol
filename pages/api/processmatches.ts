@@ -32,14 +32,12 @@ export default async function playMatches(req, res) {
                 let roundErrorCount = 0;
 
                 for (let m=0; m<round.matches.length; m++) {
-                    console.log("match-a", round.matches[m]);
                     const matchId = round.matches[m].id;
-                    console.log("match-b", matchId)
                     const match = await findMatchToPlay(matchId);
                     try {
                         await playAndSaveMatch(match);
                     } catch (error) {
-                        console.log(error);
+                        console.log("Failed match id " + match.id, error);
                         errors.push("Failed match id " + match.id + ": " + error.message);
                         roundErrorCount++;
                     }

@@ -12,8 +12,6 @@ import { findUserLeagues } from 'lib/LeagueService';
 import { User } from 'db/entity/user.entity';
 import { League } from 'db/entity/league.entity';
 
-import { tournament } from 'lib/Tournament';
-
 
 interface LeaguesParams {
     user: User
@@ -23,9 +21,6 @@ interface LeaguesParams {
 
 export default function Leagues({ user, leagues }: LeaguesParams) {
     const [errorMsg, setErrorMsg] = useState('');
-
-    const matches = tournament(4);
-    console.log(matches);
 
     return <Layout>
         <h1>Ligas</h1>
@@ -47,13 +42,6 @@ export default function Leagues({ user, leagues }: LeaguesParams) {
             ))}
         </List>
 
-        <div>
-            {matches.map((m, i) => {
-                <div key={i}>{m.map((n, j) => {
-                    <span key={j}>{n.home}-{n.away}</span>
-                })}</div>
-            })}
-        </div>
     </Layout>
 }
 

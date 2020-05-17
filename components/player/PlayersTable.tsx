@@ -88,7 +88,6 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
     };
 
     const changeSelection = (id:number, isPlayerSelected:boolean) => {
-        console.log("click", id);
         if (isPlayerSelected) {
             // Remove player from lineup
             setLineupPlayers(lp => lp.filter(e => e.id !== id));
