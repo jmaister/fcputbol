@@ -59,7 +59,7 @@ export async function findTeam(id:string):Promise<Team> {
     const db = await new Database().getManager();
     const teamRepository = db.getRepository(Team);
     try {
-        return teamRepository.findOne(id, {relations: ["players", "currentLineup", "currentLineup.players"]});
+        return teamRepository.findOne(id, {relations: ["user", "players", "currentLineup", "currentLineup.players"]});
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findTeam error:", error)
         throw new Error("Team not found:" + error);

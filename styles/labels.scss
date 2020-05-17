@@ -16,6 +16,8 @@ $jersey_font_colors: white white black black  black  black     white;
 
 .teamname {
     width: 150px;
+    display: flex;
+    flex-direction: column;
 
     .jersey {
         padding: $padding;

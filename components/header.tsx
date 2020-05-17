@@ -24,8 +24,8 @@ export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
 
     const sideLinks = [
-        {label: "Equipos", icon: <FormatListNumberedIcon/>, href: "/teams", loginRequired: true},
-        {label: "Ligas", icon: <PeopleIcon />, href: "/leagues", loginRequired: true},
+        {label: "Equipos", icon: <PeopleIcon />, href: "/teams", loginRequired: true},
+        {label: "Ligas", icon: <FormatListNumberedIcon />, href: "/leagues", loginRequired: true},
         // {label: "Partidos", icon: null, href: "/match", loginRequired: true},
     ];
 

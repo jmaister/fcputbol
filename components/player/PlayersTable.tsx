@@ -24,6 +24,7 @@ interface PlayersTableParams {
     team: Team
     players: Player[]
     lineup: Lineup
+    isEditable: boolean
 }
 
 const colorFn = (power) => {
@@ -41,7 +42,7 @@ interface ValidationResult {
 }
 
 
-export default function PlayersTable({ team, players, lineup }: PlayersTableParams) {
+export default function PlayersTable({ team, players, lineup, isEditable }: PlayersTableParams) {
     const [lineupPlayers, setLineupPlayers] = useState(lineup.players);
     const [selectedCount, setSelectedCount] = useState(11);
     const [messages, setMessages] = useState([]);
@@ -104,7 +105,6 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
             <Table className="players-table" size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>#</TableCell>
                         <TableCell>Num</TableCell>
                         <TableCell>Alineación</TableCell>
                         <TableCell>Nombre</TableCell>
@@ -123,12 +123,11 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
                                 key={player.id}
                                 hover
                             >
-                            <TableCell>{player.id}</TableCell>
                             <TableCell>{player.num}</TableCell>
                             <TableCell padding="checkbox">
                                 <input type="checkbox"
                                     checked={isPlayerSelected}
-                                    disabled={isLoading}
+                                    disabled={isLoading || !isEditable}
                                     onChange={() => changeSelection(player.id, isPlayerSelected)}
                                     />
                             </TableCell>
@@ -144,21 +143,23 @@ export default function PlayersTable({ team, players, lineup }: PlayersTablePara
                 </TableBody>
             </Table>
         </TableContainer>
-        {messages.length > 0 ?
-            <ul>
-                {messages.map(m => <li><Typography color={m.type}>{m.type=="error"?"❌":"✓"} {m.msg}</Typography></li>)}
-            </ul>
-        : null}
-        {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
-        <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            onClick={saveLineup}
-            disabled={isLoading || hasErrors}>
-            Guardar alineación
-        </Button>
-        <Loading isLoading={isLoading} />
+        {isEditable? <>
+            {messages.length > 0 ?
+                <ul>
+                    {messages.map(m => <li><Typography color={m.type}>{m.type=="error"?"❌":"✓"} {m.msg}</Typography></li>)}
+                </ul>
+            : null}
+            {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
+            <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={saveLineup}
+                disabled={isLoading || hasErrors}>
+                Guardar alineación
+            </Button>
+            <Loading isLoading={isLoading} />
+        </> : null}
     </>);
 }
 

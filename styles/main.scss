@@ -14,6 +14,10 @@ body {
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+.app-container {
+    margin-bottom: 50px;
+}
+
 .app-height-adjust {
     display: flex;
     flex-direction: column;
