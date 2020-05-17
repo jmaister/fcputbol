@@ -2,7 +2,17 @@
 
 # TODO
 
+TODO: create teams when the league is started for the first time
+
 TODO: Create UserPrivateData to store password
+
+TODO: cron processes + custom server
+
+# Cron processes
+
+http://localhost:3000/api/freezelineups
+http://localhost:3000/api/processmatches
+
 
 # Next.js
 

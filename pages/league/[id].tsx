@@ -139,7 +139,7 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             </Formik>
             </>:null}
 
-            {isOrganizing ? <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{league.code}</a>
+                {isOrganizing ? <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{process.env.NEXT_PUBLIC_SERVER_URL}/enterleague/{league.code}</a>
                 </p>: null}
             {isOngoing ? <p>La liga ya está en marcha. No se pueden añadir más jugadores.</p> : null}
             {isFinished ? <p>La liga ya ha finalizado.</p> : null}
