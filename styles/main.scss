@@ -18,6 +18,15 @@ body {
     padding-bottom: 50px;
 }
 
+.app-drawer .MuiDrawer-paper {
+    width: 240px;
+}
+
+.app-drawer .drawer-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
 a {
     text-decoration: none;
     color: black;
