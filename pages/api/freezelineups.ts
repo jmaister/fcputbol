@@ -2,7 +2,6 @@
 import { freezeLineups } from 'lib/MatchService';
 
 import moment from 'moment';
-import { RoundStatus } from 'db/entity/round.entity';
 
 export default async function freezelineups(req, res) {
 
@@ -13,7 +12,7 @@ export default async function freezelineups(req, res) {
 
             res.status(200).json({ok: true, response});
         } catch (error) {
-            console.log("error", error);
+            console.log("Error on freezelineups", error);
             res.status(400).json({ ok: false, error: error });
         }
     } else {

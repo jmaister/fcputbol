@@ -4,7 +4,7 @@ import { redirectToLogin } from './serverutils';
 
 
 export function withAuthSSP(handler) {
-    console.log("creating wrapper withAuthSSP");
+    console.log("Creating wrapper withAuthSSP");
     return async function(context) {
         const session = await getSession(context.req);
         if (!session) {

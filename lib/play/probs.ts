@@ -232,7 +232,6 @@ const calcStepsDelDef = (playerWithBall:Player, plsatt: Player[], statatt:string
             } as MatchStep);
 
         } else if (selected2 === "robo") {
-            // TODO: must create DEF -> DEL
             steps.push({
                 player: defPlayer,
                 comment: "{player} roba el balón y despeja.",
@@ -287,7 +286,7 @@ const calcStepsDefDel = (playerWithBall:Player, plsdel: Player[], plsTarget: Pla
             t: t
         } as MatchStep);
     } else if (selected === "regate"){
-        // TODO: select DEL
+        // TODO: select DEL depending on number of players
         const del = randomElement(plsdel);
 
         steps.push({
@@ -551,10 +550,8 @@ const playFunction = (ala:Formation, alb:Formation): MatchResult => {
             }
 
         } else if (state === "PB") {
-            // TODO: check if ballOnA
             newSteps = calcStepsDelPor(playerWithBall, alb.gk[0], alb.def, "PB", "GA", "DB", ballOnA, stepNumber, t);
         } else if (state === "PA") {
-            // TODO: check if !ballOnA
             newSteps = calcStepsDelPor(playerWithBall, ala.gk[0], ala.def, "PA", "GB", "DA", ballOnA, stepNumber, t);
 
         } else if (state === "GA") {

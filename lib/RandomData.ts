@@ -8,9 +8,6 @@ class RandomData {
     constructor() {
         this._names = fs.readFileSync('data/names.es.txt').toString().trim().split('\n');
         this._surnames = fs.readFileSync('data/surnames.es.txt').toString().trim().split('\n');
-
-        console.log(" last name" + this._names[this._names.length-1]);
-        console.log(" last sname" + this._surnames[this._surnames.length-1]);
     }
 
     getName():string {

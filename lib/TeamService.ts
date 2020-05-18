@@ -81,7 +81,7 @@ export async function saveLineup(teamId:string, playerIds:number[], userId:numbe
 
         const lineupPlayers = team.players.filter(p => containsElement(playerIds, p.id));
 
-        // TODO: utilizar la misma función de validación
+        // Validate lineup
         const validationResult = validateLineup(lineupPlayers, true);
         if (validationResult.hasErrors) {
             throw new Error(validationResult.messages[0].msg);

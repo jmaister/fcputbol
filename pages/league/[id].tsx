@@ -206,8 +206,6 @@ export const getServerSideProps = withAuthSSP(async (context) => {
     // Hack
     league = JSON.parse(JSON.stringify(league));
 
-    console.log("found league", league);
-
     // TODO: sort seasons
 
     // Sort rounds

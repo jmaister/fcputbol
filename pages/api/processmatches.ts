@@ -63,7 +63,7 @@ export default async function playMatches(req, res) {
 
             res.status(200).json({ok: true, processedRounds, roundsToProcess: roundsCount, infoList});
         } catch (error) {
-            console.log("error", error);
+            console.log("Error playMatches", error);
             res.status(400).json({ ok: false, error: error });
         }
     } else {
