@@ -1,12 +1,10 @@
 
 import { freezeLineups } from 'lib/MatchService';
 
-import moment from 'moment';
-
 export default async function freezelineups(req, res) {
 
     if (req.method === 'GET') {
-        const now = moment().toDate();
+        const now = new Date();
         try {
             const response = await freezeLineups(now);
 

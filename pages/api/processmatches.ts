@@ -1,7 +1,6 @@
 
 import { playAndSaveMatch, findMatchToPlay } from 'lib/MatchService';
 
-import moment from 'moment';
 import { RoundStatus, Round } from 'db/entity/round.entity';
 import { findRoundByStatus, saveRound, updateRoundState } from 'lib/RoundService';
 
@@ -16,7 +15,7 @@ interface RoundProcessInfo {
 export default async function playMatches(req, res) {
 
     if (req.method === 'GET') {
-        const now = moment().toDate();
+        const now = new Date();
         const status = RoundStatus.SCHEDULED;
         try {
             const rounds:Round[] = await findRoundByStatus(now, status);
