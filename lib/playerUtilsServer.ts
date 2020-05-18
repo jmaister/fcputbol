@@ -1,6 +1,6 @@
 import { Player } from "db/entity/player.entity";
 
-import RandomData from './random-data'
+import RandomData from './RandomData';
 import { randomIntInterval } from "./utils";
 import { Team } from "db/entity/team.entity";
 import { allPositions } from "./playerUtils";

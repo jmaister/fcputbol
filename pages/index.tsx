@@ -1,7 +1,8 @@
-import { useUser } from '../lib/hooks'
-import Layout from '../components/layout'
+import { useUser } from '../lib/hooks';
+import Layout from '../components/layout';
 
-const Home = () => {
+
+export default function Home() {
     //const user = useUser();
 
     return (
@@ -13,5 +14,3 @@ const Home = () => {
         </Layout>
     )
 }
-
-export default Home

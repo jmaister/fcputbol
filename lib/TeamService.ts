@@ -67,7 +67,6 @@ export async function findTeam(id:string):Promise<Team> {
 }
 
 
-
 export async function saveLineup(teamId:string, playerIds:number[], userId:number):Promise<Lineup> {
     const db = await new Database().getManager();
 
