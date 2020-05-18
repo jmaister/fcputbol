@@ -11,6 +11,10 @@ export default function Home() {
 
             <p>Juego inspirado en el mítico PC Fútbol</p>
 
+            <p>1. Crea una cuenta</p>
+            <p>2. Crea una liga o consigue el código para entrar en una</p>
+            <p>3. ¡¡ Jugar !!</p>
+
         </Layout>
     )
 }
