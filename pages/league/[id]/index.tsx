@@ -30,6 +30,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import Link from 'next/link';
 
 interface LeaguePageParams {
     league: League
@@ -77,6 +78,10 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
 
             <p>Administrador: @{league.admin.username}</p>
             <div>Estado: <LeagueStatusChip status={league.status} /></div>
+
+            <Link href={'/league/' + league.id + '/market'}>
+                <Button color="primary" variant="contained">Subasta de jugadores</Button>
+            </Link>
 
             {canStartSeason ? <>
 

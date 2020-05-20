@@ -17,7 +17,7 @@ import { Team } from 'db/entity/team.entity';
 import Position from './Position';
 import Loading from 'components/Loading';
 import { findById, containsId } from 'lib/utils';
-import { validateLineup } from 'lib/playerUtils';
+import { validateLineup, powerColorClass } from 'lib/playerUtils';
 
 interface PlayersTableParams {
     team: Team

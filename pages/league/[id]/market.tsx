@@ -28,6 +28,10 @@ export default function MarketPage({ user, league, marketPlayers }: MarketPagePa
     const [errorMsg, setErrorMsg] = useState('');
 
     return <Layout>
+        <Link href={'/league/' + league.id}>
+            <Button color="primary" variant="contained">Volver</Button>
+        </Link>
+
         <h1>Subasta de jugadores</h1>
 
         <MarketTable marketPlayers={marketPlayers} />
