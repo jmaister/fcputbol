@@ -73,8 +73,8 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
                 season,
                 roundNumber: r,
                 roundCount: calculatedRounds.length,
-                roundDate: roundDate.toISOString(),
-                freezeLineupDate: freezeLineupDate.toISOString(),
+                roundDate: roundDate.toDate(),
+                freezeLineupDate: freezeLineupDate.toDate(),
                 status: RoundStatus.SCHEDULED,
             });
 

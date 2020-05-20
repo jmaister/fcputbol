@@ -1,7 +1,6 @@
-import { Player, Positions } from "db/entity/player.entity";
+import { Player, Positions, PlayerStat } from "db/entity/player.entity";
 
-import { randomIntInterval, sample } from "./utils";
-import { Team } from "db/entity/team.entity";
+import { sample } from "./utils";
 
 export function findById(arr:Player[], id:number): Player {
     return arr.find(e => {
@@ -101,4 +100,43 @@ export function validateLineup(players:Player[], onlyError:boolean):LineupValida
         messages:msgs,
         hasErrors
     };
+}
+
+export interface Stats {
+    sum: number,
+    avg: number,
+    max: number,
+    min: number,
+}
+
+export function calculatePlayerStats(player:Player): Stats  {
+    let sum = 0;
+    let avg = 0;
+    let max = 0;
+    let min = 999999;
+    PlayerStat.forEach(statName => {
+        const s = player[statName];
+        sum = sum + s;
+        if (max < s) {
+            max = s;
+        }
+        if (min >s) {
+            min = s;
+        }
+    });
+    avg = sum / PlayerStat.length;
+
+    return {
+        sum,
+        avg,
+        max,
+        min
+    } as Stats;
+}
+
+
+export function calculatePlayerPrice(player:Player): number {
+    const stats = calculatePlayerStats(player);
+    const price = (stats.max * 10 + stats.min * 5) * 1000;
+    return price;
 }
