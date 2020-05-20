@@ -22,6 +22,8 @@ interface MarketTableProps {
 
 
 export default function MarketTable({ marketPlayers }: MarketTableProps) {
+    // TODO: use users config
+    const NF = new Intl.NumberFormat("es-ES");
 
     return (<>
         <TableContainer component={Paper}>
@@ -52,7 +54,7 @@ export default function MarketTable({ marketPlayers }: MarketTableProps) {
                             <TableCell className={powerColorClass(player.pass)}>{player.pass}</TableCell>
                             <TableCell className={powerColorClass(player.dribble)}>{player.dribble}</TableCell>
                             <TableCell className={powerColorClass(player.shot)}>{player.shot}</TableCell>
-                            <TableCell align="right">{Intl.NumberFormat().format(marketPlayer.startingPrice)}</TableCell>
+                            <TableCell align="right">{NF.format(marketPlayer.startingPrice)}</TableCell>
                         </TableRow>
                     })}
                 </TableBody>

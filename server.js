@@ -10,6 +10,12 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const jobs = [
+    {name: "Freeze Lineups", url: '/api/freezelineups'},
+    {name: "Process Matches", url: '/api/processmatches'},
+    {name: "Create Market", url: '/api/createmarket'},
+];
+
 var CronJob = require('cron').CronJob;
 var job = new CronJob(
     // Every 5 min, not CRON compliant
@@ -18,18 +24,13 @@ var job = new CronJob(
         console.log('Running cron job...', new Date().toISOString());
         const urlPrefix = process.env.NEXT_PUBLIC_SERVER_URL;
 
-        try {
-            const freezeResponse = await getJSON(urlPrefix + '/api/freezelineups');
-            console.log("Freeze OK", freezeResponse);
-        } catch (error) {
-            console.log("Freeze ERROR", error);
-        }
-
-        try {
-            const processMatchesResponse = await getJSON(urlPrefix + '/api/processmatches');
-            console.log("Process matches OK", processMatchesResponse);
-        } catch (error) {
-            console.log("Process matches ERROR", error);
+        for (let job of jobs) {
+            try {
+                const response = await getJSON(urlPrefix + job.url);
+                console.log(job.name + " OK", response);
+            } catch (error) {
+                console.log(job.name + " ERROR", error);
+            }
         }
 
 		console.log('Finished cron job');
@@ -44,10 +45,6 @@ app.prepare().then(() => {
         // Be sure to pass `true` as the second argument to `url.parse`.
         // This tells it to parse the query portion of the URL.
         const parsedUrl = parse(req.url, true);
-        //const { pathname, query } = parsedUrl
-
-        //if (pathname === '/a') {
-        //    app.render(req, res, '/b', query)
 
         handle(req, res, parsedUrl);
 
