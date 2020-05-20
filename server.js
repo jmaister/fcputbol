@@ -11,9 +11,9 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const jobs = [
-    {name: "Freeze Lineups", url: '/api/freezelineups'},
-    {name: "Process Matches", url: '/api/processmatches'},
-    {name: "Create Market", url: '/api/createmarket'},
+    {name: "Freeze Lineups", url: '/api/jobs/freezelineups'},
+    {name: "Process Matches", url: '/api/jobs/processmatches'},
+    {name: "Create Market", url: '/api/jobs/createmarket'},
 ];
 
 var CronJob = require('cron').CronJob;
