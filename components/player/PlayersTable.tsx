@@ -7,7 +7,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
@@ -26,10 +25,6 @@ interface PlayersTableParams {
     lineup: Lineup
     isEditable: boolean
 }
-
-const colorFn = (power) => {
-    return "power-" + Math.floor((power / 10) + 1);
-};
 
 interface Message {
     type: string
@@ -133,11 +128,11 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
                             </TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
                             <TableCell><Position pos={player.position}></Position></TableCell>
-                            <TableCell className={colorFn(player.save)}>{player.save}</TableCell>
-                            <TableCell className={colorFn(player.defense)}>{player.defense}</TableCell>
-                            <TableCell className={colorFn(player.pass)}>{player.pass}</TableCell>
-                            <TableCell className={colorFn(player.dribble)}>{player.dribble}</TableCell>
-                            <TableCell className={colorFn(player.shot)}>{player.shot}</TableCell>
+                            <TableCell className={powerColorClass(player.save)}>{player.save}</TableCell>
+                            <TableCell className={powerColorClass(player.defense)}>{player.defense}</TableCell>
+                            <TableCell className={powerColorClass(player.pass)}>{player.pass}</TableCell>
+                            <TableCell className={powerColorClass(player.dribble)}>{player.dribble}</TableCell>
+                            <TableCell className={powerColorClass(player.shot)}>{player.shot}</TableCell>
                         </TableRow>
                     })}
                 </TableBody>
@@ -162,10 +157,3 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
         </> : null}
     </>);
 }
-
-/*
-                                <Checkbox
-                                    checked={isPlayerSelected}
-                                    onChange={() => changeSelection(player.id)}
-                                    />
-*/

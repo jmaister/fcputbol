@@ -15,8 +15,8 @@ interface CreateSeasonProps {
     name: string
     leagueId: number
     userId: number
-
 }
+
 export async function createSeason({name, leagueId, userId}:CreateSeasonProps): Promise<Season> {
 
     const db = await new Database().getManager();
@@ -43,7 +43,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         const classificationRepository = transactionalEntityManager.getRepository(Classification);
 
         // Create season
-        let seasonNumber = league.currentSeason ? league.currentSeason.currentRound + 1 : 0;
+        let seasonNumber = league.seasons ? league.seasons.length : 0;
         const season = await seasonRepository.save({
             name: name,
             league,

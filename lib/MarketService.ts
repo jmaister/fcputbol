@@ -17,6 +17,16 @@ export interface CreateMarketPlayersResult {
     ok: boolean,
 }
 
+export async function findMarketPlayers(leagueId:number): Promise<MarketPlayer[]> {
+    const db = await new Database().getManager();
+    const marketPlayerRepository = db.getRepository(MarketPlayer);
+    return marketPlayerRepository.createQueryBuilder('mp')
+        .leftJoinAndSelect("mp.player", "player")
+        .where('mp.status = :status', {status: MarketPlayerStatus.OPEN})
+        .andWhere('mp.league.id = :i', {i: leagueId})
+        .getMany();
+}
+
 export async function createmarketplayers(now: Date): Promise<CreateMarketPlayersResult[]> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
@@ -48,8 +58,8 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
             if (alreadyCreated.length < DAILY_PLAYERS) {
                 for (let pos of allPositions) {
                     for (let i=0; i < NUM_PLAYERS_PER_POS; i++) {
-                        // avg will be 40,50,60,70,80
-                        const avg = (i * 10) + 40;
+                        // avg will be 30,40,50,60,70
+                        const avg = (i * 10) + 30;
                         const std = 5;
                         const playerData = createPlayer(avg, std, pos);
                         const player = await playerRepository.save(playerData);

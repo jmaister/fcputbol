@@ -140,3 +140,7 @@ export function calculatePlayerPrice(player:Player): number {
     const price = (stats.max * 10 + stats.min * 5) * 1000;
     return price;
 }
+
+export function powerColorClass(power) {
+    return "power-" + Math.floor((power / 10) + 1);
+};
