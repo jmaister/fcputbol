@@ -34,7 +34,7 @@ export default function MarketPage({ user, league, marketPlayers }: MarketPagePa
 
         <h1>Subasta de jugadores</h1>
 
-        <MarketTable marketPlayers={marketPlayers} />
+        <MarketTable marketPlayers={marketPlayers} leagueId={league.id} />
     </Layout>
 }
 

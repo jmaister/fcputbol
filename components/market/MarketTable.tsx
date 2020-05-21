@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import moment from 'moment';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -15,15 +16,19 @@ import Loading from 'components/Loading';
 import { containsId } from 'lib/utils';
 import { powerColorClass } from 'lib/playerUtils';
 import { MarketPlayer } from 'db/entity/marketplayer.entity';
+import Bid from './Bid';
+import { getBestBid, calculateNextBid } from 'lib/marketUtils';
 
 interface MarketTableProps {
     marketPlayers: MarketPlayer[]
+    leagueId: number
 }
 
 
-export default function MarketTable({ marketPlayers }: MarketTableProps) {
+export default function MarketTable({ marketPlayers, leagueId }: MarketTableProps) {
     // TODO: use users config
     const NF = new Intl.NumberFormat("es-ES");
+    moment.locale('es');
 
     return (<>
         <TableContainer component={Paper}>
@@ -43,19 +48,36 @@ export default function MarketTable({ marketPlayers }: MarketTableProps) {
                 <TableBody>
                     {marketPlayers.map((marketPlayer) => {
                         const player = marketPlayer.player;
-                        return <TableRow
+                        const bids = marketPlayer.bids;
+                        const bestBid = getBestBid(bids);
+                        const nextBid = calculateNextBid(bestBid, marketPlayer.startingPrice);
+                        return <>
+                            <TableRow
                                 key={player.id}
                                 hover
                             >
-                            <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
-                            <TableCell><Position pos={player.position}></Position></TableCell>
-                            <TableCell className={powerColorClass(player.save)}>{player.save}</TableCell>
-                            <TableCell className={powerColorClass(player.defense)}>{player.defense}</TableCell>
-                            <TableCell className={powerColorClass(player.pass)}>{player.pass}</TableCell>
-                            <TableCell className={powerColorClass(player.dribble)}>{player.dribble}</TableCell>
-                            <TableCell className={powerColorClass(player.shot)}>{player.shot}</TableCell>
-                            <TableCell align="right">{NF.format(marketPlayer.startingPrice)}</TableCell>
-                        </TableRow>
+                                <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
+                                <TableCell><Position pos={player.position}></Position></TableCell>
+                                <TableCell className={powerColorClass(player.save)}>{player.save}</TableCell>
+                                <TableCell className={powerColorClass(player.defense)}>{player.defense}</TableCell>
+                                <TableCell className={powerColorClass(player.pass)}>{player.pass}</TableCell>
+                                <TableCell className={powerColorClass(player.dribble)}>{player.dribble}</TableCell>
+                                <TableCell className={powerColorClass(player.shot)}>{player.shot}</TableCell>
+                                <TableCell align="right">{NF.format(marketPlayer.startingPrice)}</TableCell>
+                            </TableRow>
+                            {bids.map((bid, i) => {
+                                return <TableRow key={bid.id}>
+                                    <TableCell colSpan={5} />
+                                    <TableCell>{moment(bid.createdDate).calendar()}</TableCell>
+                                    <TableCell>{bid.user.username}</TableCell>
+                                    <TableCell>{bid.amount}</TableCell>
+                                </TableRow>
+                            })}
+                            <TableRow>
+                                <TableCell colSpan={4} />
+                                <TableCell colSpan={4}><Bid marketPlayerId={marketPlayer.id} startingPrice={nextBid} leagueId={leagueId} /></TableCell>
+                            </TableRow>
+                        </>
                     })}
                 </TableBody>
             </Table>

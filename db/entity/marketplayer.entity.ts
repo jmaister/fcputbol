@@ -7,7 +7,8 @@ import {
     OneToOne,
     JoinColumn,
     ManyToMany,
-    JoinTable
+    JoinTable,
+    CreateDateColumn
 } from 'typeorm';
 import { Team } from './team.entity';
 import { User } from './user.entity';
@@ -49,6 +50,9 @@ export class MarketPlayer {
     @Column("int")
     startingPrice: number
 
+    @OneToMany(type => MarketBid, m => m.marketPlayer)
+    bids: MarketBid[]
+
     // Finished fields
 
     @Column("int", {nullable: true})
@@ -76,8 +80,7 @@ export class MarketBid {
     @ManyToOne(type => League)
     league: League;
 
-    // NULL for market bot
-    @ManyToOne(type => Team, {nullable: true})
+    @ManyToOne(type => Team)
     team: Team;
 
     @ManyToOne(type => User, {nullable: true})
@@ -91,5 +94,11 @@ export class MarketBid {
         default: MarketBidStatus.PLACED
     })
     status: MarketBidStatus;
+
+    @CreateDateColumn()
+    createdDate: Date;
+
+    @Column('datetime', {nullable: true})
+    resolvedDate: Date;
 
 }

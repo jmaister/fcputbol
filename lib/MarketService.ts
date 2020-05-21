@@ -7,6 +7,8 @@ import { Player } from 'db/entity/player.entity';
 import { createPlayer } from './playerUtilsServer';
 import { allPositions, calculatePlayerPrice } from './playerUtils';
 import { League, LeagueStatus } from 'db/entity/league.entity';
+import { getBestBid } from './marketUtils';
+import { User } from 'db/entity/user.entity';
 
 const NUM_PLAYERS_PER_POS = 5;
 const DAILY_PLAYERS = NUM_PLAYERS_PER_POS * allPositions.length;
@@ -22,6 +24,8 @@ export async function findMarketPlayers(leagueId:number): Promise<MarketPlayer[]
     const marketPlayerRepository = db.getRepository(MarketPlayer);
     return marketPlayerRepository.createQueryBuilder('mp')
         .leftJoinAndSelect("mp.player", "player")
+        .leftJoinAndSelect("mp.bids", "bids")
+        .leftJoinAndSelect("bids.user", "user")
         .where('mp.status = :status', {status: MarketPlayerStatus.OPEN})
         .andWhere('mp.league.id = :i', {i: leagueId})
         .getMany();
@@ -74,6 +78,7 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
                             state: MarketPlayerStatus.OPEN
                         });
 
+                        /*
                         // Save ghost bid
                         await marketBidRepository.save({
                             league: league,
@@ -81,6 +86,7 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
                             amount: marketPlayer.startingPrice,
                             status: MarketBidStatus.PLACED,
                         });
+                        */
                     }
                 }
             }
@@ -93,3 +99,62 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
     return results;
 }
 
+interface BidResult {
+    ok: boolean
+    message?: string
+    minBid?: number
+}
+
+export async function sendBid(bidPrice: number, marketPlayerId: number, userId: number): Promise<BidResult> {
+    const db = await new Database().getManager();
+    return await db.transaction(async (transactionalEntityManager) => {
+        const marketPlayerRepository = transactionalEntityManager.getRepository(MarketPlayer);
+        const marketBidRepository = transactionalEntityManager.getRepository(MarketBid);
+        const userRepository = transactionalEntityManager.getRepository(User);
+
+        // TODO: get user money
+        // TODO: check user money
+
+        const marketPlayer = await marketPlayerRepository.findOne(marketPlayerId,
+            {relations: ["league", "league.teams", "league.teams.user", "bids", "bids.user"]});
+        const user = await userRepository.findOne(userId);
+
+        // Check if the player can bid to this MarketPlayer
+        let found = false;
+        for (let team of marketPlayer.league.teams) {
+            if (team.user.id === userId) {
+                found = true;
+            }
+        }
+        if (found) {
+            const bestBid = getBestBid(marketPlayer.bids);
+            if (bestBid != null && bestBid.amount > bidPrice) {
+                return {
+                    ok: false,
+                    message: "La mayor puja actualmente es " + bestBid.amount,
+                    minBid: bestBid.amount,
+                }
+            } else {
+                await marketBidRepository.save({
+                    marketPlayer,
+                    league: marketPlayer.league,
+                    user,
+                    amount: bidPrice,
+                    status: MarketBidStatus.PLACED,
+                });
+                return {
+                    ok: true,
+                }
+            }
+        } else {
+            return {
+                ok: false,
+                message: "El usuario es incorrecto.",
+            }
+        }
+
+        return {
+            ok: true
+        };
+    });
+}
