@@ -14,7 +14,7 @@ import { MarketPlayer } from 'db/entity/marketplayer.entity';
 import MarketTable from 'components/market/MarketTable';
 import { getSession } from 'lib/iron';
 import { findLeague } from 'lib/LeagueService';
-import { findMarketPlayers } from 'lib/MarketService';
+import { findAvailableMarketPlayers } from 'lib/MarketService';
 
 
 interface MarketPageParams {
@@ -52,7 +52,7 @@ export async function getServerSideProps(context) {
     // Hack
     league = JSON.parse(JSON.stringify(league));
 
-    let marketPlayers = await findMarketPlayers(leagueId);
+    let marketPlayers = await findAvailableMarketPlayers(leagueId);
     // Hack
     marketPlayers = JSON.parse(JSON.stringify(marketPlayers));
 

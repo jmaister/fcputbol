@@ -1,6 +1,4 @@
 
-import moment from 'moment';
-
 import Database from 'db/database';
 import { MarketPlayer, MarketBid, MarketPlayerStatus, MarketBidStatus } from 'db/entity/marketplayer.entity';
 import { Player } from 'db/entity/player.entity';
@@ -9,9 +7,13 @@ import { allPositions, calculatePlayerPrice } from './playerUtils';
 import { League, LeagueStatus } from 'db/entity/league.entity';
 import { getBestBid } from './marketUtils';
 import { User } from 'db/entity/user.entity';
+import { constants, getBidStartingTime, getBidEndTime } from './constants';
 
-const NUM_PLAYERS_PER_POS = 5;
-const DAILY_PLAYERS = NUM_PLAYERS_PER_POS * allPositions.length;
+export interface BidResult {
+    ok: boolean
+    message?: string
+    minBid?: number
+}
 
 export interface CreateMarketPlayersResult {
     leagueId: number,
@@ -19,7 +21,8 @@ export interface CreateMarketPlayersResult {
     ok: boolean,
 }
 
-export async function findMarketPlayers(leagueId:number): Promise<MarketPlayer[]> {
+
+export async function findAvailableMarketPlayers(leagueId:number): Promise<MarketPlayer[]> {
     const db = await new Database().getManager();
     const marketPlayerRepository = db.getRepository(MarketPlayer);
     return marketPlayerRepository.createQueryBuilder('mp')
@@ -45,23 +48,20 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
         const league = leagues[l];
         const res = await db.transaction(async (transactionalEntityManager) => {
             const marketPlayerRepository = transactionalEntityManager.getRepository(MarketPlayer);
-            const marketBidRepository = transactionalEntityManager.getRepository(MarketBid);
             const playerRepository = transactionalEntityManager.getRepository(Player);
 
-            const fromDate = moment().startOf('day').add(13, 'hours');
-            const toDate = moment().startOf('day').add(1, 'day').add(11, 'hours');
+            const fromDate = getBidStartingTime();
+            const toDate = getBidEndTime();
 
             const alreadyCreated = await marketPlayerRepository.createQueryBuilder('market')
-                .where('market.fromDate >= :f', {f: fromDate.toDate()})
+                .where('market.fromDate >= :f', {f: fromDate})
                 .andWhere('market.status = :s', {s: MarketPlayerStatus.OPEN})
                 .andWhere('market.league.id = :l', {l: league.id})
                 .getMany();
 
-            console.log("already created", league.id, alreadyCreated);
-
-            if (alreadyCreated.length < DAILY_PLAYERS) {
+            if (alreadyCreated.length < constants.MARKET_DAILY_PLAYERS) {
                 for (let pos of allPositions) {
-                    for (let i=0; i < NUM_PLAYERS_PER_POS; i++) {
+                    for (let i=0; i < constants.MARKET_NEW_PLAYERS_PER_POS; i++) {
                         // avg will be 30,40,50,60,70
                         const avg = (i * 10) + 30;
                         const std = 5;
@@ -73,20 +73,10 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
                             league: league,
                             player: player,
                             startingPrice: calculatePlayerPrice(player),
-                            fromDate: fromDate.toDate(),
-                            toDate: toDate.toDate(),
+                            fromDate: fromDate,
+                            toDate: toDate,
                             state: MarketPlayerStatus.OPEN
                         });
-
-                        /*
-                        // Save ghost bid
-                        await marketBidRepository.save({
-                            league: league,
-                            marketPlayer: marketPlayer,
-                            amount: marketPlayer.startingPrice,
-                            status: MarketBidStatus.PLACED,
-                        });
-                        */
                     }
                 }
             }
@@ -99,11 +89,25 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
     return results;
 }
 
-interface BidResult {
-    ok: boolean
-    message?: string
-    minBid?: number
+export async function resolvemarket(now: Date): Promise<CreateMarketPlayersResult[]> {
+    const db = await new Database().getManager();
+    const leagueRepository = db.getRepository(League);
+    const leagues = await leagueRepository.createQueryBuilder('league')
+        .where('league.status != :status', {status: LeagueStatus.FINISHED})
+        .getMany();
+
+    console.log("leagues to process", leagues);
+
+    const results = [];
+    for (let l=0; l < leagues.length; l++) {
+        const league = leagues[l];
+        const res = await db.transaction(async (transactionalEntityManager) => {
+
+        });
+    }
+    return [];
 }
+
 
 export async function sendBid(bidPrice: number, marketPlayerId: number, userId: number): Promise<BidResult> {
     const db = await new Database().getManager();
@@ -114,27 +118,23 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
 
         // TODO: get user money
         // TODO: check user money
+        // TODO: block money in the bid
 
         const marketPlayer = await marketPlayerRepository.findOne(marketPlayerId,
             {relations: ["league", "league.teams", "league.teams.user", "bids", "bids.user"]});
         const user = await userRepository.findOne(userId);
 
         // Check if the player can bid to this MarketPlayer
-        let found = false;
+        let isUserFound = false;
         for (let team of marketPlayer.league.teams) {
             if (team.user.id === userId) {
-                found = true;
+                isUserFound = true;
             }
         }
-        if (found) {
+        if (isUserFound) {
             const bestBid = getBestBid(marketPlayer.bids);
-            if (bestBid != null && bestBid.amount > bidPrice) {
-                return {
-                    ok: false,
-                    message: "La mayor puja actualmente es " + bestBid.amount,
-                    minBid: bestBid.amount,
-                }
-            } else {
+            const minBid = bestBid.amount + constants.MARKET_BID_INCREMENT
+            if (bestBid == null || bidPrice >= minBid) {
                 await marketBidRepository.save({
                     marketPlayer,
                     league: marketPlayer.league,
@@ -145,6 +145,12 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
                 return {
                     ok: true,
                 }
+            } else {
+                return {
+                    ok: false,
+                    message: "Tu puja debe ser de " + minBid + " o mayor.",
+                    minBid: minBid,
+                }
             }
         } else {
             return {
@@ -152,9 +158,5 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
                 message: "El usuario es incorrecto.",
             }
         }
-
-        return {
-            ok: true
-        };
     });
 }

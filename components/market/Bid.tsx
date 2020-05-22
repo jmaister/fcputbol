@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from 'yup';
 
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Typography } from "@material-ui/core";
 import Loading from "components/Loading";
 import Router from "next/router";
 
@@ -13,17 +13,23 @@ interface BidProps {
     leagueId: number
 }
 
+interface BidFormProps {
+    bidPrice: number
+    marketPlayerId: number
+}
+
 export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProps) {
     const [errorMsg, setErrorMsg] = useState('');
 
     const minPrice = startingPrice;
     const currentUserAvailable = 999999999; //TODO: calculate user available money
-    const initial = {
+    const initial:BidFormProps = {
         bidPrice: minPrice,
         marketPlayerId,
     };
 
-    const onSubmit = async (values, actions) => {
+    const onSubmit = async (values, actions:FormikHelpers<BidFormProps>) => {
+        setErrorMsg(null);
         console.log("submit", values);
         fetch('/api/sendbid', {
             method: 'POST',
@@ -34,14 +40,10 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
         .then(response => {
             console.log("fetch response data", response);
             if (response.ok) {
-                setErrorMsg(null);
                 Router.push('/league/' + leagueId + '/market');
             } else {
-                setErrorMsg(JSON.stringify(response.message));
-                actions.resetForm({
-                    bidPrice: response.minBid,
-                    marketPlayerId,
-                });
+                setErrorMsg(response.message);
+                actions.setFieldValue('bidPrice', response.minBid);
             }
         });
     }
@@ -70,6 +72,7 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
                         type="submit"
                         disabled={!props.isValid || props.isSubmitting}
                     >Pujar</Button>
+                    {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
                     <Loading isLoading={props.isSubmitting}/>
                 </Form>
             }}

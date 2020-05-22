@@ -69,11 +69,11 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
                                 return <TableRow key={bid.id}>
                                     <TableCell colSpan={5} />
                                     <TableCell>{moment(bid.createdDate).calendar()}</TableCell>
-                                    <TableCell>{bid.user.username}</TableCell>
-                                    <TableCell>{bid.amount}</TableCell>
+                                    <TableCell>@{bid.user.username}</TableCell>
+                                    <TableCell align="right">{NF.format(bid.amount)}</TableCell>
                                 </TableRow>
                             })}
-                            <TableRow>
+                            <TableRow key={'bid_'+player.id}>
                                 <TableCell colSpan={4} />
                                 <TableCell colSpan={4}><Bid marketPlayerId={marketPlayer.id} startingPrice={nextBid} leagueId={leagueId} /></TableCell>
                             </TableRow>
