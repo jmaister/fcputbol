@@ -31,6 +31,7 @@ export async function findAvailableMarketPlayers(leagueId:number): Promise<Marke
         .leftJoinAndSelect("bids.user", "user")
         .where('mp.status = :status', {status: MarketPlayerStatus.OPEN})
         .andWhere('mp.league.id = :i', {i: leagueId})
+        .andWhere('bids.status = :s', {s: MarketBidStatus.PLACED})
         .getMany();
 }
 
@@ -135,6 +136,17 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
             const bestBid = getBestBid(marketPlayer.bids);
             const minBid = bestBid.amount + constants.MARKET_BID_INCREMENT
             if (bestBid == null || bidPrice >= minBid) {
+                // Overbid previous bids from this user
+                marketBidRepository.createQueryBuilder()
+                    .update(MarketBid)
+                    .set({
+                        status: MarketBidStatus.OVERBID,
+                        resolvedDate: new Date()
+                    })
+                    .where("status = :s and user.id = :u", {s: MarketBidStatus.PLACED, u: userId})
+                    .execute();
+
+                // Create new bid
                 await marketBidRepository.save({
                     marketPlayer,
                     league: marketPlayer.league,

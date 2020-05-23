@@ -1,4 +1,4 @@
-
+import { Fragment } from 'react';
 import moment from 'moment';
 
 import Table from '@material-ui/core/Table';
@@ -34,7 +34,7 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
         <TableContainer component={Paper}>
             <Table className="players-table" size="small" aria-label="a dense table">
                 <TableHead>
-                    <TableRow>
+                    <TableRow key={'header'}>
                         <TableCell>Nombre</TableCell>
                         <TableCell>Posición</TableCell>
                         <TableCell>Parada</TableCell>
@@ -51,7 +51,7 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
                         const bids = marketPlayer.bids;
                         const bestBid = getBestBid(bids);
                         const nextBid = calculateNextBid(bestBid, marketPlayer.startingPrice);
-                        return <>
+                        return <Fragment key={'frg_'+marketPlayer.id}>
                             <TableRow
                                 key={player.id}
                                 hover
@@ -77,7 +77,7 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
                                 <TableCell colSpan={4} />
                                 <TableCell colSpan={4}><Bid marketPlayerId={marketPlayer.id} startingPrice={nextBid} leagueId={leagueId} /></TableCell>
                             </TableRow>
-                        </>
+                        </Fragment>
                     })}
                 </TableBody>
             </Table>

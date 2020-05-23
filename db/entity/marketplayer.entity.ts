@@ -63,6 +63,7 @@ export class MarketPlayer {
 
 export enum MarketBidStatus {
     PLACED  = "PLACED",
+    OVERBID  = "OVERBID",
     DELETED  = "DELETED",
     ACCEPTED = "ACCEPTED",
     REJECTED = "REJECTED",
