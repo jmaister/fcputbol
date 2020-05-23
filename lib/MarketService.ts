@@ -22,6 +22,12 @@ export interface CreateMarketPlayersResult {
     ok: boolean,
 }
 
+export interface ResolvedMarketPlayersResult {
+    leagueId: number,
+    resolved?: number,
+    ok: boolean,
+    message?: string,
+}
 
 export async function findAvailableMarketPlayers(leagueId:number): Promise<MarketPlayer[]> {
     const db = await new Database().getManager();
@@ -88,14 +94,14 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
     return results;
 }
 
-export async function resolvemarket(now: Date): Promise<CreateMarketPlayersResult[]> {
+export async function resolvemarket(now: Date): Promise<ResolvedMarketPlayersResult[]> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     const leagues = await leagueRepository.createQueryBuilder('league')
         .where('league.status != :status', {status: LeagueStatus.FINISHED})
         .getMany();
 
-    const results = [];
+    const results:ResolvedMarketPlayersResult[] = [];
     for (let league of leagues) {
         const res = await db.transaction(async (transactionalEntityManager) => {
             const marketPlayerRepository = transactionalEntityManager.getRepository(MarketPlayer);
@@ -168,6 +174,18 @@ export async function resolvemarket(now: Date): Promise<CreateMarketPlayersResul
                     await marketPlayerRepository.save(marketPlayer);
                 }
             }
+
+            return {
+                leagueId: league.id,
+                ok: true,
+                resolved: marketPlayesToResolve.length,
+            } as ResolvedMarketPlayersResult;
+        }).catch(error => {
+            return {
+                leagueId: league.id,
+                ok: false,
+                message: error.message,
+            } as ResolvedMarketPlayersResult;
         });
 
         results.push(res);
