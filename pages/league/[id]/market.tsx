@@ -15,6 +15,7 @@ import MarketTable from 'components/market/MarketTable';
 import { getSession } from 'lib/iron';
 import { findLeague } from 'lib/LeagueService';
 import { findAvailableMarketPlayers } from 'lib/MarketService';
+import { withAuthSSP } from 'lib/withAuth';
 
 
 interface MarketPageParams {
@@ -38,10 +39,9 @@ export default function MarketPage({ user, league, marketPlayers }: MarketPagePa
     </Layout>
 }
 
-export async function getServerSideProps(context) {
+export const getServerSideProps = withAuthSSP(async (context) => {
     const session = await getSession(context.req);
     const leagueId = context.params.id;
-
 
     let user = await findUser(session.id);
     // Hack
@@ -63,4 +63,4 @@ export async function getServerSideProps(context) {
             marketPlayers,
         }
     };
-}
+});

@@ -20,6 +20,7 @@ if (startJobs) {
         {name: "Freeze Lineups", url: '/api/jobs/freezelineups'},
         {name: "Process Matches", url: '/api/jobs/processmatches'},
         {name: "Create Market", url: '/api/jobs/createmarket'},
+        {name: "Resolve Market", url: '/api/jobs/resolvemarket'},
     ];
 
     console.log("Processing jobs will start.");

@@ -3,7 +3,7 @@ import { getSession } from './iron';
 import { redirectToLogin } from './serverutils';
 
 
-export function withAuthSSP(handler) {
+export function withAuthSSP(handler:Function) {
     console.log("Creating wrapper withAuthSSP");
     return async function(context) {
         const session = await getSession(context.req);

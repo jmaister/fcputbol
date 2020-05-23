@@ -15,7 +15,7 @@ import Position from '../player/Position';
 import Loading from 'components/Loading';
 import { containsId } from 'lib/utils';
 import { powerColorClass } from 'lib/playerUtils';
-import { MarketPlayer } from 'db/entity/marketplayer.entity';
+import { MarketPlayer, MarketBidStatus } from 'db/entity/marketplayer.entity';
 import Bid from './Bid';
 import { getBestBid, calculateNextBid } from 'lib/marketUtils';
 
@@ -34,7 +34,7 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
         <TableContainer component={Paper}>
             <Table className="players-table" size="small" aria-label="a dense table">
                 <TableHead>
-                    <TableRow key={'header'}>
+                    <TableRow>
                         <TableCell>Nombre</TableCell>
                         <TableCell>Posición</TableCell>
                         <TableCell>Parada</TableCell>
@@ -48,7 +48,7 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
                 <TableBody>
                     {marketPlayers.map((marketPlayer) => {
                         const player = marketPlayer.player;
-                        const bids = marketPlayer.bids;
+                        const bids = marketPlayer.bids.filter(b => b.status === MarketBidStatus.PLACED);
                         const bestBid = getBestBid(bids);
                         const nextBid = calculateNextBid(bestBid, marketPlayer.startingPrice);
                         return <Fragment key={'frg_'+marketPlayer.id}>

@@ -30,6 +30,7 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
 
     const onSubmit = async (values, actions:FormikHelpers<BidFormProps>) => {
         setErrorMsg(null);
+        actions.setSubmitting(true);
         console.log("submit", values);
         fetch('/api/sendbid', {
             method: 'POST',
@@ -45,6 +46,7 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
                 setErrorMsg(response.message);
                 actions.setFieldValue('bidPrice', response.minBid);
             }
+            actions.setSubmitting(false);
         });
     }
 
@@ -72,6 +74,7 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
                         type="submit"
                         disabled={!props.isValid || props.isSubmitting}
                     >Pujar</Button>
+                    <div>isSubmitting /{props.isSubmitting}/</div>
                     {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
                     <Loading isLoading={props.isSubmitting}/>
                 </Form>

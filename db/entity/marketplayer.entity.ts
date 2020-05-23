@@ -58,6 +58,8 @@ export class MarketPlayer {
     @Column("int", {nullable: true})
     finalPrice: number
 
+    @Column('datetime', {nullable: true})
+    resolvedDate: Date;
 }
 
 

@@ -1,5 +1,7 @@
-import { MarketBid } from "db/entity/marketplayer.entity";
 import { constants } from "./constants";
+
+import { MarketBid } from "db/entity/marketplayer.entity";
+import { Player } from "db/entity/player.entity";
 
 
 export function getBestBid(bids: MarketBid[]): MarketBid {
@@ -20,4 +22,15 @@ export function calculateNextBid(bid:MarketBid, playerPrice:number): number {
     } else {
         return playerPrice;
     }
+}
+
+
+export function calculateNextPlayerNum(players: Player[]): number {
+    let num = 0;
+    for (let p of players) {
+        if (p.num > num) {
+            num = p.num;
+        }
+    }
+    return num + 1;
 }
