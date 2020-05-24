@@ -14,7 +14,7 @@ export default async function sendbid(req, res) {
                 res.status(400).json(response);
             }
         } catch (error) {
-            console.log("ERROr on sendbid", error);
+            console.log("ERROR on sendbid", error);
             res.status(400).json({ ok: false, error: error });
         };
     } else {

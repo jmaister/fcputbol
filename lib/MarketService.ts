@@ -5,7 +5,7 @@ import { Player } from 'db/entity/player.entity';
 import { createPlayer } from './playerUtilsServer';
 import { allPositions, calculatePlayerPrice } from './playerUtils';
 import { League, LeagueStatus } from 'db/entity/league.entity';
-import { getBestBid, calculateNextPlayerNum } from './marketUtils';
+import { getBestBid, calculateNextPlayerNum, calculateNextBid } from './marketUtils';
 import { User } from 'db/entity/user.entity';
 import { constants, getBidStartingTime, getBidEndTime } from './constants';
 import { Team } from 'db/entity/team.entity';
@@ -225,14 +225,14 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
         }
         if (isUserFound) {
             const bestBid = getBestBid(marketPlayer.bids);
-            const minBid = bestBid.amount + constants.MARKET_BID_INCREMENT
+            const minBid = calculateNextBid(bestBid, marketPlayer.startingPrice);
             if (bestBid == null || bidPrice >= minBid) {
                 // Overbid previous bids from this user
                 await marketBidRepository.createQueryBuilder()
                     .update(MarketBid)
                     .set({
                         status: MarketBidStatus.OVERBID,
-                        resolvedDate: new Date()
+                        resolvedDate: new Date(),
                     })
                     .where("status = :s and user.id = :u", {s: MarketBidStatus.PLACED, u: userId})
                     .execute();
