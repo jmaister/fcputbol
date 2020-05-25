@@ -43,6 +43,7 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
     const [messages, setMessages] = useState([]);
     const [hasErrors, setHasErrors] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isDirty, setIsDirty] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
@@ -123,7 +124,10 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
                                 <input type="checkbox"
                                     checked={isPlayerSelected}
                                     disabled={isLoading || !isEditable}
-                                    onChange={() => changeSelection(player.id, isPlayerSelected)}
+                                    onChange={() => {
+                                        changeSelection(player.id, isPlayerSelected);
+                                        setIsDirty(true);
+                                    }}
                                     />
                             </TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
@@ -150,7 +154,7 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
                 variant="contained"
                 color="primary"
                 onClick={saveLineup}
-                disabled={isLoading || hasErrors}>
+                disabled={isLoading || hasErrors || !isDirty}>
                 Guardar alineación
             </Button>
             <Loading isLoading={isLoading} />
