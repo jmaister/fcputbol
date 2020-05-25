@@ -14,8 +14,15 @@ import { Round } from "./entity/round.entity";
 import { Season } from "./entity/season.entity";
 import { MarketPlayer, MarketBid } from "./entity/marketplayer.entity";
 
+console.log('env', process.env.NODE_ENV);
+let database = "fcputbol.sqlite";
+if (process.env.NODE_ENV === 'test') {
+    database = "fcputbol-test.sqlite";
+}
+
 const databaseOptions = ({
     ...ormconfig,
+    database,
     "entities": [
         User,
         Team,
