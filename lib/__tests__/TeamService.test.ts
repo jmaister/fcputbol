@@ -4,7 +4,7 @@ import {describe, expect, it, test} from '@jest/globals';
 import {createUser, findUser} from '../UserService';
 
 import { createTeam, findTeam } from 'lib/TeamService';
-import { colors } from 'lib/teamUtils';
+import { jerseyColors } from 'lib/teamUtils';
 import { createRandomUsername } from './TestUtils';
 
 import { User } from 'db/entity/user.entity';
@@ -22,7 +22,7 @@ test('Create team', async () => {
     const savedTeam:Team = await createTeam({
         name: 'Team One',
         userId: user.id,
-        jersey_color: colors[0].value,
+        jersey_color: jerseyColors[0].value,
     });
     expect(savedTeam).not.toBeNull();
 

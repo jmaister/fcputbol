@@ -16,7 +16,7 @@ import { TextField } from 'formik-material-ui';
 
 import {Team} from 'db/entity/team.entity';
 import Loading from 'components/Loading';
-import { colors } from 'lib/teamUtils';
+import { jerseyColors } from 'lib/teamUtils';
 
 export default function CreateTeam({}) {
     const [errorMsg, setErrorMsg] = useState('');
@@ -93,7 +93,7 @@ export default function CreateTeam({}) {
                                 shrink: true,
                             }}
                         >
-                            {colors.map(option => (
+                            {jerseyColors.map(option => (
                             <MenuItem key={option.value} value={option.value}>
                                 <span className={"jersey-sample jersey-" + option.value}>{option.label}</span>
                             </MenuItem>

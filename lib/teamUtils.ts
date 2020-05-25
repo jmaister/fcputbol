@@ -1,6 +1,6 @@
 
 
-export const colors = [
+export const jerseyColors = [
     {label: "Rojo", value: "red"},
     {label: "Azúl", value: "blue"},
     {label: "Verde", value: "green"},

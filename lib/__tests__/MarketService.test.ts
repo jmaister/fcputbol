@@ -9,7 +9,6 @@ test('title', async () => {
 
     const response = await createmarketplayers(now);
     expect(response).not.toBeNull();
-    console.log(response);
 });
 
 
