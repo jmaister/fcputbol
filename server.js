@@ -16,6 +16,7 @@ const PORT = process.env.FC_PORT;
 const startJobs = process.env.START_JOBS === 'true';
 
 if (startJobs) {
+    console.log("Processing jobs will start.");
     const jobs = [
         {name: "Freeze Lineups", url: '/api/jobs/freezelineups'},
         {name: "Process Matches", url: '/api/jobs/processmatches'},
@@ -23,7 +24,6 @@ if (startJobs) {
         {name: "Resolve Market", url: '/api/jobs/resolvemarket'},
     ];
 
-    console.log("Processing jobs will start.");
     const CronJob = require('cron').CronJob;
     const job = new CronJob(
         // Every 5 min, not CRON compliant

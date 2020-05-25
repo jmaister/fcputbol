@@ -35,14 +35,14 @@ export async function findUserForLogin({ username, password }) {
 
     const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
-    try {
-        const user = await userRepository.findOne({ username: username, password: hash });
+    const user = await userRepository.find({ username: username, password: hash });
+    if (user.length == 1) {
         return {
-            id: user.id,
-            username: user.username
+            id: user[0].id,
+            username: user[0].username
         };
-    } catch (error) {
-        console.log("find user error:", error);
+    } else {
+        //return Promise.reject(new Error("username or password not valid."));
         throw new Error("username or password not valid.");
     }
 

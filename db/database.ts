@@ -16,13 +16,16 @@ import { MarketPlayer, MarketBid } from "./entity/marketplayer.entity";
 
 console.log('env', process.env.NODE_ENV);
 let database = "fcputbol.sqlite";
+let logging = ormconfig.logging;
 if (process.env.NODE_ENV === 'test') {
     database = "fcputbol-test.sqlite";
+    logging = false;
 }
 
 const databaseOptions = ({
     ...ormconfig,
     database,
+    logging,
     "entities": [
         User,
         Team,

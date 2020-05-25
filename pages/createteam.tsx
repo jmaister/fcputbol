@@ -14,8 +14,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { TextField } from 'formik-material-ui';
 
-import {Team} from '../db/entity/team.entity';
+import {Team} from 'db/entity/team.entity';
 import Loading from 'components/Loading';
+import { colors } from 'lib/teamUtils';
 
 export default function CreateTeam({}) {
     const [errorMsg, setErrorMsg] = useState('');
@@ -25,16 +26,6 @@ export default function CreateTeam({}) {
         name: "",
         jersey_color: "",
     } as Team;
-
-    const colors = [
-        {label: "Rojo", value: "red"},
-        {label: "Azúl", value: "blue"},
-        {label: "Verde", value: "green"},
-        {label: "Naranja", value: "orange"},
-        {label: "Amarillo", value: "yellow"},
-        {label: "Azúl claro", value: "lightblue"},
-        {label: "Marrón", value: "brown"},
-    ];
 
     return (
         <Layout>

@@ -55,7 +55,7 @@ export async function createTeam({ name, jersey_color, userId }) {
     });
 }
 
-export async function findTeam(id:string):Promise<Team> {
+export async function findTeam(id:number):Promise<Team> {
     const db = await new Database().getManager();
     const teamRepository = db.getRepository(Team);
     try {
