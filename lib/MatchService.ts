@@ -147,9 +147,12 @@ export async function freezeLineups(now:Date):Promise<Match[]> {
                 .leftJoinAndSelect("home.currentLineup", "homeLineup")
                 .leftJoinAndSelect("match.away", "away")
                 .leftJoinAndSelect("away.currentLineup", "awayLineup")
-                .where("round.freezeLineupDate <= :now", {now: now.toISOString()})
+                .where("round.freezeLineupDate <= datetime(:now)", {now: now.toISOString()})
                 .andWhere("match.status = :status", {status: MatchStatus.SCHEDULED})
                 .getMany();
+
+            console.log('matches to freeze', matches);
+            console.log('now', now, now.toISOString());
 
             for (let i = 0; i < matches.length; i++) {
                 const match = matches[i];

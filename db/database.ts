@@ -12,6 +12,7 @@ import { League } from "./entity/league.entity";
 import { Classification } from "./entity/classification.entity";
 import { Round } from "./entity/round.entity";
 import { Season } from "./entity/season.entity";
+import { MarketPlayer, MarketBid } from "./entity/marketplayer.entity";
 
 const databaseOptions = ({
     ...ormconfig,
@@ -26,6 +27,9 @@ const databaseOptions = ({
         Match,
         MatchStep,
         Classification,
+
+        MarketPlayer,
+        MarketBid,
     ]
 });
 

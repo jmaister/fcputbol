@@ -7,7 +7,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
@@ -18,7 +17,7 @@ import { Team } from 'db/entity/team.entity';
 import Position from './Position';
 import Loading from 'components/Loading';
 import { findById, containsId } from 'lib/utils';
-import { validateLineup } from 'lib/playerUtils';
+import { validateLineup, powerColorClass } from 'lib/playerUtils';
 
 interface PlayersTableParams {
     team: Team
@@ -26,10 +25,6 @@ interface PlayersTableParams {
     lineup: Lineup
     isEditable: boolean
 }
-
-const colorFn = (power) => {
-    return "power-" + Math.floor((power / 10) + 1);
-};
 
 interface Message {
     type: string
@@ -48,6 +43,7 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
     const [messages, setMessages] = useState([]);
     const [hasErrors, setHasErrors] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isDirty, setIsDirty] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
@@ -128,16 +124,19 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
                                 <input type="checkbox"
                                     checked={isPlayerSelected}
                                     disabled={isLoading || !isEditable}
-                                    onChange={() => changeSelection(player.id, isPlayerSelected)}
+                                    onChange={() => {
+                                        changeSelection(player.id, isPlayerSelected);
+                                        setIsDirty(true);
+                                    }}
                                     />
                             </TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
                             <TableCell><Position pos={player.position}></Position></TableCell>
-                            <TableCell className={colorFn(player.save)}>{player.save}</TableCell>
-                            <TableCell className={colorFn(player.defense)}>{player.defense}</TableCell>
-                            <TableCell className={colorFn(player.pass)}>{player.pass}</TableCell>
-                            <TableCell className={colorFn(player.dribble)}>{player.dribble}</TableCell>
-                            <TableCell className={colorFn(player.shot)}>{player.shot}</TableCell>
+                            <TableCell className={powerColorClass(player.save)}>{player.save}</TableCell>
+                            <TableCell className={powerColorClass(player.defense)}>{player.defense}</TableCell>
+                            <TableCell className={powerColorClass(player.pass)}>{player.pass}</TableCell>
+                            <TableCell className={powerColorClass(player.dribble)}>{player.dribble}</TableCell>
+                            <TableCell className={powerColorClass(player.shot)}>{player.shot}</TableCell>
                         </TableRow>
                     })}
                 </TableBody>
@@ -155,17 +154,10 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
                 variant="contained"
                 color="primary"
                 onClick={saveLineup}
-                disabled={isLoading || hasErrors}>
+                disabled={isLoading || hasErrors || !isDirty}>
                 Guardar alineación
             </Button>
             <Loading isLoading={isLoading} />
         </> : null}
     </>);
 }
-
-/*
-                                <Checkbox
-                                    checked={isPlayerSelected}
-                                    onChange={() => changeSelection(player.id)}
-                                    />
-*/

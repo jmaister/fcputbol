@@ -49,23 +49,23 @@ export default function CreateTeam({}) {
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
                     setIsLoading(true);
-                    fetch('/api/teams', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(values),
-                    })
-                    .then((response) => response.json())
-                    .then(response => {
-                        console.log("fetch response data", response);
-                        if (response.ok) {
-                            setErrorMsg(null);
-                            Router.push('/teams');
-                        } else {
-                            actions.setSubmitting(false);
-                            setErrorMsg(JSON.stringify(response.error));
-                        }
-                        setIsLoading(false);
-                    });
+                    return fetch('/api/teams', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(values),
+                        })
+                        .then((response) => response.json())
+                        .then(response => {
+                            console.log("fetch response data", response);
+                            if (response.ok) {
+                                setErrorMsg(null);
+                                Router.push('/teams');
+                            } else {
+                                actions.setSubmitting(false);
+                                setErrorMsg(JSON.stringify(response.error));
+                            }
+                            setIsLoading(false);
+                        });
                 }}
             >{({
                 values,

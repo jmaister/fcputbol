@@ -15,6 +15,8 @@ export enum Positions {
     fw = "fw",
 }
 
+export const PlayerStat = ['save', 'defense', 'pass', 'dribble', 'shot'];
+
 @Entity()
 export class Player {
     @PrimaryGeneratedColumn()
@@ -29,7 +31,8 @@ export class Player {
     @ManyToOne(type => Team, team => team.players)
     team: Team;
 
-    @Column('int')
+    // Nullable for the new players in the market
+    @Column('int', {nullable: true})
     num: number;
 
     @Column('varchar')

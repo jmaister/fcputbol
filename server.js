@@ -4,55 +4,64 @@ const { parse } = require('url');
 const next = require('next');
 
 const bent = require('bent');
-const getJSON = bent('json')
+const getJSON = bent('json');
+
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-var CronJob = require('cron').CronJob;
-var job = new CronJob(
-    // Every 5 min, not CRON compliant
-	'0 */5 * * * *',
-	async () => {
-        console.log('Running cron job...', new Date().toISOString());
-        const urlPrefix = process.env.NEXT_PUBLIC_SERVER_URL;
+// Must be read after next()
+const PORT = process.env.FC_PORT;
+const startJobs = process.env.START_JOBS === 'true';
 
-        try {
-            const freezeResponse = await getJSON(urlPrefix + '/api/freezelineups');
-            console.log("Freeze OK", freezeResponse);
-        } catch (error) {
-            console.log("Freeze ERROR", error);
+if (startJobs) {
+    const jobs = [
+        {name: "Freeze Lineups", url: '/api/jobs/freezelineups'},
+        {name: "Process Matches", url: '/api/jobs/processmatches'},
+        {name: "Create Market", url: '/api/jobs/createmarket'},
+        {name: "Resolve Market", url: '/api/jobs/resolvemarket'},
+    ];
+
+    console.log("Processing jobs will start.");
+    const CronJob = require('cron').CronJob;
+    const job = new CronJob(
+        // Every 5 min, not CRON compliant
+        '0 */5 * * * *',
+        async () => {
+            console.log('Running cron job...', new Date().toISOString());
+            const urlPrefix = process.env.NEXT_PUBLIC_SERVER_URL;
+
+            for (let job of jobs) {
+                try {
+                    const response = await getJSON(urlPrefix + job.url);
+                    console.log(job.name + " OK", response);
+                } catch (error) {
+                    console.log(job.name + " ERROR", error);
+                }
+            }
+
+            console.log('Finished cron job');
         }
+    );
+    setTimeout(()=> {
+        job.start();
+    }, 20000);
+} else {
+    console.log("Processing jobs will NOT start.");
+}
 
-        try {
-            const processMatchesResponse = await getJSON(urlPrefix + '/api/processmatches');
-            console.log("Process matches OK", processMatchesResponse);
-        } catch (error) {
-            console.log("Process matches ERROR", error);
-        }
-
-		console.log('Finished cron job');
-	}
-);
-setTimeout(()=> {
-    job.start();
-}, 20000);
 
 app.prepare().then(() => {
     createServer((req, res) => {
         // Be sure to pass `true` as the second argument to `url.parse`.
         // This tells it to parse the query portion of the URL.
         const parsedUrl = parse(req.url, true);
-        //const { pathname, query } = parsedUrl
-
-        //if (pathname === '/a') {
-        //    app.render(req, res, '/b', query)
 
         handle(req, res, parsedUrl);
 
-    }).listen(3300, err => {
+    }).listen(PORT, err => {
         if (err) throw err
-        console.log('> Ready on http://localhost:3300');
+        console.log('> Ready on http://localhost:'+PORT);
     })
 })

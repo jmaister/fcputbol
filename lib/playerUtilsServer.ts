@@ -1,4 +1,4 @@
-import { Player } from "db/entity/player.entity";
+import { Player, Positions } from "db/entity/player.entity";
 
 import RandomData from './RandomData';
 import { randomIntInterval } from "./utils";
@@ -18,22 +18,29 @@ export function createTeamPlayers(team:Team): Player[] {
         const pos = allPositions[type];
         const q = quantities[type];
         for (let idx = 0; idx < q; idx++) {
-            const playerData = {
-                name: RandomData.getName(),
-                surname: RandomData.getSurname(),
-                num: num,
-                position: pos,
-                save: randomIntInterval(avg-std, avg+std),
-                defense: randomIntInterval(avg-std, avg+std),
-                pass: randomIntInterval(avg-std, avg+std),
-                dribble: randomIntInterval(avg-std, avg+std),
-                shot: randomIntInterval(avg-std, avg+std),
-                team: team
-            } as Player;
+            const playerData = createPlayer(avg, std, pos);
+            playerData.num = num;
+            playerData.team = team;
             players.push(playerData);
             num++;
         }
     }
 
     return players;
+}
+
+export function createPlayer(avg:number, std:number, pos: Positions): Player {
+    const playerData = {
+        name: RandomData.getName(),
+        surname: RandomData.getSurname(),
+        position: pos,
+        save: randomIntInterval(avg-std, avg+std),
+        defense: randomIntInterval(avg-std, avg+std),
+        pass: randomIntInterval(avg-std, avg+std),
+        dribble: randomIntInterval(avg-std, avg+std),
+        shot: randomIntInterval(avg-std, avg+std)
+    } as Player;
+
+    return playerData;
+
 }

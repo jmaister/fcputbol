@@ -43,11 +43,11 @@ export default function CreateLeague({user}:CreateLeaguePageParams) {
                 })}
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
-                    fetch('/api/leagues', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(values),
-                    })
+                    return fetch('/api/leagues', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(values),
+                        })
                         .then((response) => response.json())
                         .then(response => {
                             console.log("fetch response data", response);
