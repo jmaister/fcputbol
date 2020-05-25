@@ -1,7 +1,7 @@
 
 import {describe, expect, it, test} from '@jest/globals';
 
-import {createUser, findUserForLogin} from '../UserService';
+import {createUser, findUserForLogin, findUser} from '../UserService';
 import { User } from 'db/entity/user.entity';
 import { createRandomUsername } from './TestUtils';
 
@@ -49,6 +49,12 @@ test('Find user for login error', async () => {
             password: 'not the password',
         });
     }).rejects.toThrow('not valid');
+});
+
+test('Find user error', async () => {
+    return expect(async () => {
+        const user:User = await findUser(9999);
+    }).rejects.toThrow('not found');
 });
 
 

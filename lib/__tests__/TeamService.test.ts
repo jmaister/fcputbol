@@ -37,4 +37,13 @@ test('Create team', async () => {
 });
 
 
+test('Find team error', async () => {
+
+    return expect(async () => {
+        const team:Team = await findTeam(9999);
+    }).rejects.toThrow('not found')
+
+});
+
+
 export {}

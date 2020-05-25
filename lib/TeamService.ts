@@ -58,11 +58,13 @@ export async function createTeam({ name, jersey_color, userId }) {
 export async function findTeam(id:number):Promise<Team> {
     const db = await new Database().getManager();
     const teamRepository = db.getRepository(Team);
-    try {
-        return teamRepository.findOne(id, {relations: ["user", "players", "currentLineup", "currentLineup.players"]});
-    } catch (error) {
-        console.log("_*_*_*_*_*_*_ findTeam error:", error)
-        throw new Error("Team not found:" + error);
+
+    const team = await teamRepository.findOne(id, {relations: ["user", "players", "currentLineup", "currentLineup.players"]});
+    console.log("-----------", team)
+    if (team) {
+        return team;
+    } else {
+        throw new Error("Team not found.");
     }
 }
 
