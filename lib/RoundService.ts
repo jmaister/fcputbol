@@ -16,7 +16,7 @@ export async function findRoundByStatus(now:Date, status:RoundStatus):Promise<Ro
     const roundRepository = db.getRepository(Round);
     return roundRepository.createQueryBuilder("round")
         .leftJoinAndSelect("round.matches", "matches")
-        .where("round.roundDate < :now", {now: now})
+        .where("round.roundDate < :now", {now: now.toISOString()})
         .andWhere("round.status = :status", {status})
         .getMany();
 }

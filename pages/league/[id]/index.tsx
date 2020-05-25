@@ -206,7 +206,6 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
 
 export const getServerSideProps = withAuthSSP(async (context) => {
     const leagueId = context.params.id;
-    console.log("found league id", leagueId);
     let league = await findLeague(leagueId);
     // Hack
     league = JSON.parse(JSON.stringify(league));
