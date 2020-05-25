@@ -30,24 +30,27 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
 
     const onSubmit = async (values, actions:FormikHelpers<BidFormProps>) => {
         setErrorMsg(null);
-        actions.setSubmitting(true);
-        console.log("submit", values);
-        fetch('/api/sendbid', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(values),
-        })
-        .then((response) => response.json())
-        .then(response => {
-            console.log("fetch response data", response);
-            if (response.ok) {
-                Router.push('/league/' + leagueId + '/market');
-            } else {
-                setErrorMsg(response.message);
-                actions.setFieldValue('bidPrice', response.minBid);
-            }
-            actions.setSubmitting(false);
-        });
+        return fetch('/api/sendbid', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values),
+            })
+            .then((response) => response.json())
+            .then(response => {
+                console.log("fetch response data", response);
+                if (response.ok) {
+                    Router.push('/league/' + leagueId + '/market');
+                } else {
+                    setErrorMsg(response.message);
+                    actions.setSubmitting(false);
+                    if (response.minBid) {
+                        actions.setFieldValue('bidPrice', response.minBid);
+                    }
+                }
+            }).catch(error => {
+                setErrorMsg(error);
+                actions.setSubmitting(false);
+            });
     }
 
     return <>
@@ -58,7 +61,7 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
                 bidPrice: Yup.number().integer().min(minPrice).max(currentUserAvailable).required().label("Puja"),
             })}
             >
-            {props => {
+            {({isValid, isSubmitting, errors}) => {
                 return <Form>
                     <Field
                         as={TextField}
@@ -66,17 +69,17 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
                         label="Puja"
                         required={true}
                         fullWidth
-                        helperText={<ErrorMessage name="bidPrice" />}
+                        helperText={errors.bidPrice}
+                        caca={<ErrorMessage name="bidPrice" />}
                     />
                     <Button
                         color="primary"
                         variant="contained"
                         type="submit"
-                        disabled={!props.isValid || props.isSubmitting}
+                        disabled={!isValid || isSubmitting}
                     >Pujar</Button>
-                    <div>isSubmitting /{props.isSubmitting}/</div>
                     {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
-                    <Loading isLoading={props.isSubmitting}/>
+                    <Loading isLoading={isSubmitting}/>
                 </Form>
             }}
         </Formik>

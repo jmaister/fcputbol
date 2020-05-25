@@ -68,11 +68,11 @@ export default function EnterLeague({user, league}:CreateLeagueParams) {
                     })}
                     onSubmit={async (values, actions) => {
                         console.log("onsubmit values", values);
-                        fetch('/api/enterleague', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(values),
-                        })
+                        return fetch('/api/enterleague', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(values),
+                            })
                             .then((response) => response.json())
                             .then(data => {
                                 console.log("fetch response data", data);

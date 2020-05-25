@@ -92,22 +92,22 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
                 })}
                 onSubmit={async (values, actions) => {
                     console.log("onsubmit values", values);
-                    fetch('/api/startseason', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(values),
-                    })
-                    .then((response) => response.json())
-                    .then(response => {
-                        console.log("fetch response data", response);
-                        if (response.ok) {
-                            setErrorMsg(null);
-                            Router.push('/league/' + league.id);
-                        } else {
-                            actions.setSubmitting(false);
-                            setErrorMsg(JSON.stringify(response.error.message));
-                        }
-                    });
+                    return fetch('/api/startseason', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(values),
+                        })
+                        .then((response) => response.json())
+                        .then(response => {
+                            console.log("fetch response data", response);
+                            if (response.ok) {
+                                setErrorMsg(null);
+                                Router.push('/league/' + league.id);
+                            } else {
+                                actions.setSubmitting(false);
+                                setErrorMsg(JSON.stringify(response.error.message));
+                            }
+                        });
                 }}
                 >{({
                     values,
@@ -144,8 +144,8 @@ export default function LeaguePage({league, user}: LeaguePageParams) {
             </Formik>
             </>:null}
 
-                {isOrganizing ? <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{process.env.NEXT_PUBLIC_SERVER_URL}/enterleague/{league.code}</a>
-                </p>: null}
+            {isOrganizing ? <p>Envía este código para entrar en la liga: <a href={'/enterleague/'+ league.code}>{process.env.NEXT_PUBLIC_SERVER_URL}/enterleague/{league.code}</a>
+            </p>: null}
             {isOngoing ? <p>La liga ya está en marcha. No se pueden añadir más jugadores.</p> : null}
             {isFinished ? <p>La liga ya ha finalizado.</p> : null}
 
