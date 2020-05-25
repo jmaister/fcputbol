@@ -1,7 +1,7 @@
 
 import {describe, expect, it, test} from '@jest/globals';
 
-import {createUser} from '../UserService';
+import {createUser, findUser} from '../UserService';
 
 import { createTeam, findTeam } from 'lib/TeamService';
 import { colors } from 'lib/teamUtils';
@@ -27,9 +27,13 @@ test('Create team', async () => {
     expect(savedTeam).not.toBeNull();
 
     const team = await findTeam(savedTeam.id);
-    console.log("team", team);
     expect(team).not.toBeNull();
     expect(team.players.length).toBe(18);
+
+    const foundUser = await findUser(user.id);
+    expect(foundUser).not.toBeNull();
+    expect(foundUser.teams.length).toBe(1);
+    expect(foundUser.teams[0].players.length).toBe(18);
 });
 
 
