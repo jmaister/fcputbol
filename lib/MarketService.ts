@@ -18,7 +18,7 @@ export interface BidResult {
 
 export interface CreateMarketPlayersResult {
     leagueId: number,
-    created: number,
+    createdCount: number,
     ok: boolean,
 }
 
@@ -51,6 +51,7 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
     const results = [];
     for (let l=0; l < leagues.length; l++) {
         const league = leagues[l];
+        let createdCount = 0;
         const res = await db.transaction(async (transactionalEntityManager) => {
             const marketPlayerRepository = transactionalEntityManager.getRepository(MarketPlayer);
             const playerRepository = transactionalEntityManager.getRepository(Player);
@@ -82,13 +83,14 @@ export async function createmarketplayers(now: Date): Promise<CreateMarketPlayer
                             toDate: toDate,
                             state: MarketPlayerStatus.OPEN
                         });
+                        createdCount++;
                     }
                 }
             }
             return true;
         });
 
-        results.push({leagueId: league.id, ok: res});
+        results.push({leagueId: league.id, ok: res, createdCount: createdCount});
     }
 
     return results;

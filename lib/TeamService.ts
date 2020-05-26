@@ -60,7 +60,6 @@ export async function findTeam(id:number):Promise<Team> {
     const teamRepository = db.getRepository(Team);
 
     const team = await teamRepository.findOne(id, {relations: ["user", "players", "currentLineup", "currentLineup.players"]});
-    console.log("-----------", team)
     if (team) {
         return team;
     } else {
