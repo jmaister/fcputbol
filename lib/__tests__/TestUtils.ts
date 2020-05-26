@@ -43,7 +43,7 @@ export interface MinimalLeague {
     league: League
 }
 
-export async function creteMinimalLeaue(): Promise<MinimalLeague> {
+export async function createMinimalLeague(): Promise<MinimalLeague> {
     const u1 = await createUserAndTeam();
     const u2 = await createUserAndTeam();
 

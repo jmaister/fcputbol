@@ -24,7 +24,10 @@ export interface CreateMarketPlayersResult {
 
 export interface ResolvedMarketPlayersResult {
     leagueId: number,
-    resolved?: number,
+    resolvedCount?: number,
+    acceptedCount?: number,
+    rejectedCount?: number,
+    noBidsCount?: number,
     ok: boolean,
     message?: string,
 }
@@ -115,6 +118,10 @@ export async function resolvemarket(now: Date): Promise<ResolvedMarketPlayersRes
             const fromDate = getBidStartingTime();
             const toDate = getBidEndTime();
 
+            let acceptedCount = 0;
+            let rejectedCount = 0;
+            let noBidsCount = 0;
+
             const marketPlayesToResolve = await marketPlayerRepository.createQueryBuilder('market')
                 .leftJoinAndSelect('market.bids', 'bids')
                 .leftJoinAndSelect('market.player', 'player')
@@ -133,9 +140,6 @@ export async function resolvemarket(now: Date): Promise<ResolvedMarketPlayersRes
 
                 if (bids.length > 0) {
                     const bestBid = getBestBid(bids);
-                    console.log("marketPlayer", marketPlayer);
-                    console.log("best bid", bestBid);
-
                     marketPlayer.status = MarketPlayerStatus.ACCEPTED;
                     marketPlayer.resolvedDate = now;
                     marketPlayer.finalPrice = bestBid.amount;
@@ -161,11 +165,14 @@ export async function resolvemarket(now: Date): Promise<ResolvedMarketPlayersRes
 
                             // TODO: transfer money, user->bank or user->user
 
+                            acceptedCount++;
                         } else {
                             // Losers
                             bid.resolvedDate = now;
                             bid.status = MarketBidStatus.REJECTED;
                             await marketBidRepository.save(bid);
+
+                            rejectedCount++;
                         }
                     }
 
@@ -174,13 +181,18 @@ export async function resolvemarket(now: Date): Promise<ResolvedMarketPlayersRes
                     marketPlayer.status = MarketPlayerStatus.FINISHED;
                     marketPlayer.resolvedDate = now;
                     await marketPlayerRepository.save(marketPlayer);
+
+                    noBidsCount++;
                 }
             }
 
             return {
                 leagueId: league.id,
                 ok: true,
-                resolved: marketPlayesToResolve.length,
+                resolvedCount: marketPlayesToResolve.length,
+                acceptedCount,
+                rejectedCount,
+                noBidsCount,
             } as ResolvedMarketPlayersResult;
         }).catch(error => {
             return {
@@ -207,61 +219,75 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
         // TODO: check user money
         // TODO: block money in the bid
 
+        const user = await userRepository.findOne(userId);
+        if (!user) {
+            return {
+                ok: false,
+                message: "El usuario no existe.",
+            }
+        }
+
         const marketPlayer = await marketPlayerRepository.findOne(marketPlayerId,
             {relations: ["league", "league.teams", "league.teams.user", "bids", "bids.user"]});
-
-
-        if (marketPlayer.status != MarketPlayerStatus.OPEN) {
-            throw new Error("La puja no existe.");
+        if (!marketPlayer) {
+            return {
+                ok: false,
+                message: "La puja no existe.",
+            }
+        } else if (marketPlayer.status != MarketPlayerStatus.OPEN) {
+            return {
+                ok: false,
+                message: "La puja ya está cerrada.",
+            }
         }
-        const user = await userRepository.findOne(userId);
 
         // Check if the player can bid to this MarketPlayer
-        let isUserFound = false;
+        let isTeamFound = false;
         let userTeam = null
         for (let team of marketPlayer.league.teams) {
             if (team.user.id === userId) {
-                isUserFound = true;
+                isTeamFound = true;
                 userTeam = team;
             }
         }
-        if (isUserFound) {
-            const bestBid = getBestBid(marketPlayer.bids);
-            const minBid = calculateNextBid(bestBid, marketPlayer.startingPrice);
-            if (bestBid == null || bidPrice >= minBid) {
-                // Overbid previous bids from this user
-                await marketBidRepository.createQueryBuilder()
-                    .update(MarketBid)
-                    .set({
-                        status: MarketBidStatus.OVERBID,
-                        resolvedDate: new Date(),
-                    })
-                    .where("status = :s and user.id = :u", {s: MarketBidStatus.PLACED, u: userId})
-                    .execute();
 
-                // Create new bid
-                await marketBidRepository.save({
-                    marketPlayer,
-                    league: marketPlayer.league,
-                    user,
-                    team: userTeam,
-                    amount: bidPrice,
-                    status: MarketBidStatus.PLACED,
-                });
-                return {
-                    ok: true,
-                }
-            } else {
-                return {
-                    ok: false,
-                    message: "Tu puja debe ser de " + minBid + " o mayor.",
-                    minBid: minBid,
-                }
+        if (!isTeamFound) {
+            return {
+                ok: false,
+                message: "El equipo es incorrecto.",
+            }
+        }
+
+        const bestBid = getBestBid(marketPlayer.bids);
+        const minBid = calculateNextBid(bestBid, marketPlayer.startingPrice);
+        if (bidPrice >= minBid) {
+            // Overbid previous bids from this user
+            await marketBidRepository.createQueryBuilder()
+                .update(MarketBid)
+                .set({
+                    status: MarketBidStatus.OVERBID,
+                    resolvedDate: new Date(),
+                })
+                .where("status = :s and user.id = :u", {s: MarketBidStatus.PLACED, u: userId})
+                .execute();
+
+            // Create new bid
+            await marketBidRepository.save({
+                marketPlayer,
+                league: marketPlayer.league,
+                user,
+                team: userTeam,
+                amount: bidPrice,
+                status: MarketBidStatus.PLACED,
+            });
+            return {
+                ok: true,
             }
         } else {
             return {
                 ok: false,
-                message: "El usuario es incorrecto.",
+                message: "Tu puja debe ser de " + minBid + " o mayor.",
+                minBid: minBid,
             }
         }
     });

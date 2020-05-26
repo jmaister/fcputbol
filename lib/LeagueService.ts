@@ -21,11 +21,11 @@ export async function createLeague({ name, yourteam, userId }) {
     });
 }
 
-export async function findLeague(id:string):Promise<League> {
+export async function findLeague(id:number):Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     try {
-        return leagueRepository.findOne(id, {relations: [
+        const league = await leagueRepository.findOne(id, {relations: [
             "teams",
             "teams.user",
             "admin",
@@ -37,9 +37,13 @@ export async function findLeague(id:string):Promise<League> {
             "seasons.rounds.matches.home", "seasons.rounds.matches.home.user",
             "seasons.rounds.matches.away", "seasons.rounds.matches.away.user",
         ]});
+        if (!league) {
+            throw new Error("League not found.");
+        }
+        return league
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findLeague error:", error)
-        throw new Error("League not found:" + error);
+        throw new Error("Find league error:" + error);
     }
 }
 
@@ -47,16 +51,20 @@ export async function findLeagueByCode(code:string):Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     try {
-        return leagueRepository.createQueryBuilder("league")
+        const league = await leagueRepository.createQueryBuilder("league")
             .leftJoinAndSelect("league.teams", "team")
             .leftJoinAndSelect("team.user", "user")
             .leftJoinAndSelect("league.admin", "admin")
             .where("league.code = :code", {code: code})
             .getOne();
+        if (!league) {
+            throw new Error("League not found.");
+        }
+        return league;
 
     } catch (error) {
-        console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
-        throw new Error("Find leagues error:" + error);
+        console.log("_*_*_*_*_*_*_ findLeague code error:", error)
+        throw new Error("Find league code error:" + error);
     }
 }
 

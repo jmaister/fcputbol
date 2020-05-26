@@ -1,10 +1,10 @@
 
 import {describe, expect, it, test} from '@jest/globals';
 
-import {createLeague, enterLeague} from '../LeagueService';
+import {createLeague, enterLeague, findLeague, findLeagueByCode} from '../LeagueService';
 import { User } from 'db/entity/user.entity';
 import { createUser } from 'lib/UserService';
-import { createRandomUsername, createUserAndTeam } from './TestUtils';
+import { createRandomUsername, createUserAndTeam, createMinimalLeague } from './TestUtils';
 import { createTeam } from 'lib/TeamService';
 import { Team } from 'db/entity/team.entity';
 import { jerseyColors } from 'lib/teamUtils';
@@ -77,7 +77,7 @@ test('Enter league wrong user', async () => {
 
 });
 
-test('Enter league wrong user', async () => {
+test('Enter league wrong team', async () => {
     const u1 = await createUserAndTeam();
     const u2 = await createUserAndTeam();
 
@@ -117,6 +117,34 @@ test('Enter league wrong code', async () => {
         })
     }).rejects.toThrow();
 
+});
+
+test('Find league', async () => {
+    const context = await createMinimalLeague();
+
+    const league = await findLeague(context.league.id);
+    expect(league).not.toBeNull();
+    expect(league.id).toBe(context.league.id)
+});
+
+test('Find league, error not valid', async () => {
+    return expect(async () => {
+        return  await findLeague(9999);
+    }).rejects.toThrow();
+});
+
+test('Find league by code', async () => {
+    const context = await createMinimalLeague();
+
+    const league = await findLeagueByCode(context.league.code);
+    expect(league).not.toBeNull();
+    expect(league.id).toBe(context.league.id)
+});
+
+test('Find league, error not valid', async () => {
+    return expect(async () => {
+        return  await findLeagueByCode('ab123');
+    }).rejects.toThrow();
 });
 
 export {}
