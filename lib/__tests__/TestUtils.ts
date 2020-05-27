@@ -9,7 +9,7 @@ import { createLeague, enterLeague } from "lib/LeagueService";
 
 
 export function createRandomUsername() {
-    return "test" + Math.floor(Math.random() * 100000);
+    return "test" + Math.floor(Math.random() * 1000000);
 }
 
 export interface UserAndTeam {
@@ -21,13 +21,14 @@ export async function createUserAndTeam(): Promise<UserAndTeam> {
         username: createRandomUsername(),
         password: 'test2',
     });
+    expect(user).not.toBeNull();
 
     const team:Team = await createTeam({
         name: 'Team One',
         userId: user.id,
         jersey_color: jerseyColors[0].value,
     });
-    expect(user).not.toBeNull();
+    expect(team).not.toBeNull();
 
     return {
         user,

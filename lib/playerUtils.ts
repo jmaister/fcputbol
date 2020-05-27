@@ -22,7 +22,14 @@ export const PositionNames = {
     [Positions.fw]: "delantero",
 };
 
-export function sortPlayersByPosition(players:Player[]) {
+interface SortedPlayers {
+    [Positions.gk]: Player[]
+    [Positions.def]: Player[]
+    [Positions.mid]: Player[]
+    [Positions.fw]: Player[]
+}
+
+export function sortPlayersByPosition(players:Player[]): SortedPlayers {
     const sortedPlayers = {
         [Positions.gk]: [],
         [Positions.def]: [],

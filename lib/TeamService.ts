@@ -47,7 +47,7 @@ export async function createTeam({ name, jersey_color, userId }) {
             await teamRepository.save(team);
 
             // Avoid circular reference
-            return teamRepository.findOne(team.id);
+            return teamRepository.findOne(team.id, {relations: ['players', 'currentLineup', 'currentLineup.players']});
         } catch (error) {
             console.log("create team error: ", error);
             throw new Error("create team error: " + error);
@@ -68,7 +68,7 @@ export async function findTeam(id:number):Promise<Team> {
 }
 
 
-export async function saveLineup(teamId:string, playerIds:number[], userId:number):Promise<Lineup> {
+export async function saveLineup(teamId:number, playerIds:number[], userId:number):Promise<Lineup> {
     const db = await new Database().getManager();
 
     return db.transaction(async (transactionalEntityManager) => {
@@ -88,7 +88,7 @@ export async function saveLineup(teamId:string, playerIds:number[], userId:numbe
             throw new Error(validationResult.messages[0].msg);
         }
 
-        const lineup = await lineupRepository.save({
+        const lineup:Lineup = await lineupRepository.save({
             players: lineupPlayers
         });
 
@@ -98,6 +98,4 @@ export async function saveLineup(teamId:string, playerIds:number[], userId:numbe
 
         return lineup;
     });
-
-
 }
