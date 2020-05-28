@@ -75,7 +75,7 @@ export async function findUser(userId: number): Promise<User> {
     }
 }
 
-interface UserMoneyInfo {
+export interface UserMoneyInfo {
     money: number
     budget: number
 }
