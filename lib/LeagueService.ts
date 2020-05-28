@@ -21,11 +21,11 @@ export async function createLeague({ name, yourteam, userId }) {
     });
 }
 
-export async function findLeague(id:string):Promise<League> {
+export async function findLeague(id:number):Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     try {
-        return leagueRepository.findOne(id, {relations: [
+        const league = await leagueRepository.findOne(id, {relations: [
             "teams",
             "teams.user",
             "admin",
@@ -37,9 +37,13 @@ export async function findLeague(id:string):Promise<League> {
             "seasons.rounds.matches.home", "seasons.rounds.matches.home.user",
             "seasons.rounds.matches.away", "seasons.rounds.matches.away.user",
         ]});
+        if (!league) {
+            throw new Error("League not found.");
+        }
+        return league
     } catch (error) {
         console.log("_*_*_*_*_*_*_ findLeague error:", error)
-        throw new Error("League not found:" + error);
+        throw new Error("Find league error:" + error);
     }
 }
 
@@ -47,20 +51,24 @@ export async function findLeagueByCode(code:string):Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     try {
-        return leagueRepository.createQueryBuilder("league")
+        const league = await leagueRepository.createQueryBuilder("league")
             .leftJoinAndSelect("league.teams", "team")
             .leftJoinAndSelect("team.user", "user")
             .leftJoinAndSelect("league.admin", "admin")
             .where("league.code = :code", {code: code})
             .getOne();
+        if (!league) {
+            throw new Error("League not found.");
+        }
+        return league;
 
     } catch (error) {
-        console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
-        throw new Error("Find leagues error:" + error);
+        console.log("_*_*_*_*_*_*_ findLeague code error:", error)
+        throw new Error("Find league code error:" + error);
     }
 }
 
-export async function findUserLeagues(userId:string):Promise<League[]> {
+export async function findUserLeagues(userId:number):Promise<League[]> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     try {
@@ -76,13 +84,21 @@ export async function findUserLeagues(userId:string):Promise<League[]> {
     }
 }
 
-export async function enterLeague({ yourteam, code, userId }) {
+interface EnterLeagueParams {
+    yourteam: number
+    code: string
+    userId: number
+}
+export async function enterLeague({ yourteam, code, userId }: EnterLeagueParams): Promise<League> {
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     const teamRepository = db.getRepository(Team);
     try {
         const team = await teamRepository.findOne(yourteam, {relations: ["user"]});
         // Check that user and yourteam matches
+        if (!team) {
+            throw new Error("El equipo no existe.");
+        }
         if (team.user.id !== userId) {
             throw new Error("El equipo no pertenece a ese usuario.");
         }
@@ -91,11 +107,14 @@ export async function enterLeague({ yourteam, code, userId }) {
             .leftJoinAndSelect("league.teams", "team")
             .where("league.code = :code", {code: code})
             .getOne();
+        if (!league) {
+            throw new Error("La liga no existe.");
+        }
 
         league.teams.push(team);
         return leagueRepository.save(league);
     } catch (error) {
-        console.log("_*_*_*_*_*_*_ findUserLeagues error:", error)
-        throw new Error("Find leagues error:" + error);
+        console.log("_*_*_*_*_*_*_ enterLeague error:", error)
+        throw new Error("enterLeague error:" + error);
     }
 }

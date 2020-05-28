@@ -11,7 +11,9 @@
     "typeorm": "ts-node -P tsconfig.typeorm.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:gen": "typeorm migration:generate -n",
     "typeorm:mig": "typeorm migration:run",
-    "typeorm:cr": "typeorm migration:create -n"
+    "typeorm:cr": "typeorm migration:create -n",
+    "pre:test:drop": "typeorm schema:drop",
+    "test": "del fcputbol-test.sqlite && cross-env NODE_ENV=test jest --coverage"
   },
   "dependencies": {
     "@hapi/iron": "6.0.0",
@@ -34,11 +36,13 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "7.8.3",
+    "@types/jest": "25.2.3",
     "@types/node": "13.13.5",
     "@types/react": "16.9.34",
     "bent": "7.3.1",
     "cron": "1.8.2",
     "cross-env": "7.0.2",
+    "jest": "26.0.1",
     "sass": "1.26.5",
     "sqlite3": "4.2.0",
     "ts-node": "8.10.1",

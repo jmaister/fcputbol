@@ -76,7 +76,3 @@ export function containsId<T>(arr:T[], id:number): boolean {
     const found = findById(arr, id);
     return !!found;
 };
-
-export function containsElement<T>(arr:T[], id:T): boolean {
-    return !!arr.find(e => e === id);
-};

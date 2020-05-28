@@ -12,7 +12,7 @@ const salt = "SaLtSaLtSaLtSaLt";//.toString('hex');
  * db here, such as MongoDB, Fauna, SQL, etc.
  */
 
-export async function createUser({ username, password }) {
+export async function createUser({ username, password }): Promise<User> {
     // Here you should create the user and save the salt and hashed password (some dbs may have
     // authentication methods that will do it for you so you don't have to worry about it):
     //
@@ -23,32 +23,40 @@ export async function createUser({ username, password }) {
     const user = await userRepository.save({
         username: username,
         password: hash
+    }).catch(error => {
+        console.log("*_*_*_* ERROR createUser:", error);
+        throw new Error("Error creando usuario.");
     });
 
     return user;
 }
 
-export async function findUserForLogin({ username, password }) {
+interface UserSession {
+    id: number
+    username: string
+}
+
+export async function findUserForLogin({ username, password }): Promise<UserSession> {
     // Here you should lookup for the user in your DB and compare the password:
 
     const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
     const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
-    try {
-        const user = await userRepository.findOne({ username: username, password: hash });
+    const user = await userRepository.findOne({ username: username, password: hash });
+    if (user) {
         return {
             id: user.id,
             username: user.username
         };
-    } catch (error) {
-        console.log("find user error:", error);
+    } else {
+        //return Promise.reject(new Error("username or password not valid."));
         throw new Error("username or password not valid.");
     }
 
 }
 
-export async function findUser(id) {
+export async function findUser(id: number): Promise<User> {
     const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
     const user = await userRepository

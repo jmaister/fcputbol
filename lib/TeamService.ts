@@ -4,7 +4,6 @@ import { Team } from 'db/entity/team.entity';
 import { Lineup } from 'db/entity/lineup.entity';
 import { Player } from 'db/entity/player.entity';
 
-import {containsElement} from './utils';
 import Database from 'db/database';
 import { createRandomLineup, validateLineup } from './playerUtils';
 import { createTeamPlayers } from './playerUtilsServer';
@@ -47,7 +46,7 @@ export async function createTeam({ name, jersey_color, userId }) {
             await teamRepository.save(team);
 
             // Avoid circular reference
-            return teamRepository.findOne(team.id);
+            return teamRepository.findOne(team.id, {relations: ['players', 'currentLineup', 'currentLineup.players']});
         } catch (error) {
             console.log("create team error: ", error);
             throw new Error("create team error: " + error);
@@ -55,19 +54,20 @@ export async function createTeam({ name, jersey_color, userId }) {
     });
 }
 
-export async function findTeam(id:string):Promise<Team> {
+export async function findTeam(id:number):Promise<Team> {
     const db = await new Database().getManager();
     const teamRepository = db.getRepository(Team);
-    try {
-        return teamRepository.findOne(id, {relations: ["user", "players", "currentLineup", "currentLineup.players"]});
-    } catch (error) {
-        console.log("_*_*_*_*_*_*_ findTeam error:", error)
-        throw new Error("Team not found:" + error);
+
+    const team = await teamRepository.findOne(id, {relations: ["user", "players", "currentLineup", "currentLineup.players"]});
+    if (team) {
+        return team;
+    } else {
+        throw new Error("Team not found.");
     }
 }
 
 
-export async function saveLineup(teamId:string, playerIds:number[], userId:number):Promise<Lineup> {
+export async function saveLineup(teamId:number, playerIds:number[], userId:number):Promise<Lineup> {
     const db = await new Database().getManager();
 
     return db.transaction(async (transactionalEntityManager) => {
@@ -79,7 +79,7 @@ export async function saveLineup(teamId:string, playerIds:number[], userId:numbe
             throw new Error("Este no es tu equipo.");
         }
 
-        const lineupPlayers = team.players.filter(p => containsElement(playerIds, p.id));
+        const lineupPlayers = team.players.filter(p => playerIds.includes(p.id));
 
         // Validate lineup
         const validationResult = validateLineup(lineupPlayers, true);
@@ -87,16 +87,14 @@ export async function saveLineup(teamId:string, playerIds:number[], userId:numbe
             throw new Error(validationResult.messages[0].msg);
         }
 
-        const lineup = await lineupRepository.save({
+        const lineup:Lineup = await lineupRepository.save({
             players: lineupPlayers
         });
 
         // Assign to team
         team.currentLineup = lineup;
-        teamRepository.save(team);
+        await teamRepository.save(team);
 
         return lineup;
     });
-
-
 }
