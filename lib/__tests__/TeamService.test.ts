@@ -3,9 +3,9 @@ import {describe, expect, it, test} from '@jest/globals';
 
 import {createUser, findUser} from '../UserService';
 
-import { createTeam, findTeam } from 'lib/TeamService';
-import { jerseyColors } from 'lib/teamUtils';
-import { createRandomUsername } from './TestUtils';
+import { createTeam, findTeam, saveLineup } from 'lib/TeamService';
+import { jerseyColors, LineupWrapper } from 'lib/teamUtils';
+import { createRandomUsername, createUserAndTeam } from './TestUtils';
 
 import { User } from 'db/entity/user.entity';
 import { Team } from 'db/entity/team.entity';
@@ -40,10 +40,23 @@ test('Create team', async () => {
 test('Find team error', async () => {
 
     return expect(async () => {
-        const team:Team = await findTeam(9999);
+        const team:Team = await findTeam(999999);
     }).rejects.toThrow('not found')
 
 });
 
+test('Save lineup', async () => {
+    const {user, team} = await createUserAndTeam();
+
+    const lineupWrapper = new LineupWrapper(team, team.currentLineup);
+    const outPlayerId = lineupWrapper.getSortedLineup().def[0].id;
+    const inPlayerId = lineupWrapper.getSortedBench().def[0].id;
+
+    lineupWrapper.exchangePlayer(inPlayerId, outPlayerId);
+
+    const savedLineup = await saveLineup(team.id, lineupWrapper.getLineupIds(), user.id);
+    expect(savedLineup).not.toBeNull();
+
+});
 
 export {}

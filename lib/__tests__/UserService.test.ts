@@ -53,7 +53,7 @@ test('Find user for login error', async () => {
 
 test('Find user error', async () => {
     return expect(async () => {
-        const user:User = await findUser(9999);
+        return await findUser(9999);
     }).rejects.toThrow('not found');
 });
 

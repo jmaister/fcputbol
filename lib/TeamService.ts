@@ -4,7 +4,6 @@ import { Team } from 'db/entity/team.entity';
 import { Lineup } from 'db/entity/lineup.entity';
 import { Player } from 'db/entity/player.entity';
 
-import {containsElement} from './utils';
 import Database from 'db/database';
 import { createRandomLineup, validateLineup } from './playerUtils';
 import { createTeamPlayers } from './playerUtilsServer';
@@ -80,7 +79,7 @@ export async function saveLineup(teamId:number, playerIds:number[], userId:numbe
             throw new Error("Este no es tu equipo.");
         }
 
-        const lineupPlayers = team.players.filter(p => containsElement(playerIds, p.id));
+        const lineupPlayers = team.players.filter(p => playerIds.includes(p.id));
 
         // Validate lineup
         const validationResult = validateLineup(lineupPlayers, true);
@@ -94,7 +93,7 @@ export async function saveLineup(teamId:number, playerIds:number[], userId:numbe
 
         // Assign to team
         team.currentLineup = lineup;
-        teamRepository.save(team);
+        await teamRepository.save(team);
 
         return lineup;
     });
