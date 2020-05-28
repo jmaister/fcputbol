@@ -1,7 +1,10 @@
 import crypto from 'crypto';
 
-import { User } from '../db/entity/user.entity';
+import { User, UserMoney, UserMoneyType } from '../db/entity/user.entity';
 import Database from '../db/database';
+import { Select } from '@material-ui/core';
+import { League } from 'db/entity/league.entity';
+import { constants } from './constants';
 
 // TODO: read from ENV
 const salt = "SaLtSaLtSaLtSaLt";//.toString('hex');
@@ -56,11 +59,11 @@ export async function findUserForLogin({ username, password }): Promise<UserSess
 
 }
 
-export async function findUser(id: number): Promise<User> {
+export async function findUser(userId: number): Promise<User> {
     const db = await new Database().getManager();
     const userRepository = db.getRepository(User);
     const user = await userRepository
-        .findOne(id, { relations: [
+        .findOne(userId, { relations: [
             "teams", "teams.players"
         ] });
 
@@ -70,4 +73,51 @@ export async function findUser(id: number): Promise<User> {
     } else {
         throw new Error("user not found");
     }
+}
+
+interface UserMoneyInfo {
+    money: number
+    budget: number
+}
+
+export async function getUserMoney(userId: number, leagueId: number): Promise<UserMoneyInfo> {
+    const db = await new Database().getManager();
+    const userMoneyRepository = db.getRepository(UserMoney);
+    const result = await userMoneyRepository.createQueryBuilder('um')
+        .select('SUM(um.amount) AS amount')
+        .where("um.user.id = :u", {u: userId})
+        .andWhere("um.league.id = :l", {l: leagueId})
+        .getRawOne();
+
+    if (result.amount) {
+        const amount = result.amount;
+        const budget = result.amount + Math.floor(amount * constants.MONEY_MAX_NEGATIVE_PCT / 100);
+        return {
+            money: amount,
+            budget: Math.max(0, budget),
+        };
+    } else {
+        return {
+            money: 0,
+            budget: 0,
+        }
+    }
+}
+
+export async function createUserMoney(userId: number, leagueId: number, amount:number, type:UserMoneyType): Promise<UserMoney> {
+    const db = await new Database().getManager();
+    const userMoneyRepository = db.getRepository(UserMoney);
+    const userRepository = db.getRepository(User);
+    const leagueRepository = db.getRepository(League);
+
+    const user = await userRepository.findOne(userId);
+    const league = await leagueRepository.findOne(leagueId);
+
+    return userMoneyRepository.save({
+        user,
+        league,
+        amount,
+        type,
+        date: new Date(),
+    });
 }
