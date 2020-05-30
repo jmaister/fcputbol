@@ -15,77 +15,80 @@ export async function playAndSaveMatch(match:Match): Promise<Match> {
 }
 
 export async function saveMatch(match:Match, matchResult:MatchResult): Promise<Match> {
-        const db = await new Database().getManager();
-        return db.transaction(async (transactionalEntityManager) => {
-            try {
-                const matchRepository = transactionalEntityManager.getRepository(Match);
-                const matchStepRepository = transactionalEntityManager.getRepository(MatchStep);
+    const db = await new Database().getManager();
+    return db.transaction(async (transactionalEntityManager) => {
+        try {
+            const matchRepository = transactionalEntityManager.getRepository(Match);
+            const matchStepRepository = transactionalEntityManager.getRepository(MatchStep);
 
-                match.resultHome = matchResult.score[0];
-                match.resultAway = matchResult.score[1];
-                if (match.resultHome > match.resultAway) {
-                    match.homePoints = 3;
-                    match.awayPoints = 0;
-                    match.homeWin = true;
-                    match.draw = false;
-                    match.awayWin = false;
-                } else if (match.resultHome === match.resultAway) {
-                    match.homePoints = 1;
-                    match.awayPoints = 1;
-                    match.homeWin = false;
-                    match.draw = true;
-                    match.awayWin = false;
-                } else if (match.resultHome < match.resultAway) {
-                    match.homePoints = 0;
-                    match.awayPoints = 3;
-                    match.homeWin = false;
-                    match.draw = false;
-                    match.awayWin = true;
-                }
-
-                match.stepsCount = matchResult.steps.length;
-                match.playDate = moment().toDate();
-                match.status = MatchStatus.FINISHED;
-                const savedMatch = await matchRepository.save(match);
-
-                // Save match steps
-                for (let i=0; i<matchResult.steps.length; i++) {
-                    const s = matchResult.steps[i];
-                    s.match = savedMatch;
-                    await matchStepRepository.save(s);
-                }
-
-                // Update classification
-                // Home
-                await transactionalEntityManager
-                    .createQueryBuilder()
-                    .update(Classification)
-                    .set({
-                        points: () => "points + " + match.homePoints,
-                        goalsScored: () => "goalsScored + " + match.resultHome,
-                        goalsAgainst: () => "goalsAgainst + " + match.resultAway,
-                    })
-                    .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.home.id })
-                    .execute();
-                // Away
-                await transactionalEntityManager
-                    .createQueryBuilder()
-                    .update(Classification)
-                    .set({
-                        points: () => "points + " + match.awayPoints,
-                        goalsScored: () => "goalsScored + " + match.resultAway,
-                        goalsAgainst: () => "goalsAgainst + " + match.resultHome,
-                    })
-                    .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.away.id })
-                    .execute();
-
-                // Avoid circular ref
-                return matchRepository.findOne(match.id);
-            } catch (error) {
-                console.log("error on saveMatch", error);
-                throw new Error("Error on saveMatch: " + error);
+            match.resultHome = matchResult.score[0];
+            match.resultAway = matchResult.score[1];
+            if (match.resultHome > match.resultAway) {
+                match.homePoints = 3;
+                match.awayPoints = 0;
+                match.homeWin = true;
+                match.draw = false;
+                match.awayWin = false;
+            } else if (match.resultHome === match.resultAway) {
+                match.homePoints = 1;
+                match.awayPoints = 1;
+                match.homeWin = false;
+                match.draw = true;
+                match.awayWin = false;
+            } else if (match.resultHome < match.resultAway) {
+                match.homePoints = 0;
+                match.awayPoints = 3;
+                match.homeWin = false;
+                match.draw = false;
+                match.awayWin = true;
             }
-        });
+
+            match.stepsCount = matchResult.steps.length;
+            match.playDate = moment().toDate();
+            match.status = MatchStatus.FINISHED;
+            const savedMatch = await matchRepository.save(match);
+
+            // Save match steps
+            for (let i=0; i<matchResult.steps.length; i++) {
+                const s = matchResult.steps[i];
+                s.match = savedMatch;
+                await matchStepRepository.save(s);
+            }
+
+            // Update classification
+            // Home
+            await transactionalEntityManager
+                .createQueryBuilder()
+                .update(Classification)
+                .set({
+                    points: () => "points + " + match.homePoints,
+                    goalsScored: () => "goalsScored + " + match.resultHome,
+                    goalsAgainst: () => "goalsAgainst + " + match.resultAway,
+                })
+                .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.home.id })
+                .execute();
+            // Away
+            await transactionalEntityManager
+                .createQueryBuilder()
+                .update(Classification)
+                .set({
+                    points: () => "points + " + match.awayPoints,
+                    goalsScored: () => "goalsScored + " + match.resultAway,
+                    goalsAgainst: () => "goalsAgainst + " + match.resultHome,
+                })
+                .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.away.id })
+                .execute();
+
+            // TODO: Update users money, MONEY_MATCH_WIN, MONEY_MATCH_DRAW, MONEY_MATCH_LOSE, MONEY_PER_GOAL
+
+
+            // Avoid circular ref
+            return matchRepository.findOne(match.id);
+        } catch (error) {
+            console.log("error on saveMatch", error);
+            throw new Error("Error on saveMatch: " + error);
+        }
+    });
 }
 
 export async function findMatch(id:string):Promise<Match> {
