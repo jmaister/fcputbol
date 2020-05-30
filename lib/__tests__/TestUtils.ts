@@ -65,6 +65,6 @@ export async function createMinimalLeague(): Promise<MinimalLeague> {
         t1: u1.team,
         u2: u2.user,
         t2: u2.team,
-        league: enteredLeague,
+        league: league,
     }
 }

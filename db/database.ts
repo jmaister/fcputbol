@@ -14,7 +14,6 @@ import { Round } from "./entity/round.entity";
 import { Season } from "./entity/season.entity";
 import { MarketPlayer, MarketBid } from "./entity/marketplayer.entity";
 
-console.log('env', process.env.NODE_ENV);
 let database = "fcputbol.sqlite";
 let logging = ormconfig.logging;
 if (process.env.NODE_ENV === 'test') {
@@ -70,11 +69,11 @@ export default class Database {
         // from the old session.
         // https://stackoverflow.com/questions/60677582/entitymetadatanotfound-no-metadata-for-businessapplication-was-found
         if (currentConnection && !this.hasCreatedConnection) {
-            console.debug('recreating connection due to hot reloading');
+            // console.debug('recreating connection due to hot reloading');
             if (currentConnection.isConnected) {
                 await currentConnection.close();
             }
-            console.debug('done closing, making new connection..');
+            // console.debug('done closing, making new connection..');
             return this.createConnectionWithName(DEFAULT_CONNECTION_NAME);
         }
         if (currentConnection) {

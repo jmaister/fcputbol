@@ -7,7 +7,7 @@ export const constants = {
     MARKET_DAILY_PLAYERS: 20,
 
     MONEY_SEASON_START: 500000,
-    MONEY_MAX_NEGATIVE_PCT: 15,
+    MONEY_OVERSPEND_PCT: 15,
 };
 
 export function getBidStartingTime(): Date {

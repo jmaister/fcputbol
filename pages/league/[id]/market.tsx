@@ -28,6 +28,8 @@ interface MarketPageParams {
 
 export default function MarketPage({ user, league, marketPlayers, userMoneyInfo }: MarketPageParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    // TODO: use users config
+    const NF = new Intl.NumberFormat("es-ES");
 
     return <Layout>
         <Link href={'/league/' + league.id}>
@@ -36,9 +38,10 @@ export default function MarketPage({ user, league, marketPlayers, userMoneyInfo 
 
         <h1>Subasta de jugadores</h1>
 
-        <p>Tienes <b>{userMoneyInfo.money} €</b> y puedes llegar a gastar <b>{userMoneyInfo.budget} €</b>.</p>
+        <p>Tienes <b>{NF.format(userMoneyInfo.money)} €</b> y puedes llegar a gastar hasta <b>{NF.format(userMoneyInfo.expendable)} €</b>.</p>
+        <p>Dinero bloqueado en pujas <b>{NF.format(userMoneyInfo.blocked)} €</b></p>
 
-        <MarketTable marketPlayers={marketPlayers} leagueId={league.id} />
+        <MarketTable marketPlayers={marketPlayers} leagueId={league.id} userMoneyInfo={userMoneyInfo} />
     </Layout>
 }
 

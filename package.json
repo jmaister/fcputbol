@@ -13,7 +13,7 @@
     "typeorm:mig": "typeorm migration:run",
     "typeorm:cr": "typeorm migration:create -n",
     "pre:test:drop": "typeorm schema:drop",
-    "test": "del fcputbol-test.sqlite && cross-env NODE_ENV=test jest --coverage"
+    "test": "del fcputbol-test.sqlite && cross-env NODE_ENV=test jest --coverage --verbose"
   },
   "dependencies": {
     "@hapi/iron": "6.0.0",
