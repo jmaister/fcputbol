@@ -6,7 +6,7 @@ import { createPlayer } from './playerUtilsServer';
 import { allPositions, calculatePlayerPrice } from './playerUtils';
 import { League, LeagueStatus } from 'db/entity/league.entity';
 import { getBestBid, calculateNextPlayerNum, calculateNextBid } from './marketUtils';
-import { User } from 'db/entity/user.entity';
+import { User, UserMoney, UserMoneyType } from 'db/entity/user.entity';
 import { constants, getBidStartingTime, getBidEndTime } from './constants';
 import { Team } from 'db/entity/team.entity';
 import { getUserMoney } from './UserService';
@@ -142,6 +142,7 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
         const playerRepository = transactionalEntityManager.getRepository(Player);
         const userRepository = transactionalEntityManager.getRepository(User);
         const teamRepository = transactionalEntityManager.getRepository(Team);
+        const userMoneyRepository = transactionalEntityManager.getRepository(UserMoney);
 
         const fromDate = getBidStartingTime();
         const toDate = getBidEndTime();
@@ -151,8 +152,9 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
         let noBidsCount = 0;
 
         const marketPlayesToResolve = await marketPlayerRepository.createQueryBuilder('market')
-            //.leftJoinAndSelect('market.bids', 'bids')
             .leftJoinAndSelect('market.player', 'player')
+            .leftJoinAndSelect('player.team', 'team')
+            .leftJoinAndSelect('team.user', 'user')
             .where('market.toDate <= :t', {t: now.toISOString()})
             .andWhere('market.status = :s', {s: MarketPlayerStatus.OPEN})
             .andWhere('market.league.id = :l', {l: leagueId})
@@ -191,7 +193,26 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
                         // TODO: remove player from current user's lineup
                         // TODO: send message to user to fix lineup, if needed
 
-                        // TODO: transfer money, user->bank or user->user
+                        // Subtract money from buying user
+                        await userMoneyRepository.save({
+                            user: bid.user,
+                            league: bid.league,
+                            amount: -1 * bid.amount,
+                            type: UserMoneyType.PLAYER_BUY,
+                            player: marketPlayer.player,
+                            date: new Date(),
+                        });
+                        // Add money from seller user
+                        if (marketPlayer.player.team && marketPlayer.player.team.user) {
+                            await userMoneyRepository.save({
+                                user: marketPlayer.player.team.user,
+                                league: bid.league,
+                                amount: bid.amount,
+                                type: UserMoneyType.PLAYER_SELL,
+                                player: marketPlayer.player,
+                                date: new Date(),
+                            });
+                        }
 
                         acceptedCount++;
                     } else {

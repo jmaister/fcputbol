@@ -28,7 +28,7 @@ interface MarketTableProps {
 
 
 export default function MarketTable({ marketPlayers, leagueId, userMoneyInfo }: MarketTableProps) {
-    // TODO: use users config
+    // TODO: get locale from user
     const NF = new Intl.NumberFormat("es-ES");
     moment.locale('es');
 
