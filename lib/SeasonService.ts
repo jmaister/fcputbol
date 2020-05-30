@@ -9,6 +9,8 @@ import { Season, SeasonStatus } from "db/entity/season.entity";
 import { League, LeagueStatus } from "db/entity/league.entity";
 import { Round, RoundStatus } from "db/entity/round.entity";
 import { Match, MatchStatus } from "db/entity/match.entity";
+import { UserMoney, UserMoneyType } from "db/entity/user.entity";
+import { constants } from "./constants";
 
 
 interface CreateSeasonProps {
@@ -22,8 +24,9 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
     const db = await new Database().getManager();
     const leagueRepository = db.getRepository(League);
     const league = await leagueRepository.findOne(leagueId, {
-        relations: ["seasons", "currentSeason", "admin", "teams"]
+        relations: ["seasons", "currentSeason", "admin", "teams", "teams.user"]
     });
+    const now = new Date();
 
     if (league.admin.id !== userId) {
         throw new Error("No eres el administrador de esta liga.");
@@ -41,8 +44,19 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         const roundRepository = transactionalEntityManager.getRepository(Round);
         const matchRepository = transactionalEntityManager.getRepository(Match);
         const classificationRepository = transactionalEntityManager.getRepository(Classification);
+        const userMoneyRepository = transactionalEntityManager.getRepository(UserMoney);
 
-        // TODO: give users the MONEY_SEASON_START
+        // Give users the MONEY_SEASON_START
+        for (let team of league.teams) {
+            await userMoneyRepository.save({
+                user: team.user,
+                league,
+                amount: constants.MONEY_SEASON_START,
+                type: UserMoneyType.SEASON_START,
+                date: now,
+            });
+
+        }
 
         // Create season
         let seasonNumber = league.seasons ? league.seasons.length : 0;
@@ -64,7 +78,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         const calculatedRounds:MatchPair[][] = tournament(n);
 
         // Matches start next day at 12:00:00 UTC
-        let roundDate = moment().utc().hour(12).minute(0).second(0).millisecond(0).add(1, "day");
+        let roundDate = moment(now).utc().hour(12).minute(0).second(0).millisecond(0).add(1, "day");
 
         for (let r=0; r < calculatedRounds.length; r++) {
             const calculatedRound = calculatedRounds[r];
@@ -112,5 +126,11 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         // Avoid circular refs
         return seasonRepository.findOne(season.id);
     });
+}
 
+export async function findSeason(seasonId): Promise<Season> {
+    const db = await new Database().getManager();
+    const seasonRepository = db.getRepository(Season);
+
+    return seasonRepository.findOne(seasonId, {relations: ['league', 'rounds', 'classifications']});
 }
