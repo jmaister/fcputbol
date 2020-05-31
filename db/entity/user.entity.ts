@@ -36,6 +36,10 @@ export enum UserMoneyType {
     SEASON_START = "SEASON_START",
     PLAYER_BUY = "PLAYER_BUY",
     PLAYER_SELL = "PLAYER_SELL",
+    MATCH_WIN = "MATCH_WIN",
+    MATCH_DRAW = "MATCH_DRAW",
+    MATCH_LOSE = "MATCH_LOSE",
+    GOAL = "GOAL",
 }
 
 @Entity()
@@ -56,9 +60,12 @@ export class UserMoney {
     @Column("varchar")
     type: UserMoneyType;
 
-    // Fields for PLAYER_BUY, PLAYER_SELL
+    @Column('datetime')
+    date: Date;
 
+    // Fields for PLAYER_BUY, PLAYER_SELL
     @ManyToOne(type => Player, {nullable: true})
     player: Player;
+
 
 }

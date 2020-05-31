@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import Layout from 'components/layout';
 
-import { findUser } from 'lib/UserService';
+import { findUser, getUserMoney, UserMoneyInfo } from 'lib/UserService';
 
 import { Button, List, ListItem } from '@material-ui/core';
 
@@ -22,11 +22,14 @@ interface MarketPageParams {
     user: User
     league: League
     marketPlayers: MarketPlayer[]
+    userMoneyInfo: UserMoneyInfo
 }
 
 
-export default function MarketPage({ user, league, marketPlayers }: MarketPageParams) {
+export default function MarketPage({ user, league, marketPlayers, userMoneyInfo }: MarketPageParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    // TODO: use users config
+    const NF = new Intl.NumberFormat("es-ES");
 
     return <Layout>
         <Link href={'/league/' + league.id}>
@@ -35,7 +38,10 @@ export default function MarketPage({ user, league, marketPlayers }: MarketPagePa
 
         <h1>Subasta de jugadores</h1>
 
-        <MarketTable marketPlayers={marketPlayers} leagueId={league.id} />
+        <p>Tienes <b>{NF.format(userMoneyInfo.money)} €</b> y puedes llegar a gastar hasta <b>{NF.format(userMoneyInfo.expendable)} €</b>.</p>
+        <p>Dinero bloqueado en pujas <b>{NF.format(userMoneyInfo.blocked)} €</b></p>
+
+        <MarketTable marketPlayers={marketPlayers} leagueId={league.id} userMoneyInfo={userMoneyInfo} />
     </Layout>
 }
 
@@ -56,11 +62,14 @@ export const getServerSideProps = withAuthSSP(async (context) => {
     // Hack
     marketPlayers = JSON.parse(JSON.stringify(marketPlayers));
 
+    let userMoneyInfo = await getUserMoney(user.id, leagueId)
+
     return {
         props: {
             user,
             league,
             marketPlayers,
+            userMoneyInfo,
         }
     };
 });

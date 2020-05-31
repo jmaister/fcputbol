@@ -1,6 +1,6 @@
 import { constants } from "./constants";
 
-import { MarketBid } from "db/entity/marketplayer.entity";
+import { MarketBid, MarketBidStatus } from "db/entity/marketplayer.entity";
 import { Player } from "db/entity/player.entity";
 
 
@@ -8,7 +8,7 @@ export function getBestBid(bids: MarketBid[]): MarketBid {
     let best = null;
 
     for (let bid of bids) {
-        if (best == null || bid.amount > best.amount) {
+        if (best == null || (bid.amount > best.amount && bid.status == MarketBidStatus.PLACED)) {
             best = bid;
         }
     }

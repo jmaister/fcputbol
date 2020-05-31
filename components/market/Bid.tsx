@@ -6,11 +6,13 @@ import * as Yup from 'yup';
 import { TextField, Button, Typography } from "@material-ui/core";
 import Loading from "components/Loading";
 import Router from "next/router";
+import { UserMoneyInfo } from "lib/UserService";
 
 interface BidProps {
     startingPrice: number
     marketPlayerId: number
     leagueId: number
+    userMoneyInfo: UserMoneyInfo
 }
 
 interface BidFormProps {
@@ -18,15 +20,16 @@ interface BidFormProps {
     marketPlayerId: number
 }
 
-export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProps) {
+export default function Bid({ startingPrice, marketPlayerId, leagueId, userMoneyInfo }: BidProps) {
     const [errorMsg, setErrorMsg] = useState('');
 
-    const minPrice = startingPrice;
-    const currentUserAvailable = 999999999; //TODO: calculate user available money
+    const minPrice = Math.min(startingPrice, userMoneyInfo.expendable);
+    const currentUserAvailable = userMoneyInfo.expendable;
     const initial:BidFormProps = {
         bidPrice: minPrice,
         marketPlayerId,
     };
+    const userCanBid = userMoneyInfo.expendable >= startingPrice;
 
     const onSubmit = async (values, actions:FormikHelpers<BidFormProps>) => {
         setErrorMsg(null);
@@ -76,7 +79,7 @@ export default function Bid({ startingPrice, marketPlayerId, leagueId }: BidProp
                         color="primary"
                         variant="contained"
                         type="submit"
-                        disabled={!isValid || isSubmitting}
+                        disabled={!isValid || isSubmitting || !userCanBid}
                     >Pujar</Button>
                     {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}
                     <Loading isLoading={isSubmitting}/>

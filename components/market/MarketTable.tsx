@@ -18,15 +18,17 @@ import { powerColorClass } from 'lib/playerUtils';
 import { MarketPlayer, MarketBidStatus } from 'db/entity/marketplayer.entity';
 import Bid from './Bid';
 import { getBestBid, calculateNextBid } from 'lib/marketUtils';
+import { UserMoneyInfo } from 'lib/UserService';
 
 interface MarketTableProps {
     marketPlayers: MarketPlayer[]
     leagueId: number
+    userMoneyInfo: UserMoneyInfo
 }
 
 
-export default function MarketTable({ marketPlayers, leagueId }: MarketTableProps) {
-    // TODO: use users config
+export default function MarketTable({ marketPlayers, leagueId, userMoneyInfo }: MarketTableProps) {
+    // TODO: get locale from user
     const NF = new Intl.NumberFormat("es-ES");
     moment.locale('es');
 
@@ -75,7 +77,9 @@ export default function MarketTable({ marketPlayers, leagueId }: MarketTableProp
                             })}
                             <TableRow key={'bid_'+player.id}>
                                 <TableCell colSpan={4} />
-                                <TableCell colSpan={4}><Bid marketPlayerId={marketPlayer.id} startingPrice={nextBid} leagueId={leagueId} /></TableCell>
+                                <TableCell colSpan={4}>
+                                    <Bid marketPlayerId={marketPlayer.id} startingPrice={nextBid} leagueId={leagueId} userMoneyInfo={userMoneyInfo} />
+                                </TableCell>
                             </TableRow>
                         </Fragment>
                     })}
