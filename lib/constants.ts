@@ -8,6 +8,12 @@ export const constants = {
 
     MONEY_SEASON_START: 500000,
     MONEY_OVERSPEND_PCT: 15,
+
+    MONEY_MATCH_WIN: 50000,
+    MONEY_MATCH_DRAW: 25000,
+    MONEY_MATCH_LOSE: 10000,
+
+    MONEY_PER_GOAL: 10000,
 };
 
 export function getBidStartingTime(): Date {

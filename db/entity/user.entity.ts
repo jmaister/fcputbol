@@ -39,8 +39,7 @@ export enum UserMoneyType {
     MATCH_WIN = "MATCH_WIN",
     MATCH_DRAW = "MATCH_DRAW",
     MATCH_LOSE = "MATCH_LOSE",
-    GOAL_SCORED = "GOAL_SCORED",
-    GOAL_AGAINST = "GOAL_AGAINST",
+    GOAL = "GOAL",
 }
 
 @Entity()

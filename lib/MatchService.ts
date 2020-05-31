@@ -8,6 +8,8 @@ import { MatchStep, Match, MatchStatus } from '../db/entity/match.entity';
 import { Classification } from 'db/entity/classification.entity';
 import { EntityManager } from 'typeorm';
 import { League, LeagueStatus } from 'db/entity/league.entity';
+import { UserMoney, UserMoneyType } from 'db/entity/user.entity';
+import { constants } from './constants';
 
 
 export async function playMatch(matchId: number, db?:EntityManager): Promise<Match> {
@@ -23,6 +25,7 @@ export async function playMatch(matchId: number, db?:EntityManager): Promise<Mat
         try {
             const matchRepository = transactionalEntityManager.getRepository(Match);
             const matchStepRepository = transactionalEntityManager.getRepository(MatchStep);
+            const userMoneyRepository = transactionalEntityManager.getRepository(UserMoney);
 
             match.resultHome = matchResult.score[0];
             match.resultAway = matchResult.score[1];
@@ -82,8 +85,71 @@ export async function playMatch(matchId: number, db?:EntityManager): Promise<Mat
                 .where("season.id = :seasonId and team.id = :teamId", { seasonId: match.round.season.id, teamId: match.away.id })
                 .execute();
 
-            // TODO: Update users money, MONEY_MATCH_WIN, MONEY_MATCH_DRAW, MONEY_MATCH_LOSE, MONEY_PER_GOAL
-
+            // Update users money: MONEY_MATCH_WIN, MONEY_MATCH_DRAW, MONEY_MATCH_LOSE, MONEY_PER_GOAL
+            if (match.resultHome > 0) {
+                await userMoneyRepository.save({
+                    user: match.home.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_PER_GOAL * match.resultHome,
+                    type: UserMoneyType.GOAL,
+                    date: new Date(),
+                });
+            }
+            if (match.resultAway > 0) {
+                await userMoneyRepository.save({
+                    user: match.away.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_PER_GOAL * match.resultAway,
+                    type: UserMoneyType.GOAL,
+                    date: new Date(),
+                });
+            }
+            if (match.homeWin) {
+                await userMoneyRepository.save({
+                    user: match.home.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_MATCH_WIN,
+                    type: UserMoneyType.MATCH_WIN,
+                    date: new Date(),
+                });
+                await userMoneyRepository.save({
+                    user: match.away.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_MATCH_LOSE,
+                    type: UserMoneyType.MATCH_LOSE,
+                    date: new Date(),
+                });
+            } else if(match.draw) {
+                await userMoneyRepository.save({
+                    user: match.home.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_MATCH_DRAW,
+                    type: UserMoneyType.MATCH_DRAW,
+                    date: new Date(),
+                });
+                await userMoneyRepository.save({
+                    user: match.away.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_MATCH_DRAW,
+                    type: UserMoneyType.MATCH_DRAW,
+                    date: new Date(),
+                });
+            } else {
+                await userMoneyRepository.save({
+                    user: match.home.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_MATCH_LOSE,
+                    type: UserMoneyType.MATCH_LOSE,
+                    date: new Date(),
+                });
+                await userMoneyRepository.save({
+                    user: match.away.user,
+                    league: match.round.season.league,
+                    amount: constants.MONEY_MATCH_WIN,
+                    type: UserMoneyType.MATCH_WIN,
+                    date: new Date(),
+                });
+            }
 
             // Avoid circular ref
             return matchRepository.findOne(match.id);
