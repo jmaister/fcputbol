@@ -112,13 +112,17 @@ export async function getUserMoney(userId: number, leagueId: number, db?: Entity
     const amount = result.amount || 0;
     const blocked = bidResult.amount || 0;
 
-    let budget = amount + Math.floor(amount * constants.MONEY_OVERSPEND_PCT / 100);
-    let expendable = budget - blocked;
+    let budget = 0;
+    let expendable = 0;
+    if (amount > 0 ) {
+        budget = amount + Math.floor(amount * constants.MONEY_OVERSPEND_PCT / 100);
+        expendable = Math.max(0, budget - blocked);
+    }
 
     return {
         money: amount,
         blocked: blocked,
-        budget: Math.max(0, budget),
+        budget: budget,
         expendable,
         overSpendPct: constants.MONEY_OVERSPEND_PCT,
     };

@@ -145,6 +145,7 @@ test('Create bid, increase form same user', async () => {
     expect(bid1).not.toBeNull();
     expect(bid1.ok).toBe(true);
 
+    // TODO: should check the money without counting the previous vid
     const bid2 = await sendBid(marketPlayer.startingPrice + constants.MARKET_BID_INCREMENT, marketPlayer.id, context.u2.id);
     expect(bid2).not.toBeNull();
     expect(bid2.ok).toBe(true);

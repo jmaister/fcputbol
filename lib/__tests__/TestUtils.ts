@@ -5,6 +5,8 @@ import { createTeam } from "lib/TeamService";
 import { jerseyColors } from "lib/teamUtils";
 import { League } from "db/entity/league.entity";
 import { createLeague, enterLeague } from "lib/LeagueService";
+import { Season } from "db/entity/season.entity";
+import { createSeason } from "lib/SeasonService";
 
 
 
@@ -67,4 +69,23 @@ export async function createMinimalLeague(): Promise<MinimalLeague> {
         t2: u2.team,
         league: league,
     }
+}
+
+export interface LeagueAndSeason extends MinimalLeague {
+    season: Season
+}
+
+export async function createLeagueAndSeason(): Promise<LeagueAndSeason> {
+    const context = await createMinimalLeague();
+
+    const season = await createSeason({
+        name: "Season " + Math.random(),
+        leagueId: context.league.id,
+        userId: context.u1.id
+    });
+
+    return {
+        ...context,
+        season: season
+    };
 }

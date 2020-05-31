@@ -73,6 +73,7 @@ test('Get user current money, movements', async () => {
     expect(result1).not.toBeNull();
     expect(result1.money).toBe(0);
     expect(result1.budget).toBe(0);
+    expect(result1.expendable).toBe(0);
 
     const userMoney1 = await createUserMoney(context.u1.id, context.league.id, 5000, UserMoneyType.SEASON_START);
     expect(userMoney1).not.toBeNull();
@@ -81,6 +82,7 @@ test('Get user current money, movements', async () => {
     expect(result2).not.toBeNull();
     expect(result2.money).toBe(5000);
     expect(result2.budget).toBe(5750);
+    expect(result2.expendable).toBe(5750);
 
     const userMoney2 = await createUserMoney(context.u1.id, context.league.id, -2000, UserMoneyType.SEASON_START);
     expect(userMoney2).not.toBeNull();
@@ -89,6 +91,7 @@ test('Get user current money, movements', async () => {
     expect(result3).not.toBeNull();
     expect(result3.money).toBe(3000);
     expect(result3.budget).toBe(3450);
+    expect(result3.expendable).toBe(3450);
 
     const userMoney3 = await createUserMoney(context.u1.id, context.league.id, -3450, UserMoneyType.SEASON_START);
     expect(userMoney3).not.toBeNull();
@@ -97,6 +100,7 @@ test('Get user current money, movements', async () => {
     expect(result4).not.toBeNull();
     expect(result4.money).toBe(-450);
     expect(result4.budget).toBe(0);
+    expect(result4.expendable).toBe(0);
 
 });
 

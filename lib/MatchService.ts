@@ -6,16 +6,19 @@ import { MatchResult, play } from './play/probs';
 import Database from 'db/database';
 import { MatchStep, Match, MatchStatus } from '../db/entity/match.entity';
 import { Classification } from 'db/entity/classification.entity';
+import { EntityManager } from 'typeorm';
+import { League, LeagueStatus } from 'db/entity/league.entity';
 
 
-export async function playAndSaveMatch(match:Match): Promise<Match> {
+export async function playMatch(matchId: number, db?:EntityManager): Promise<Match> {
+    if (!db) {
+        db = await new Database().getManager();
+    }
+
     // Play a match
-    const result: MatchResult = play(match.home, match.away);
-    return saveMatch(match, result);
-}
+    const match = await findMatchToPlay(matchId, db);
+    const matchResult: MatchResult = play(match.home, match.away);
 
-export async function saveMatch(match:Match, matchResult:MatchResult): Promise<Match> {
-    const db = await new Database().getManager();
     return db.transaction(async (transactionalEntityManager) => {
         try {
             const matchRepository = transactionalEntityManager.getRepository(Match);
@@ -119,8 +122,10 @@ export async function findMatchesByUser(userId:string):Promise<Match[]> {
         .getMany();
 }
 
-export async function findMatchToPlay(matchId:number):Promise<Match> {
-    const db = await new Database().getManager();
+export async function findMatchToPlay(matchId:number, db?:EntityManager):Promise<Match> {
+    if (!db) {
+        db = await new Database().getManager();
+    }
     const matchRepository = db.getRepository(Match);
     return matchRepository.createQueryBuilder("match")
         .leftJoinAndSelect("match.round", "round")
@@ -137,7 +142,24 @@ export async function findMatchToPlay(matchId:number):Promise<Match> {
         .getOne();
 }
 
+
 export async function freezeLineups(now:Date):Promise<Match[]> {
+    const db = await new Database().getManager();
+    const leagueRepository = db.getRepository(League);
+
+    const leagues = await leagueRepository.createQueryBuilder('league')
+        .where('league.status != :status', {status: LeagueStatus.FINISHED})
+        .getMany();
+
+    let matches = [];
+    for (let league of leagues) {
+        const m = await freezeLineupsForLeague(now, league.id);
+        matches = matches.concat(m);
+    }
+    return matches;
+}
+
+export async function freezeLineupsForLeague(now:Date, leagueId:number):Promise<Match[]> {
     const db = await new Database().getManager();
 
     return db.transaction(async (transactionalEntityManager) => {
@@ -146,16 +168,16 @@ export async function freezeLineups(now:Date):Promise<Match[]> {
 
             const matches = await matchRepository.createQueryBuilder('match')
                 .leftJoinAndSelect("match.round", "round")
+                .leftJoinAndSelect("round.season", "season")
+                .leftJoinAndSelect("season.league", "league")
                 .leftJoinAndSelect("match.home", "home")
                 .leftJoinAndSelect("home.currentLineup", "homeLineup")
                 .leftJoinAndSelect("match.away", "away")
                 .leftJoinAndSelect("away.currentLineup", "awayLineup")
                 .where("round.freezeLineupDate <= datetime(:now)", {now: now.toISOString()})
                 .andWhere("match.status = :status", {status: MatchStatus.SCHEDULED})
+                .andWhere("league.id = :li", {li: leagueId})
                 .getMany();
-
-            console.log('matches to freeze', matches);
-            console.log('now', now, now.toISOString());
 
             for (let i = 0; i < matches.length; i++) {
                 const match = matches[i];

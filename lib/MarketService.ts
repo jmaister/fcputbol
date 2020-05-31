@@ -164,6 +164,7 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
         for (let marketPlayer of marketPlayesToResolve) {
             const bids = await marketBidRepository.createQueryBuilder('bid')
                 .leftJoinAndSelect('bid.team', 'team')
+                .leftJoinAndSelect('bid.user', 'user')
                 .where('bid.marketPlayer.id = :i', {i: marketPlayer.id})
                 .andWhere('bid.status = :bs', {bs: MarketBidStatus.PLACED})
                 .getMany();

@@ -124,7 +124,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         await seasonRepository.save(season);
 
         // Avoid circular refs
-        return seasonRepository.findOne(season.id);
+        return seasonRepository.findOne(season.id, {relations: ["rounds", "rounds.matches"]});
     });
 }
 
