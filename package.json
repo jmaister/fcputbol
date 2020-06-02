@@ -13,7 +13,7 @@
     "typeorm:mig": "typeorm migration:run",
     "typeorm:cr": "typeorm migration:create -n",
     "pre:test:drop": "typeorm schema:drop",
-    "test": "del fcputbol-test.sqlite && cross-env NODE_ENV=test jest --coverage --verbose"
+    "test": "rimraf fcputbol-test.sqlite && cross-env NODE_ENV=test jest --coverage --verbose"
   },
   "dependencies": {
     "@hapi/iron": "6.0.0",
@@ -43,6 +43,7 @@
     "cron": "1.8.2",
     "cross-env": "7.0.2",
     "jest": "26.0.1",
+    "rimraf": "3.0.2",
     "sass": "1.26.5",
     "sqlite3": "4.2.0",
     "ts-node": "8.10.1",

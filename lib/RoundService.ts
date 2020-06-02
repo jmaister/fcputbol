@@ -104,7 +104,11 @@ export async function playRound(now: Date, roundId:number): Promise<RoundProcess
 
     for (let match of matchesToProcess) {
         try {
-            await playMatch(match.id, db);
+            await playMatch(now, match.id, db)
+                .catch(error => {
+                    console.log("Failed match id " + match.id, error.stack);
+                    errors.push("Failed match id " + match.id + ": " + error.message);
+                });
         } catch (error) {
             console.log("Failed match id " + match.id, error);
             errors.push("Failed match id " + match.id + ": " + error.message);

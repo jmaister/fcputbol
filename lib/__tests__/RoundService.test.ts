@@ -29,11 +29,11 @@ test('Play Round', async () => {
 
 
 async function testFreezeAndPlayRound(round:Round, leagueId:number): Promise<RoundProcessInfo> {
-    let freezeDate0 = moment(round.freezeLineupDate).add(1, 'second').toDate();
-    await freezeLineupsForLeague(freezeDate0, leagueId);
+    let freezeDate = moment(round.freezeLineupDate).add(1, 'second').toDate();
+    await freezeLineupsForLeague(freezeDate, leagueId);
 
-    let playDate0 = moment(round.roundDate).add(1, 'second').toDate();
-    return await playRound(playDate0, round.id);
+    let playDate = moment(round.roundDate).add(1, 'second').toDate();
+    return await playRound(playDate, round.id);
 }
 
 test('Play Round, finish season', async () => {
@@ -62,5 +62,29 @@ test('Play Round, finish season', async () => {
     expect(response1.seasonFinished).toBe(true);
 
 });
+
+test('Play Round, 10 teams', async () => {
+    const context = await createLeagueAndSeason(10);
+
+    const rounds = context.season.rounds;
+
+    for (const round of rounds) {
+        const response = await testFreezeAndPlayRound(round, context.league.id);
+        expect(response).not.toBeNull();
+        expect(response.roundId).toBe(round.id);
+        expect(response.errorCount).toBe(0);
+        expect(response.matchesToProcess).toBe(5);
+        expect(response.processedMatches).toBe(5);
+        expect(response.roundFinished).toBe(true);
+
+        if (round.id === rounds[rounds.length-1].id) {
+            expect(response.seasonFinished).toBe(true);
+        } else {
+            expect(response.seasonFinished).toBe(false);
+        }
+    }
+
+}, 45000);
+
 
 export {}
