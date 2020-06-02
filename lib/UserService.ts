@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { User, UserMoney, UserMoneyType } from '../db/entity/user.entity';
+import { User, UserAssets, UserAssetType, UserAssetSubType } from '../db/entity/user.entity';
 import Database from '../db/database';
 import { Select } from '@material-ui/core';
 import { League } from 'db/entity/league.entity';
@@ -77,6 +77,32 @@ export async function findUser(userId: number): Promise<User> {
     }
 }
 
+export interface UserAssetInfo {
+    type: UserAssetType
+    amount: number
+}
+
+export async function getUserAssets(userId: number, leagueId: number, type: UserAssetType, db?: EntityManager): Promise<UserAssetInfo> {
+    if (!db) {
+        db = await new Database().getManager();
+    }
+    const userMoneyRepository = db.getRepository(UserAssets);
+    const marketBidRepository = db.getRepository(MarketBid);
+
+    // Money on UserMoney
+    const result = await userMoneyRepository.createQueryBuilder('um')
+        .select('SUM(um.amount) AS amount')
+        .where("um.user.id = :u", {u: userId})
+        .andWhere("um.league.id = :l", {l: leagueId})
+        .andWhere("um.type = :t", {t: type})
+        .getRawOne();
+
+    return {
+        type: type,
+        amount: result.amount,
+    };
+}
+
 export interface UserMoneyInfo {
     money: number
     blocked: number
@@ -85,12 +111,11 @@ export interface UserMoneyInfo {
     overSpendPct: number
 }
 
-
 export async function getUserMoney(userId: number, leagueId: number, db?: EntityManager): Promise<UserMoneyInfo> {
     if (!db) {
         db = await new Database().getManager();
     }
-    const userMoneyRepository = db.getRepository(UserMoney);
+    const userMoneyRepository = db.getRepository(UserAssets);
     const marketBidRepository = db.getRepository(MarketBid);
 
     // Money on UserMoney
@@ -98,6 +123,7 @@ export async function getUserMoney(userId: number, leagueId: number, db?: Entity
         .select('SUM(um.amount) AS amount')
         .where("um.user.id = :u", {u: userId})
         .andWhere("um.league.id = :l", {l: leagueId})
+        .andWhere("um.type = :t", {t: UserAssetType.MONEY})
         .getRawOne();
 
     // TODO: return amount per marketPlayer, if user overbids, that amount does not count
@@ -128,9 +154,10 @@ export async function getUserMoney(userId: number, leagueId: number, db?: Entity
     };
 }
 
-export async function createUserMoney(userId: number, leagueId: number, amount:number, type:UserMoneyType): Promise<UserMoney> {
+
+export async function createUserAsset(userId: number, leagueId: number, amount:number, type:UserAssetType, subType: UserAssetSubType): Promise<UserAssets> {
     const db = await new Database().getManager();
-    const userMoneyRepository = db.getRepository(UserMoney);
+    const userMoneyRepository = db.getRepository(UserAssets);
     const userRepository = db.getRepository(User);
     const leagueRepository = db.getRepository(League);
 
@@ -142,6 +169,7 @@ export async function createUserMoney(userId: number, leagueId: number, amount:n
         league,
         amount,
         type,
+        subType,
         date: new Date(),
     });
 }

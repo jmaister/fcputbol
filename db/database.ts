@@ -3,7 +3,7 @@ import { ConnectionManager, Connection, EntityManager, getConnectionManager, cre
 import ormconfig from '../ormconfig.json';
 
 import { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
-import { User, UserMoney } from './entity/user.entity';
+import { User, UserAssets } from './entity/user.entity';
 import { Team } from './entity/team.entity';
 import { Player } from './entity/player.entity';
 import { MatchStep, Match } from "./entity/match.entity";
@@ -39,7 +39,7 @@ const databaseOptions = ({
 
         MarketPlayer,
         MarketBid,
-        UserMoney,
+        UserAssets,
     ]
 });
 

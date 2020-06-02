@@ -6,7 +6,7 @@ import { createPlayer } from './playerUtilsServer';
 import { allPositions, calculatePlayerPrice } from './playerUtils';
 import { League, LeagueStatus } from 'db/entity/league.entity';
 import { getBestBid, calculateNextPlayerNum, calculateNextBid } from './marketUtils';
-import { User, UserMoney, UserMoneyType } from 'db/entity/user.entity';
+import { User, UserAssets, UserAssetType, UserAssetSubType } from 'db/entity/user.entity';
 import { constants, getBidStartingTime, getBidEndTime } from './constants';
 import { Team } from 'db/entity/team.entity';
 import { getUserMoney } from './UserService';
@@ -142,7 +142,7 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
         const playerRepository = transactionalEntityManager.getRepository(Player);
         const userRepository = transactionalEntityManager.getRepository(User);
         const teamRepository = transactionalEntityManager.getRepository(Team);
-        const userMoneyRepository = transactionalEntityManager.getRepository(UserMoney);
+        const userMoneyRepository = transactionalEntityManager.getRepository(UserAssets);
 
         const fromDate = getBidStartingTime();
         const toDate = getBidEndTime();
@@ -200,7 +200,8 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
                             user: bid.user,
                             league: bid.league,
                             amount: -1 * bid.amount,
-                            type: UserMoneyType.PLAYER_BUY,
+                            type: UserAssetType.MONEY,
+                            subType: UserAssetSubType.PLAYER_BUY,
                             player: marketPlayer.player,
                             date: new Date(),
                         });
@@ -210,7 +211,8 @@ export async function resolvemarketforleague(now: Date, leagueId: number, db?: E
                                 user: marketPlayer.player.team.user,
                                 league: bid.league,
                                 amount: bid.amount,
-                                type: UserMoneyType.PLAYER_SELL,
+                                type: UserAssetType.MONEY,
+                                subType: UserAssetSubType.PLAYER_SELL,
                                 player: marketPlayer.player,
                                 date: new Date(),
                             });

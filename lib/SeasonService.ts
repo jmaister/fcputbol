@@ -9,7 +9,7 @@ import { Season, SeasonStatus } from "db/entity/season.entity";
 import { League, LeagueStatus } from "db/entity/league.entity";
 import { Round, RoundStatus } from "db/entity/round.entity";
 import { Match, MatchStatus } from "db/entity/match.entity";
-import { UserMoney, UserMoneyType } from "db/entity/user.entity";
+import { UserAssets, UserAssetType, UserAssetSubType } from "db/entity/user.entity";
 import { constants } from "./constants";
 
 
@@ -44,7 +44,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         const roundRepository = transactionalEntityManager.getRepository(Round);
         const matchRepository = transactionalEntityManager.getRepository(Match);
         const classificationRepository = transactionalEntityManager.getRepository(Classification);
-        const userMoneyRepository = transactionalEntityManager.getRepository(UserMoney);
+        const userMoneyRepository = transactionalEntityManager.getRepository(UserAssets);
 
         // Give users the MONEY_SEASON_START
         for (let team of league.teams) {
@@ -52,10 +52,18 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
                 user: team.user,
                 league,
                 amount: constants.MONEY_SEASON_START,
-                type: UserMoneyType.SEASON_START,
+                type: UserAssetType.MONEY,
+                subType: UserAssetSubType.SEASON_START,
                 date: now,
             });
-
+            await userMoneyRepository.save({
+                user: team.user,
+                league,
+                amount: constants.PLAYER_POINTS_SEASON_START,
+                type: UserAssetType.PLAYER_POINTS,
+                subType: UserAssetSubType.SEASON_START,
+                date: now,
+            });
         }
 
         // Create season

@@ -32,7 +32,13 @@ export class User {
     teams: Team[];
 }
 
-export enum UserMoneyType {
+export enum UserAssetType {
+    MONEY = "MONEY",
+    PLAYER_POINTS = "PLAYER_POINTS",
+
+}
+
+export enum UserAssetSubType {
     SEASON_START = "SEASON_START",
     PLAYER_BUY = "PLAYER_BUY",
     PLAYER_SELL = "PLAYER_SELL",
@@ -40,10 +46,11 @@ export enum UserMoneyType {
     MATCH_DRAW = "MATCH_DRAW",
     MATCH_LOSE = "MATCH_LOSE",
     GOAL = "GOAL",
+    PLAYER_UPDATE = "PLAYER_UPDATE",
 }
 
 @Entity()
-export class UserMoney {
+export class UserAssets {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -58,7 +65,10 @@ export class UserMoney {
     amount: number;
 
     @Column("varchar")
-    type: UserMoneyType;
+    type: UserAssetType;
+
+    @Column("varchar")
+    subType: UserAssetSubType;
 
     @Column('datetime')
     date: Date;
@@ -66,6 +76,4 @@ export class UserMoney {
     // Fields for PLAYER_BUY, PLAYER_SELL
     @ManyToOne(type => Player, {nullable: true})
     player: Player;
-
-
 }
