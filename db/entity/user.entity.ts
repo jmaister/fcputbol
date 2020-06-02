@@ -46,7 +46,6 @@ export enum UserAssetSubType {
     MATCH_DRAW = "MATCH_DRAW",
     MATCH_LOSE = "MATCH_LOSE",
     GOAL = "GOAL",
-    PLAYER_UPDATE = "PLAYER_UPDATE",
 }
 
 @Entity()
@@ -73,7 +72,7 @@ export class UserAssets {
     @Column('datetime')
     date: Date;
 
-    // Fields for PLAYER_BUY, PLAYER_SELL
+    // Fields for PLAYER_BUY, PLAYER_SELL, PLAYER_* stats
     @ManyToOne(type => Player, {nullable: true})
     player: Player;
 }

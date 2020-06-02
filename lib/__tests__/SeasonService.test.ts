@@ -4,8 +4,9 @@ import { createMinimalLeague } from './TestUtils';
 import { createSeason, findSeason } from 'lib/SeasonService';
 import { SeasonStatus } from 'db/entity/season.entity';
 import { RoundStatus } from 'db/entity/round.entity';
-import { getUserMoney } from 'lib/UserService';
+import { getUserMoney, getUserAssets } from 'lib/UserService';
 import { constants } from 'lib/constants';
+import { UserAssetType } from 'db/entity/user.entity';
 
 
 
@@ -39,8 +40,13 @@ test('Create season', async () => {
 
     const afterMoneyU1 = await getUserMoney(context.u1.id, context.league.id);
     expect(afterMoneyU1.money).toBe(constants.MONEY_SEASON_START);
+    const afterAssetsU1 = await getUserAssets(context.u1.id, context.league.id, UserAssetType.PLAYER_POINTS);
+    expect(afterAssetsU1.amount).toBe(constants.PLAYER_POINTS_SEASON_START);
+
     const aftertMoneyU2 = await getUserMoney(context.u2.id, context.league.id);
     expect(aftertMoneyU2.money).toBe(constants.MONEY_SEASON_START);
+    const afterAssetsU2 = await getUserAssets(context.u2.id, context.league.id, UserAssetType.PLAYER_POINTS);
+    expect(afterAssetsU2.amount).toBe(constants.PLAYER_POINTS_SEASON_START);
 
 });
 

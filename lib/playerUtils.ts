@@ -1,4 +1,4 @@
-import { Player, Positions, PlayerStat } from "db/entity/player.entity";
+import { Player, Positions, PlayerStat, PlayerStats } from "db/entity/player.entity";
 
 import { sample } from "./utils";
 
@@ -121,7 +121,7 @@ export function calculatePlayerStats(player:Player): Stats  {
     let avg = 0;
     let max = 0;
     let min = 999999;
-    PlayerStat.forEach(statName => {
+    PlayerStats.forEach(statName => {
         const s = player[statName];
         sum = sum + s;
         if (max < s) {
@@ -131,7 +131,7 @@ export function calculatePlayerStats(player:Player): Stats  {
             min = s;
         }
     });
-    avg = sum / PlayerStat.length;
+    avg = sum / PlayerStats.length;
 
     return {
         sum,
