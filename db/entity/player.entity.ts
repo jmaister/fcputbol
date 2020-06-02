@@ -16,7 +16,7 @@ export enum Positions {
     fw = "fw",
 }
 
-// export const PlayerStat = ['save', 'defense', 'pass', 'dribble', 'shot'];
+export const PlayerStatProperties = ['save', 'defense', 'pass', 'dribble', 'shot'];
 
 export enum PlayerStat {
     SAVE = 'SAVE',
@@ -26,7 +26,7 @@ export enum PlayerStat {
     SHOT = 'SHOT',
 }
 
-export const PlayerStats = [PlayerStat.SAVE, PlayerStat.DEFENSE, PlayerStat.PASS, PlayerStat.DRIBBLE, PlayerStat.SHOT];
+export const PlayerStatList = [PlayerStat.SAVE, PlayerStat.DEFENSE, PlayerStat.PASS, PlayerStat.DRIBBLE, PlayerStat.SHOT];
 
 @Entity()
 export class Player {
@@ -67,13 +67,13 @@ export class PlayerPoints {
     id: number;
 
     @ManyToOne(type => Player)
-    user: Player;
+    player: Player;
 
     @Column('double')
     points: number;
 
     @Column("varchar")
-    status: PlayerStat;
+    stat: PlayerStat;
 
     @CreateDateColumn()
     createdDate: Date;

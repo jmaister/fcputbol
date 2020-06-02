@@ -5,7 +5,7 @@ import ormconfig from '../ormconfig.json';
 import { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
 import { User, UserAssets } from './entity/user.entity';
 import { Team } from './entity/team.entity';
-import { Player } from './entity/player.entity';
+import { Player, PlayerPoints } from './entity/player.entity';
 import { MatchStep, Match } from "./entity/match.entity";
 import { Lineup } from "./entity/lineup.entity";
 import { League } from "./entity/league.entity";
@@ -40,6 +40,7 @@ const databaseOptions = ({
         MarketPlayer,
         MarketBid,
         UserAssets,
+        PlayerPoints,
     ]
 });
 

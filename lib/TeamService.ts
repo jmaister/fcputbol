@@ -7,6 +7,7 @@ import { Player } from 'db/entity/player.entity';
 import Database from 'db/database';
 import { createRandomLineup, validateLineup } from './playerUtils';
 import { createTeamPlayers } from './playerUtilsServer';
+import { saveInitialStats } from './PlayerService';
 
 export async function createTeam({ name, jersey_color, userId }) {
 
@@ -33,6 +34,7 @@ export async function createTeam({ name, jersey_color, userId }) {
             for (let i=0; i<players.length; i++) {
                 const savedPlayer:Player = await playerRepository.save(players[i]);
                 savedPlayers.push(savedPlayer);
+                await saveInitialStats(savedPlayer, transactionalEntityManager)
             }
 
             // Save default lineup
