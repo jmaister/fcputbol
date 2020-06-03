@@ -2,7 +2,7 @@
 import Database from 'db/database';
 import { MarketPlayer, MarketBid, MarketPlayerStatus, MarketBidStatus } from 'db/entity/marketplayer.entity';
 import { Player } from 'db/entity/player.entity';
-import { createPlayer } from './playerUtilsServer';
+import { createPlayerData } from './playerUtilsServer';
 import { allPositions, calculatePlayerPrice } from './playerUtils';
 import { League, LeagueStatus } from 'db/entity/league.entity';
 import { getBestBid, calculateNextPlayerNum, calculateNextBid } from './marketUtils';
@@ -94,7 +94,7 @@ export async function createmarketplayersforleague(now: Date, leagueId: number, 
                     // avg will be 30,40,50,60,70
                     const avg = (i * 10) + 30;
                     const std = 5;
-                    const playerData = createPlayer(avg, std, pos);
+                    const playerData = createPlayerData(avg, std, pos);
                     const player = await playerRepository.save(playerData);
 
                     // Save market player

@@ -16,8 +16,6 @@ export enum Positions {
     fw = "fw",
 }
 
-export const PlayerStatProperties = ['save', 'defense', 'pass', 'dribble', 'shot'];
-
 export enum PlayerStat {
     SAVE = 'SAVE',
     DEFENSE = 'DEFENSE',
