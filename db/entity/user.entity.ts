@@ -46,6 +46,7 @@ export enum UserAssetSubType {
     MATCH_DRAW = "MATCH_DRAW",
     MATCH_LOSE = "MATCH_LOSE",
     GOAL = "GOAL",
+    USER_SPENT = "USER_SPENT",
 }
 
 @Entity()
