@@ -46,7 +46,7 @@ export async function createSeason({name, leagueId, userId}:CreateSeasonProps): 
         const classificationRepository = transactionalEntityManager.getRepository(Classification);
         const userMoneyRepository = transactionalEntityManager.getRepository(UserAssets);
 
-        // Give users the MONEY_SEASON_START
+        // Give users the MONEY_SEASON_START and PLAYER_POINTS_SEASON_START
         for (let team of league.teams) {
             await userMoneyRepository.save({
                 user: team.user,

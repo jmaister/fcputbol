@@ -2,11 +2,7 @@
 
 # TODO
 
-TODO: create teams when the league is started for the first time
-
 TODO: Create UserPrivateData to store password
-
-TODO: cron processes + custom server
 
 # Cron processes
 

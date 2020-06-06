@@ -4,6 +4,7 @@ import { Player, PlayerPoints, PlayerStatList, PlayerStat } from 'db/entity/play
 import { EntityManager } from 'typeorm';
 import Database from 'db/database';
 import { UserAssets, User, UserAssetType, UserAssetSubType } from 'db/entity/user.entity';
+import { getUserAssets, UserAssetInfo } from './UserService';
 
 export async function findPlayer(playerId:number): Promise<Player> {
     const db = await new Database().getManager();
@@ -41,11 +42,16 @@ export async function saveInitialStats(player: Player, db: EntityManager) {
     return true;
 }
 
-export async function saveNewStatPoint(userId: number, player: Player, points:number, stat:PlayerStat): Promise<Player> {
+export async function saveNewStatPoint(leagueId: number, userId: number, player: Player, points:number, stat:PlayerStat): Promise<Player> {
     const db = await new Database().getManager();
 
-    // TODO: check UserAssets, validate available
     // TODO: check that player belongs to user
+
+    // Check UserAssets, validate available
+    const currentAssets:UserAssetInfo = await getUserAssets(userId, leagueId, UserAssetType.PLAYER_POINTS, db);
+    if (currentAssets.amount <= points) {
+        throw new Error("No tienes suficientes puntos.");
+    }
 
     return db.transaction(async (transactionalEntityManager) => {
         const playerPointsRepository = transactionalEntityManager.getRepository(PlayerPoints);

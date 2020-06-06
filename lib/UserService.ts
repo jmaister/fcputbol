@@ -86,15 +86,14 @@ export async function getUserAssets(userId: number, leagueId: number, type: User
     if (!db) {
         db = await new Database().getManager();
     }
-    const userMoneyRepository = db.getRepository(UserAssets);
-    const marketBidRepository = db.getRepository(MarketBid);
+    const userAssetsRepository = db.getRepository(UserAssets);
 
     // Money on UserMoney
-    const result = await userMoneyRepository.createQueryBuilder('um')
-        .select('SUM(um.amount) AS amount')
-        .where("um.user.id = :u", {u: userId})
-        .andWhere("um.league.id = :l", {l: leagueId})
-        .andWhere("um.type = :t", {t: type})
+    const result = await userAssetsRepository.createQueryBuilder('ua')
+        .select('SUM(ua.amount) AS amount')
+        .where("ua.user.id = :u", {u: userId})
+        .andWhere("ua.league.id = :l", {l: leagueId})
+        .andWhere("ua.type = :t", {t: type})
         .getRawOne();
 
     return {
