@@ -1,5 +1,5 @@
 
-import { Player, PlayerPoints, PlayerStatList, PlayerStat } from 'db/entity/player.entity';
+import { Player, PlayerPoints, PlayerStatList, PlayerStat, PlayerStatFieldList } from 'db/entity/player.entity';
 
 import { EntityManager } from 'typeorm';
 import Database from 'db/database';
@@ -31,8 +31,8 @@ export async function saveInitialStats(player: Player, db: EntityManager) {
 
     const playerPointsRepository = db.getRepository(PlayerPoints);
 
-    for (const stat of PlayerStatList) {
-        const points = player[stat.toLowerCase()];
+    for (const stat of PlayerStatFieldList) {
+        const points = player[stat];
         await playerPointsRepository.save({
             player,
             stat,
