@@ -25,6 +25,7 @@ export enum PlayerStat {
 }
 
 export const PlayerStatList = [PlayerStat.SAVE, PlayerStat.DEFENSE, PlayerStat.PASS, PlayerStat.DRIBBLE, PlayerStat.SHOT];
+export const PlayerStatFieldList = PlayerStatList.map(s => s.toLowerCase());
 
 @Entity()
 export class Player {
