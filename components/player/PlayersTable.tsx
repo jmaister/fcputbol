@@ -10,16 +10,19 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { Player } from 'db/entity/player.entity';
+import { Player, PlayerStatList } from 'db/entity/player.entity';
 import { Lineup } from 'db/entity/lineup.entity';
 import { Team } from 'db/entity/team.entity';
+import { League } from 'db/entity/league.entity';
 
 import Position from './Position';
+import AddPlayerPoint from './AddPlayerPoint';
 import Loading from 'components/Loading';
 import { findById, containsId } from 'lib/utils';
 import { validateLineup, powerColorClass } from 'lib/playerUtils';
 
 interface PlayersTableParams {
+    league: League
     team: Team
     players: Player[]
     lineup: Lineup
@@ -37,7 +40,7 @@ interface ValidationResult {
 }
 
 
-export default function PlayersTable({ team, players, lineup, isEditable }: PlayersTableParams) {
+export default function PlayersTable({ league, team, players, lineup, isEditable }: PlayersTableParams) {
     const [lineupPlayers, setLineupPlayers] = useState(lineup.players);
     const [selectedCount, setSelectedCount] = useState(11);
     const [messages, setMessages] = useState([]);
@@ -97,6 +100,7 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
 
     return (<>
         <h3>Jugadores en la alineación: {selectedCount}</h3>
+
         <TableContainer component={Paper}>
             <Table className="players-table" size="small" aria-label="a dense table">
                 <TableHead>
@@ -132,11 +136,12 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
                             </TableCell>
                             <TableCell component="th" scope="row">{player.name} {player.surname}</TableCell>
                             <TableCell><Position pos={player.position}></Position></TableCell>
-                            <TableCell className={powerColorClass(player.save)}>{player.save}</TableCell>
-                            <TableCell className={powerColorClass(player.defense)}>{player.defense}</TableCell>
-                            <TableCell className={powerColorClass(player.pass)}>{player.pass}</TableCell>
-                            <TableCell className={powerColorClass(player.dribble)}>{player.dribble}</TableCell>
-                            <TableCell className={powerColorClass(player.shot)}>{player.shot}</TableCell>
+                            {PlayerStatList.map(stat => {
+                                const statValue = player[stat.toLowerCase()];
+                                return <TableCell key={stat} className={powerColorClass(statValue)}>
+                                    {statValue} <AddPlayerPoint leagueId={league.id} playerId={player.id} teamId={team.id} stat={stat} />
+                                </TableCell>
+                            })}
                         </TableRow>
                     })}
                 </TableBody>
@@ -145,7 +150,7 @@ export default function PlayersTable({ team, players, lineup, isEditable }: Play
         {isEditable? <>
             {messages.length > 0 ?
                 <ul>
-                    {messages.map(m => <li><Typography color={m.type}>{m.type=="error"?"❌":"✓"} {m.msg}</Typography></li>)}
+                    {messages.map((m,i) => <li key={i}><Typography color={m.type}>{m.type=="error"?"❌":"✓"} {m.msg}</Typography></li>)}
                 </ul>
             : null}
             {errorMsg && <Typography color="error"><p>{errorMsg}</p></Typography>}

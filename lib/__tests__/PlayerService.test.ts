@@ -32,7 +32,7 @@ test('Update Player stat', async () => {
 
     const inc = 100;
     for (const stat of PlayerStatList) {
-        const updatedPlayer = await saveNewStatPoint(context.league.id, context.u1.id, playerData, inc, stat);
+        const updatedPlayer = await saveNewStatPoint(context.league.id, context.u1.id, playerData.id, inc, stat);
         expect(updatedPlayer).not.toBeNull();
         expect(updatedPlayer[stat.toLowerCase()]).toBe(playerData[stat.toLowerCase()] + inc);
     }
@@ -45,7 +45,7 @@ test('Update Player stat, error not enough points', async () => {
     const playerData = context.t1.players[0];
 
     return expect(async () => {
-        return await saveNewStatPoint(context.league.id, context.u1.id, playerData, 1, PlayerStat.DEFENSE);
+        return await saveNewStatPoint(context.league.id, context.u1.id, playerData.id, 1, PlayerStat.DEFENSE);
     }).rejects.toThrow();
 });
 

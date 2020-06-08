@@ -23,7 +23,7 @@ interface BidFormProps {
 export default function Bid({ startingPrice, marketPlayerId, leagueId, userMoneyInfo }: BidProps) {
     const [errorMsg, setErrorMsg] = useState('');
 
-    const minPrice = Math.min(startingPrice, userMoneyInfo.expendable);
+    const minPrice = startingPrice;
     const currentUserAvailable = userMoneyInfo.expendable;
     const initial:BidFormProps = {
         bidPrice: minPrice,

@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import Database from 'db/database';
 import { UserAssets, User, UserAssetType, UserAssetSubType } from 'db/entity/user.entity';
 import { getUserAssets, UserAssetInfo } from './UserService';
+import { League } from 'db/entity/league.entity';
 
 export async function findPlayer(playerId:number): Promise<Player> {
     const db = await new Database().getManager();
@@ -31,8 +32,8 @@ export async function saveInitialStats(player: Player, db: EntityManager) {
 
     const playerPointsRepository = db.getRepository(PlayerPoints);
 
-    for (const stat of PlayerStatFieldList) {
-        const points = player[stat];
+    for (const stat of PlayerStatList) {
+        const points = player[stat.toLowerCase()];
         await playerPointsRepository.save({
             player,
             stat,
@@ -42,10 +43,14 @@ export async function saveInitialStats(player: Player, db: EntityManager) {
     return true;
 }
 
-export async function saveNewStatPoint(leagueId: number, userId: number, player: Player, points:number, stat:PlayerStat): Promise<Player> {
+export async function saveNewStatPoint(leagueId: number, userId: number, playerId: number, points:number, stat:PlayerStat): Promise<Player> {
     const db = await new Database().getManager();
+    const leagueRepository = db.getRepository(League);
+    const playerRepository = db.getRepository(Player);
 
     // TODO: check that player belongs to user
+    const league = await leagueRepository.findOne(leagueId);
+    const player = await playerRepository.findOne(playerId);
 
     // Check UserAssets, validate available
     const currentAssets:UserAssetInfo = await getUserAssets(userId, leagueId, UserAssetType.PLAYER_POINTS, db);
@@ -68,9 +73,10 @@ export async function saveNewStatPoint(leagueId: number, userId: number, player:
 
         // Update points spending on UserAssets
         const user = await userRepository.findOne(userId);
-        userAssetsRepository.save({
+        await userAssetsRepository.save({
             user,
-            amount: points,
+            league: league,
+            amount: -1 * points,
             date: new Date(),
             player: player,
             type: UserAssetType.PLAYER_POINTS,
