@@ -54,7 +54,7 @@ export async function saveNewStatPoint(leagueId: number, userId: number, playerI
 
     // Check UserAssets, validate available
     const currentAssets:UserAssetInfo = await getUserAssets(userId, leagueId, UserAssetType.PLAYER_POINTS, db);
-    if (currentAssets.amount <= points) {
+    if (currentAssets.amount < points) {
         throw new Error("No tienes suficientes puntos.");
     }
 

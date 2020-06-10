@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@material-ui/core";
 
 import { PlayerStat } from "db/entity/player.entity";
-import Router from "next/router";
+
 import Loading from "components/Loading";
 
 
@@ -12,11 +12,15 @@ export interface AddPlayerPointProps {
     teamId: number
     playerId: number
     stat: PlayerStat
+    currentValue: number
+    availablePoints: number
+    updateAvailablePoints: Function
 }
 
-export default function AddPlayerPoint({leagueId, teamId, playerId, stat}: AddPlayerPointProps) {
+export default function AddPlayerPoint({leagueId, teamId, playerId, stat, currentValue, availablePoints, updateAvailablePoints}: AddPlayerPointProps) {
     const [errorMsg, setErrorMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [statValue, setStatValue] = useState(currentValue);
 
     const addPoint = () => {
         setErrorMsg(null);
@@ -39,7 +43,8 @@ export default function AddPlayerPoint({leagueId, teamId, playerId, stat}: AddPl
             .then(response => {
                 console.log("fetch response data", response);
                 if (response.ok) {
-                    Router.push('/team/' + teamId);
+                    setStatValue(statValue + 1);
+                    updateAvailablePoints(availablePoints - 1)
                 } else {
                     setErrorMsg(response.message);
                 }
@@ -51,11 +56,12 @@ export default function AddPlayerPoint({leagueId, teamId, playerId, stat}: AddPl
     }
 
     return <>
+        {statValue}&nbsp;
         <Button
                 variant="contained"
                 color="primary"
                 onClick={addPoint}
-                disabled={isLoading}
+                disabled={isLoading || availablePoints <= 0}
         >
             +1
         </Button>

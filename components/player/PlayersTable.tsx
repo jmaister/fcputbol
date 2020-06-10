@@ -27,20 +27,12 @@ interface PlayersTableParams {
     players: Player[]
     lineup: Lineup
     isEditable: boolean
-}
-
-interface Message {
-    type: string
-    msg: string
-}
-
-interface ValidationResult {
-    messages: Message[]
-    hasErrors: boolean
+    availablePoints: number
+    updateAvailablePoints: Function
 }
 
 
-export default function PlayersTable({ league, team, players, lineup, isEditable }: PlayersTableParams) {
+export default function PlayersTable({ league, team, players, lineup, isEditable, availablePoints, updateAvailablePoints }: PlayersTableParams) {
     const [lineupPlayers, setLineupPlayers] = useState(lineup.players);
     const [selectedCount, setSelectedCount] = useState(11);
     const [messages, setMessages] = useState([]);
@@ -139,7 +131,12 @@ export default function PlayersTable({ league, team, players, lineup, isEditable
                             {PlayerStatList.map(stat => {
                                 const statValue = player[stat.toLowerCase()];
                                 return <TableCell key={stat} className={powerColorClass(statValue)}>
-                                    {statValue} <AddPlayerPoint leagueId={league.id} playerId={player.id} teamId={team.id} stat={stat} />
+                                    {isEditable?
+                                    <AddPlayerPoint currentValue={statValue} leagueId={league.id} playerId={player.id} teamId={team.id} stat={stat}
+                                        availablePoints={availablePoints} updateAvailablePoints={updateAvailablePoints} />
+                                    :
+                                    {statValue}
+                                    }
                                 </TableCell>
                             })}
                         </TableRow>

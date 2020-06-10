@@ -24,6 +24,7 @@ interface TeamPageParams {
 
 export default function TeamPage({league, team, userId, userAssets}: TeamPageParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    const [availablePoints, setAvailablePoints] = useState(userAssets.amount);
 
     const canEdit = team.user.id === userId;
 
@@ -33,9 +34,13 @@ export default function TeamPage({league, team, userId, userAssets}: TeamPagePar
 
             <TeamName team={team}></TeamName>
 
-            <p>Puntos disponibles <b>{userAssets.amount}</b>.</p>
+            {canEdit ?
+                <p>Puntos disponibles <b>{availablePoints}</b>.</p>
+            : null}
 
-            <PlayersTable league={league} team={team} players={team.players} lineup={team.currentLineup} isEditable={canEdit} />
+            <PlayersTable
+                league={league} team={team} players={team.players} lineup={team.currentLineup}
+                isEditable={canEdit} availablePoints={availablePoints} updateAvailablePoints={setAvailablePoints} />
         </Layout>
     )
 }

@@ -294,7 +294,7 @@ export async function sendBid(bidPrice: number, marketPlayerId: number, userId: 
         if (bidPrice > userMoney.expendable) {
             return {
                 ok: false,
-                message: "No tienes suficiente presupuesto. Máximo: " + userMoney.expendable,
+                message: "No tienes suficiente dinero. Puedes gastar: " + userMoney.expendable,
                 errorCode: 'NOT_ENOUGH_BUDGET'
             }
         }
