@@ -4,6 +4,8 @@
 
 TODO: Create UserPrivateData to store password
 
+TODO: Remove moment.js, put https://date-fns.org/v2.14.0/docs/Getting-Started
+
 # Cron processes
 
 http://localhost:3000/api/freezelineups

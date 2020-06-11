@@ -48,15 +48,14 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
             }
 
             // Save match steps
-            for (let i=0; i<matchResult.steps.length; i++) {
-                const s = matchResult.steps[i];
-                s.match = match;
+            for (const step of matchResult.steps) {
+                step.match = match;
+                await matchStepRepository.save(step);
             }
 
             match.stepsCount = matchResult.steps.length;
             match.playDate = now;
             match.status = MatchStatus.FINISHED;
-            match.matchSteps = matchResult.steps;
             const savedMatch = await matchRepository.save(match);
 
             // Update classification
