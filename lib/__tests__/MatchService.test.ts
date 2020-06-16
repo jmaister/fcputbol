@@ -21,6 +21,7 @@ test('Freeze Lineups', async () => {
         expect(match.status).toBe(MatchStatus.READY);
         expect(match.homeLineup).not.toBeNull();
         expect(match.awayLineup).not.toBeNull();
+        expect(match.matchSteps).toBeUndefined();
     }
 });
 
