@@ -3,7 +3,8 @@ import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
-    ManyToOne
+    ManyToOne,
+    CreateDateColumn
 } from 'typeorm';
 
 import { Team } from './team.entity';
@@ -15,7 +16,16 @@ export enum Positions {
     fw = "fw",
 }
 
-export const PlayerStat = ['save', 'defense', 'pass', 'dribble', 'shot'];
+export enum PlayerStat {
+    SAVE = 'SAVE',
+    DEFENSE = 'DEFENSE',
+    PASS = 'PASS',
+    DRIBBLE = 'DRIBBLE',
+    SHOT = 'SHOT',
+}
+
+export const PlayerStatList = [PlayerStat.SAVE, PlayerStat.DEFENSE, PlayerStat.PASS, PlayerStat.DRIBBLE, PlayerStat.SHOT];
+export const PlayerStatFieldList = PlayerStatList.map(s => s.toLowerCase());
 
 @Entity()
 export class Player {
@@ -48,5 +58,24 @@ export class Player {
     dribble: number;
     @Column('double')
     shot: number;
+}
+
+@Entity()
+export class PlayerPoints {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @ManyToOne(type => Player)
+    player: Player;
+
+    @Column('double')
+    points: number;
+
+    @Column("varchar")
+    stat: PlayerStat;
+
+    @CreateDateColumn()
+    createdDate: Date;
+
 }
 

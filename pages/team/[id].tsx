@@ -7,18 +7,24 @@ import PlayersTable from 'components/player/PlayersTable';
 import { findTeam } from 'lib/TeamService';
 
 import { Team } from 'db/entity/team.entity';
-import { User } from 'db/entity/user.entity';
+import { League } from 'db/entity/league.entity';
+
 import { getSession } from 'lib/iron';
 import TeamName from 'components/team/TeamName';
-import { findUser } from 'lib/UserService';
+import { findLeague } from 'lib/LeagueService';
+import { getUserAssets, UserAssetInfo } from 'lib/UserService';
+import { UserAssetType } from 'db/entity/user.entity';
 
 interface TeamPageParams {
+    league: League
     userId: number
     team: Team
+    userAssets: UserAssetInfo
 }
 
-export default function TeamPage({team, userId}: TeamPageParams) {
+export default function TeamPage({league, team, userId, userAssets}: TeamPageParams) {
     const [errorMsg, setErrorMsg] = useState('');
+    const [availablePoints, setAvailablePoints] = useState(userAssets.amount);
 
     const canEdit = team.user.id === userId;
 
@@ -28,13 +34,20 @@ export default function TeamPage({team, userId}: TeamPageParams) {
 
             <TeamName team={team}></TeamName>
 
-            <PlayersTable team={team} players={team.players} lineup={team.currentLineup} isEditable={canEdit} />
+            {canEdit ?
+                <p>Puntos disponibles <b>{availablePoints}</b>.</p>
+            : null}
+
+            <PlayersTable
+                league={league} team={team} players={team.players} lineup={team.currentLineup}
+                isEditable={canEdit} availablePoints={availablePoints} updateAvailablePoints={setAvailablePoints} />
         </Layout>
     )
 }
 
 
 export async function getServerSideProps(context) {
+    // TODO: check valid user
     const session = await getSession(context.req);
     const userId = session.id;
 
@@ -43,10 +56,19 @@ export async function getServerSideProps(context) {
     // Hack
     team = JSON.parse(JSON.stringify(team));
 
+    // TODO: get league id
+    let league = await findLeague(1);
+    // Hack
+    league = JSON.parse(JSON.stringify(league));
+
+    const userAssets = await getUserAssets(userId, league.id, UserAssetType.PLAYER_POINTS);
+
     return {
         props: {
             team,
             userId,
+            league,
+            userAssets,
         }
     };
 }

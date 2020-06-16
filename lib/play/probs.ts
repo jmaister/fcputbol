@@ -386,7 +386,7 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
                 player: por,
                 comment: "{player} intercepta el balón y despeja.",
                 state: state,
-                ballOnA: ballOnA,
+                ballOnA: !ballOnA,
                 stepNumber: stepNumber++,
                 t: t
             } as MatchStep);
@@ -395,7 +395,7 @@ const calcStepsDelPor = (del: Player, por: Player, plsTarget: Player[], state:st
                 player2: por,
                 comment: "{player} recibe el pase del portero.",
                 state: stateClear,
-                ballOnA: ballOnA,
+                ballOnA: !ballOnA,
                 stepNumber: stepNumber++,
                 t: t
             } as MatchStep);

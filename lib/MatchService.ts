@@ -6,7 +6,7 @@ import { MatchStep, Match, MatchStatus } from '../db/entity/match.entity';
 import { Classification } from 'db/entity/classification.entity';
 import { EntityManager } from 'typeorm';
 import { League, LeagueStatus } from 'db/entity/league.entity';
-import { UserMoney, UserMoneyType } from 'db/entity/user.entity';
+import { UserAssets, UserAssetType, UserAssetSubType } from 'db/entity/user.entity';
 import { constants } from './constants';
 
 
@@ -23,7 +23,7 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
         try {
             const matchRepository = transactionalEntityManager.getRepository(Match);
             const matchStepRepository = transactionalEntityManager.getRepository(MatchStep);
-            const userMoneyRepository = transactionalEntityManager.getRepository(UserMoney);
+            const userMoneyRepository = transactionalEntityManager.getRepository(UserAssets);
 
             match.resultHome = matchResult.score[0];
             match.resultAway = matchResult.score[1];
@@ -48,15 +48,14 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
             }
 
             // Save match steps
-            for (let i=0; i<matchResult.steps.length; i++) {
-                const s = matchResult.steps[i];
-                s.match = match;
+            for (const step of matchResult.steps) {
+                step.match = match;
+                await matchStepRepository.save(step);
             }
 
             match.stepsCount = matchResult.steps.length;
             match.playDate = now;
             match.status = MatchStatus.FINISHED;
-            match.matchSteps = matchResult.steps;
             const savedMatch = await matchRepository.save(match);
 
             // Update classification
@@ -89,7 +88,8 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
                     user: match.home.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_PER_GOAL * match.resultHome,
-                    type: UserMoneyType.GOAL,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.GOAL,
                     date: now,
                 });
             }
@@ -98,7 +98,8 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
                     user: match.away.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_PER_GOAL * match.resultAway,
-                    type: UserMoneyType.GOAL,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.GOAL,
                     date: now,
                 });
             }
@@ -107,14 +108,16 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
                     user: match.home.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_MATCH_WIN,
-                    type: UserMoneyType.MATCH_WIN,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.MATCH_WIN,
                     date: now,
                 });
                 await userMoneyRepository.save({
                     user: match.away.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_MATCH_LOSE,
-                    type: UserMoneyType.MATCH_LOSE,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.MATCH_LOSE,
                     date: now,
                 });
             } else if(match.draw) {
@@ -122,14 +125,16 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
                     user: match.home.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_MATCH_DRAW,
-                    type: UserMoneyType.MATCH_DRAW,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.MATCH_DRAW,
                     date: now,
                 });
                 await userMoneyRepository.save({
                     user: match.away.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_MATCH_DRAW,
-                    type: UserMoneyType.MATCH_DRAW,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.MATCH_DRAW,
                     date: now,
                 });
             } else {
@@ -137,14 +142,16 @@ export async function playMatch(now: Date, matchId: number, db?:EntityManager): 
                     user: match.home.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_MATCH_LOSE,
-                    type: UserMoneyType.MATCH_LOSE,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.MATCH_LOSE,
                     date: now,
                 });
                 await userMoneyRepository.save({
                     user: match.away.user,
                     league: match.round.season.league,
                     amount: constants.MONEY_MATCH_WIN,
-                    type: UserMoneyType.MATCH_WIN,
+                    type: UserAssetType.MONEY,
+                    subType: UserAssetSubType.MATCH_WIN,
                     date: now,
                 });
             }

@@ -5,8 +5,8 @@ import {createmarketplayers, resolvemarket, findAvailableMarketPlayers, sendBid,
 import { createMinimalLeague } from './TestUtils';
 import moment from 'moment';
 import { constants, getBidEndTime } from 'lib/constants';
-import { createUserMoney } from 'lib/UserService';
-import { UserMoneyType } from 'db/entity/user.entity';
+import { createUserAsset } from 'lib/UserService';
+import { UserAssetType, UserAssetSubType } from 'db/entity/user.entity';
 
 const now = new Date();
 
@@ -94,7 +94,7 @@ test('Create bid', async () => {
     expect(marketPlayer.bids.length).toBe(0);
 
     // Get money to the user
-    await createUserMoney(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
+    await createUserAsset(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
 
     const bid = await sendBid(marketPlayer.startingPrice, marketPlayer.id, context.u2.id);
     expect(bid).not.toBeNull();
@@ -114,8 +114,8 @@ test('Create bid, increase form other user', async () => {
     expect(marketPlayer.bids.length).toBe(0);
 
     // Get money to the users
-    await createUserMoney(context.u1.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
-    await createUserMoney(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
+    await createUserAsset(context.u1.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
+    await createUserAsset(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
 
     const bid1 = await sendBid(marketPlayer.startingPrice, marketPlayer.id, context.u2.id);
     expect(bid1).not.toBeNull();
@@ -139,7 +139,7 @@ test('Create bid, increase form same user', async () => {
     expect(marketPlayer.bids.length).toBe(0);
 
     // Get money to the user
-    await createUserMoney(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
+    await createUserAsset(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
 
     const bid1 = await sendBid(marketPlayer.startingPrice, marketPlayer.id, context.u2.id);
     expect(bid1).not.toBeNull();
@@ -165,7 +165,7 @@ test('Create bid, error low bid', async () => {
     expect(marketPlayer.bids.length).toBe(0);
 
     // Get money to the user
-    await createUserMoney(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
+    await createUserAsset(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
 
     const response = await sendBid(marketPlayer.startingPrice-1, marketPlayer.id, context.u2.id);
     expect(response.ok).toBe(false);
@@ -209,8 +209,8 @@ test('Resolve market', async () => {
     const marketPlayer = marketPlayers[4];
 
     // Get money to the user
-    await createUserMoney(context.u1.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
-    await createUserMoney(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserMoneyType.SEASON_START);
+    await createUserAsset(context.u1.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
+    await createUserAsset(context.u2.id, context.league.id, marketPlayer.startingPrice * 10, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
 
     const bid1 = await sendBid(marketPlayer.startingPrice, marketPlayer.id, context.u2.id);
     expect(bid1).not.toBeNull();

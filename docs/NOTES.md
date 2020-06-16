@@ -2,11 +2,9 @@
 
 # TODO
 
-TODO: create teams when the league is started for the first time
-
 TODO: Create UserPrivateData to store password
 
-TODO: cron processes + custom server
+TODO: Remove moment.js, put https://date-fns.org/v2.14.0/docs/Getting-Started
 
 # Cron processes
 

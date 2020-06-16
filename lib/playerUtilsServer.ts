@@ -18,7 +18,7 @@ export function createTeamPlayers(team:Team): Player[] {
         const pos = allPositions[type];
         const q = quantities[type];
         for (let idx = 0; idx < q; idx++) {
-            const playerData = createPlayer(avg, std, pos);
+            const playerData = createPlayerData(avg, std, pos);
             playerData.num = num;
             playerData.team = team;
             players.push(playerData);
@@ -29,7 +29,7 @@ export function createTeamPlayers(team:Team): Player[] {
     return players;
 }
 
-export function createPlayer(avg:number, std:number, pos: Positions): Player {
+export function createPlayerData(avg:number, std:number, pos: Positions): Player {
     const playerData = {
         name: RandomData.getName(),
         surname: RandomData.getSurname(),

@@ -1,8 +1,8 @@
 
 import {describe, expect, it, test} from '@jest/globals';
 
-import {createUser, findUserForLogin, findUser, getUserMoney, createUserMoney} from '../UserService';
-import { User, UserMoneyType } from 'db/entity/user.entity';
+import {createUser, findUserForLogin, findUser, getUserMoney, createUserAsset} from '../UserService';
+import { User, UserAssetType, UserAssetSubType } from 'db/entity/user.entity';
 import { createRandomUsername, createMinimalLeague } from './TestUtils';
 
 
@@ -75,7 +75,7 @@ test('Get user current money, movements', async () => {
     expect(result1.budget).toBe(0);
     expect(result1.expendable).toBe(0);
 
-    const userMoney1 = await createUserMoney(context.u1.id, context.league.id, 5000, UserMoneyType.SEASON_START);
+    const userMoney1 = await createUserAsset(context.u1.id, context.league.id, 5000, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
     expect(userMoney1).not.toBeNull();
 
     const result2 = await getUserMoney(context.u1.id, context.league.id);
@@ -84,7 +84,7 @@ test('Get user current money, movements', async () => {
     expect(result2.budget).toBe(5750);
     expect(result2.expendable).toBe(5750);
 
-    const userMoney2 = await createUserMoney(context.u1.id, context.league.id, -2000, UserMoneyType.SEASON_START);
+    const userMoney2 = await createUserAsset(context.u1.id, context.league.id, -2000, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
     expect(userMoney2).not.toBeNull();
 
     const result3 = await getUserMoney(context.u1.id, context.league.id);
@@ -93,7 +93,7 @@ test('Get user current money, movements', async () => {
     expect(result3.budget).toBe(3450);
     expect(result3.expendable).toBe(3450);
 
-    const userMoney3 = await createUserMoney(context.u1.id, context.league.id, -3450, UserMoneyType.SEASON_START);
+    const userMoney3 = await createUserAsset(context.u1.id, context.league.id, -3450, UserAssetType.MONEY, UserAssetSubType.SEASON_START);
     expect(userMoney3).not.toBeNull();
 
     const result4 = await getUserMoney(context.u1.id, context.league.id);
