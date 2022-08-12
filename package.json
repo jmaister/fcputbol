@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@hapi/iron": "6.0.0",
-    "@material-ui/core": "4.9.13",
+    "@material-ui/core": "4.12.4",
     "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "4.0.0-alpha.53",
     "@next/bundle-analyzer": "^9.4.4",
